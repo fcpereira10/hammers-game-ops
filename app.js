@@ -1125,7 +1125,7 @@ function loginView(){
   document.getElementById('app').innerHTML=`<div class="login">
     <div class="lang" role="group" aria-label="Language" style="align-self:flex-end">
       <button data-act="lang" data-l="pt" aria-pressed="${lang==='pt'}">PT</button><button data-act="lang" data-l="en" aria-pressed="${lang==='en'}">EN</button></div>
-    <div class="sheet login-card"><h2>Hammers Game Ops</h2>${body}${L.msg?`<p class="err">${esc(L.msg)}</p>`:''}</div></div>`;
+    <div class="sheet login-card"><div class="login-head"><img src="icons/logo.png" alt="Hammers" width="88" height="85"><h2>Hammers Game Ops</h2></div>${body}${L.msg?`<p class="err">${esc(L.msg)}</p>`:''}</div></div>`;
 }
 const continueUrl=()=>location.origin+location.pathname;
 async function finishLink(url,email){
