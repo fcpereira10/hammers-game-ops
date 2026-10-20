@@ -34,12 +34,12 @@ Site estático (HTML, CSS e JavaScript sem build), publicado no GitHub Pages. O 
 ## Configuração (uma vez)
 
 1. **Firebase**: criar o projeto, registar uma app web e copiar o `firebaseConfig` para `firebase-config.js`.
-2. **Authentication**: ativar *Email/Password* com *Email link (passwordless sign-in)* e acrescentar `fcpereira10.github.io` em *Authorized domains*.
+2. **Authentication**: ativar *Email/Password* com *Email link (passwordless sign-in)* e acrescentar `gameops.hammersflagfootball.pt` (e `fcpereira10.github.io`) em *Authorized domains*.
 3. **Firestore**: criar a base de dados (modo de produção, `eur3`) e colar `firestore.rules` no separador *Regras*.
 4. **Primeiro admin**: no Firestore, coleção `members`, documento com o email (em minúsculas) e o campo `role` = `admin`.
 5. **GitHub Pages**: em *Settings → Pages*, escolher *Deploy from a branch*, `main`, pasta `/ (root)`.
 
-A app fica em https://fcpereira10.github.io/hammers-game-ops/
+A app fica em https://gameops.hammersflagfootball.pt (registo DNS `CNAME gameops → fcpereira10.github.io`). Esse domínio também tem de estar nos *Authorized domains* do Firebase.
 
 ## Dados
 
