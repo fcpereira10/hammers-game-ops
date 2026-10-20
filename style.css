@@ -1,30 +1,30 @@
 /* Layout: one-screen sideline tool. Field left (offense goes up), controls right; stacks on phones.
-   Palette: Hammers orange (actions), Hammers red (our team), black (text, dark surfaces); turf green and flag yellow stay where football uses them. */
+   Palette: Hammers orange #FF3300 (main color: actions and our team), red (end zone, brand stripe), black (text, dark surfaces); turf green and flag yellow stay where football uses them. */
 :root{
   --bg:#F3F2F0; --surface:#FFFFFF; --surface-2:#F7F6F4; --ink:#141414; --muted:#5E5A56; --line:#DDD9D4;
-  --accent:#C2410C; --accent-soft:#FDE6D8; --accent-ink:#FFFFFF;
-  --hammers:#C8102E; --hammers-ink:#FFFFFF;
+  --accent:#FF3300; --accent-soft:#FFE3D9; --accent-ink:#FFFFFF; --accent-text:#D42B00;
+  --hammers:#FF3300; --hammers-ink:#FFFFFF;
   --opp:#3F4650; --opp-soft:#E6E8EB;
   --turf:#2E6A45; --turf-2:#285E3D; --chalk:rgba(255,255,255,.82); --chalk-soft:rgba(255,255,255,.22);
   --good:#17804F; --bad:#9F1D1D; --gold:#A86A0C;
   --mark-c:#FFFFFF; --mark-x:#FFC2BA;
-  --brand:linear-gradient(90deg,#C8102E,#F26B1D);
+  --brand:linear-gradient(90deg,#C8102E,#FF3300);
   --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
   --r:10px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E0D0C; --surface:#1A1816; --surface-2:#221F1C; --ink:#F1EEEA; --muted:#A39D96; --line:#36312C;
-  --accent:#FF7A33; --accent-soft:#3A1E0E; --accent-ink:#1A0A00;
-  --hammers:#F0444F; --hammers-ink:#1A0406;
+  --accent:#FF3300; --accent-soft:#3A1408; --accent-ink:#FFFFFF; --accent-text:#FF6A40;
+  --hammers:#FF3300; --hammers-ink:#FFFFFF;
   --opp:#A7AEB8; --opp-soft:#23272C;
   --turf:#22513A; --turf-2:#1D4632; --chalk:rgba(255,255,255,.75); --chalk-soft:rgba(255,255,255,.16);
   --good:#4CD995; --bad:#F87171; --gold:#F2C14E; --mark-c:#FFFFFF; --mark-x:#FFB4AB;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E0D0C; --surface:#1A1816; --surface-2:#221F1C; --ink:#F1EEEA; --muted:#A39D96; --line:#36312C;
-  --accent:#FF7A33; --accent-soft:#3A1E0E; --accent-ink:#1A0A00;
-  --hammers:#F0444F; --hammers-ink:#1A0406;
+  --accent:#FF3300; --accent-soft:#3A1408; --accent-ink:#FFFFFF; --accent-text:#FF6A40;
+  --hammers:#FF3300; --hammers-ink:#FFFFFF;
   --opp:#A7AEB8; --opp-soft:#23272C;
   --turf:#22513A; --turf-2:#1D4632; --chalk:rgba(255,255,255,.75); --chalk-soft:rgba(255,255,255,.16);
   --good:#4CD995; --bad:#F87171; --gold:#F2C14E; --mark-c:#FFFFFF; --mark-x:#FFB4AB;
@@ -222,7 +222,7 @@ td.jn{font-family:var(--f-display);font-weight:800;font-size:20px}
 .quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 @media (max-width:560px){.quick{grid-template-columns:minmax(0,1fr)}}
 .qs{background:var(--surface-2);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:6px}
-.qs .k{font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.qs .k{font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-text)}
 .qs b{font-family:var(--f-display);font-size:20px;line-height:1.1}
 .qs span{color:var(--muted);font-size:14px;line-height:1.4}
 .toc{display:flex;flex-wrap:wrap;gap:6px}
@@ -306,5 +306,5 @@ td.jn{font-family:var(--f-display);font-weight:800;font-size:20px}
 .top::before{content:"";flex-basis:100%;height:4px;border-radius:2px;background:var(--brand);order:-1}
 .login-card{position:relative;overflow:hidden}
 .login-card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--brand)}
-.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);box-shadow:inset 0 -3px 0 #F26B1D}
-.optrow .oi{color:var(--accent)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);box-shadow:inset 0 -3px 0 #FF3300}
+.optrow .oi{color:var(--accent-text)}
