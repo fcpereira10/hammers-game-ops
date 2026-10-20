@@ -279,3 +279,4 @@ td.jn{font-family:var(--f-display);font-weight:800;font-size:20px}
 .acct b{color:var(--ink)}
 .mrow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);border:1px solid var(--line)}
 .mrow span{min-width:0;overflow-wrap:anywhere}
+.owner{font-size:12px;font-weight:600;color:var(--muted)}

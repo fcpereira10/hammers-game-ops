@@ -14,7 +14,9 @@ O login é feito com um link enviado por email, sem password. Só entram os emai
 | Papel | Pode |
 |---|---|
 | Membro | ver, criar e editar todos os jogos |
-| Admin | tudo o que o membro pode, mais apagar jogos e gerir os membros |
+| Admin | tudo o que o membro pode, mais ver os jogos privados, apagar jogos e gerir os membros |
+
+Cada jogo mostra quem o criou. Por defeito fica visível para a **Equipa**. Quem o cria pode escolher **Só eu** (para testes ou treinos) e mudar isso mais tarde.
 
 Os admins gerem a lista na app, em **Jogo ▾ → Membros**.
 
@@ -44,8 +46,9 @@ A app fica em https://gameops.hammersflagfootball.pt (registo DNS `CNAME gameops
 ## Dados
 
 ```
-members/{email}                 role: "member" | "admin"
-games/{gameId}                  equipa, competição, adversário, plantéis, formações
+members/{email}                 role: "member" | "admin", name
+games/{gameId}                  equipa, competição, adversário, plantéis, formações,
+                                owner (email de quem criou), visibility: "team" | "private"
 games/{gameId}/events/{eventId} cada jogada, falta, conversão, intervalo...
 ```
 

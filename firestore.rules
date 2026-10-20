@@ -6,19 +6,29 @@ service cloud.firestore {
                         exists(/databases/$(db)/documents/members/$(email())); }
     function admin()  { return member() &&
                         get(/databases/$(db)/documents/members/$(email())).data.role == 'admin'; }
+    // a game is visible to the whole team, to its owner when private, and always to admins
+    function canSee(game) { return admin() || game.visibility == 'team' || game.owner == email(); }
 
     match /members/{id} {
-      // anyone may check one exact email (so the login page sends links only to members);
-      // only members may list the whole team
+      // anyone may check one exact email (so the login page sends links only to members)
       allow get: if true;
       allow list: if member();
       allow write: if admin();
+      // each member may change their own display name
+      allow update: if member() && id == email() &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']);
     }
     match /games/{gid} {
-      allow read, create, update: if member();
+      allow read: if member() && canSee(resource.data);
+      allow create: if member() && request.resource.data.owner == email();
+      // owner and visibility only change by the owner or an admin
+      allow update: if member() && canSee(resource.data) &&
+                       (admin() || (request.resource.data.get('owner', '') == resource.data.get('owner', '') &&
+                                    (request.resource.data.get('visibility', '') == resource.data.get('visibility', '') ||
+                                     resource.data.get('owner', '') == email())));
       allow delete: if admin();
       match /events/{eid} {
-        allow read, write: if member();
+        allow read, write: if member() && canSee(get(/databases/$(db)/documents/games/$(gid)).data);
       }
     }
   }

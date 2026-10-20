@@ -56,6 +56,9 @@ pt:{
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
   signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
   badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
+  visLbl:'Visível para', visTeam:'Equipa', visMe:'Só eu', visTeamS:'toda a Game Ops vê e edita', visMeS:'só tu e os admins (testes, treinos)',
+  byOwner:n=>`por ${n}`, visNowMe:'Jogo visível só para ti e para os admins', visNowTeam:'Jogo visível para toda a equipa',
+  myName:'O meu nome', myNameLead:'É o nome que aparece nos jogos que crias.', nameLbl:'Nome (opcional)', namePh:'ex.: Francisco', nameSaved:'Nome guardado',
   pwOptional:'Password (se já criaste uma)', signInPw:'Entrar com password', pwHint:'Ainda não tens password? Usa "Enviar link" e cria uma dentro da app, em Jogo ▾ → Definir password.',
   pwEmpty:'Escreve a password, ou usa "Enviar link".', pwWrong:'Email ou password errados. Se ainda não criaste password, usa "Enviar link".', pwTooMany:'Demasiadas tentativas. Espera uns minutos ou usa "Enviar link".',
   setPw:'Definir password', pwLead:'Com uma password podes entrar sem esperar pelo email. O link continua a funcionar sempre que precisares.',
@@ -133,6 +136,9 @@ en:{
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
   signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
   badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
+  visLbl:'Visible to', visTeam:'Team', visMe:'Only me', visTeamS:'all of Game Ops sees and edits', visMeS:'only you and the admins (tests, practice)',
+  byOwner:n=>`by ${n}`, visNowMe:'Game visible only to you and the admins', visNowTeam:'Game visible to the whole team',
+  myName:'My name', myNameLead:'This is the name shown on the games you create.', nameLbl:'Name (optional)', namePh:'e.g. Francisco', nameSaved:'Name saved',
   pwOptional:'Password (if you already created one)', signInPw:'Sign in with password', pwHint:'No password yet? Use "Send link" and create one inside the app, in Game ▾ → Set password.',
   pwEmpty:'Type the password, or use "Send link".', pwWrong:'Wrong email or password. If you have not created a password yet, use "Send link".', pwTooMany:'Too many attempts. Wait a few minutes or use "Send link".',
   setPw:'Set password', pwLead:'With a password you can sign in without waiting for the email. The link keeps working whenever you need it.',
@@ -593,7 +599,7 @@ function render(){
   const pend=cloud.outbox.length;
   const sync=g.store==='demo'?`<span class="sample">${t('sample')}</span>`
     :g.store==='local'?`<span class="sync local">${t('localOnly')}</span>`
-    :`<span class="sync ${pend?'pend':'ok'}">${pend?t('sending',pend):t('shared')}</span>`;
+    :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
   document.getElementById('app').innerHTML=`
   <header class="top">
     <button class="chip game" data-act="games" aria-label="${t('chooseGame')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
@@ -881,29 +887,38 @@ function renderSheet(){
       <input class="field-in" id="form-name" maxlength="24" placeholder="${t('formPh')}" autocomplete="off">
       <button class="primary" data-act="formaddin">${t('add')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='games'){
-    const tag=x=>x.store==='cloud'?`<span class="sync ok">${t('shared')}</span>`:x.store==='local'?`<span class="sync local">${t('localOnly')}</span>`:`<span class="sample">${t('sample')}</span>`;
+    const tag=x=>x.store==='cloud'?`<span class="owner">${x.owner?t('byOwner',esc(personName(x.owner))):''}</span>${x.visibility==='private'?` <span class="sync local">🔒 ${t('visMe')}</span>`:''}`:x.store==='local'?`<span class="sync local">${t('localOnly')}</span>`:`<span class="sample">${t('sample')}</span>`;
     const cnt=x=>{const ev=x.id===g.id?g.events:(x.events||null);return ev?`${ev.filter(e=>e.t==='play').length} ${t('playsAbbr')}`:''};
     const rb=(v,l,d)=>`<button class="big" data-act="role" data-r="${v}" aria-pressed="${role()===v}">${l}<small>${d}</small></button>`;
     h=`<h2>${t('games')}</h2>
       ${g.store!=='demo'&&!readOnly()?`<span class="lbl2">${t('roleQ')}</span><div class="grid4" style="grid-template-columns:repeat(3,1fr)">${rb('H','Hammers',t('roleHs'))}${rb('A',t('roleA'),t('roleAs'))}${rb('both',t('roleB'),t('roleBs'))}</div>`:''}
+      ${canChangeVis(g)?`<span class="lbl2">${t('visLbl')}</span><div class="grid2">
+        <button class="big" data-act="setvis" data-v="team" aria-pressed="${g.visibility!=='private'}">${t('visTeam')}<small>${t('visTeamS')}</small></button>
+        <button class="big" data-act="setvis" data-v="private" aria-pressed="${g.visibility==='private'}">🔒 ${t('visMe')}<small>${t('visMeS')}</small></button></div>`:''}
       <span class="lbl2">${t('allGames')}</span>
       <div class="gl">${games.map(x=>`<button data-act="pickgame" data-id="${x.id}" aria-current="${x.id===g.id}"><span><b>${esc(x.team)} vs ${esc(x.opp)}</b><br><small>${esc(x.comp)} · ${x.date}</small> ${tag(x)}</span><span class="num">${cnt(x)}</span></button>`).join('')}</div>
       ${cloud.db&&!cloud.ready?`<p>${t('loadingShared')}</p>`:''}
       <button class="primary" data-act="newgame">${t('newGame')}</button>
       ${g.store==='demo'||readOnly()||(g.store==='cloud'&&!isAdmin)?'':`<button class="ghost" data-act="delgame" style="color:var(--bad)">${sheet.delc?t('delGameC'):t('delGame')}</button>`}
-      <div class="acct"><span>${t('signedAs')} <b>${esc(me||'')}</b>${isAdmin?` · ${t('roleAdmin')}`:''}</span>
-        ${isAdmin?`<button class="btn" data-act="members">${t('members')}</button>`:''}<button class="btn" data-act="setpw">${t('setPw')}</button><button class="btn" data-act="signout">${t('signOut')}</button></div>
+      <div class="acct"><span>${t('signedAs')} <b>${esc(personName(me))}</b> · ${esc(me||'')}${isAdmin?` · ${t('roleAdmin')}`:''}</span>
+        ${isAdmin?`<button class="btn" data-act="members">${t('members')}</button>`:''}<button class="btn" data-act="myname">${t('myName')}</button><button class="btn" data-act="setpw">${t('setPw')}</button><button class="btn" data-act="signout">${t('signOut')}</button></div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
   }else if(sheet.kind==='members'){
     h=`<h2>${t('members')}</h2><p>${t('membersLead')}</p>
-      <div class="gl">${members.map(m=>`<div class="mrow"><span><b>${esc(m.id)}</b><br><small>${m.role==='admin'?t('roleAdmin'):t('roleMember')}</small></span>
+      <div class="gl">${members.map(m=>`<div class="mrow"><span><b>${esc(m.name||m.id.split('@')[0])}</b><br><small>${esc(m.id)} · ${m.role==='admin'?t('roleAdmin'):t('roleMember')}</small></span>
         ${m.id===me?`<small>${t('you')}</small>`:`<span class="row"><button class="btn" data-act="mrole" data-id="${esc(m.id)}" data-r="${m.role==='admin'?'member':'admin'}">${m.role==='admin'?t('makeMember'):t('makeAdmin')}</button>
         <button class="btn" data-act="mdel" data-id="${esc(m.id)}" style="color:var(--bad)">${sheet.mdel===m.id?t('confirm'):t('remove')}</button></span>`}</div>`).join('')}</div>
       <label class="lbl2" for="m-email">${t('addMember')}</label>
       <input class="field-in" id="m-email" type="email" placeholder="nome@email.com" autocomplete="off">
+      <label class="lbl2" for="m-name">${t('nameLbl')}</label>
+      <input class="field-in" id="m-name" maxlength="40" placeholder="${t('namePh')}" autocomplete="off">
       <div class="grid2"><button class="big" data-act="madd" data-r="member">${t('roleMember')}<small>${t('memberS')}</small></button>
         <button class="big" data-act="madd" data-r="admin">${t('roleAdmin')}<small>${t('adminS')}</small></button></div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
+  }else if(sheet.kind==='myname'){
+    h=`<h2>${t('myName')}</h2><p>${t('myNameLead')}</p>
+      <input class="field-in" id="my-name" maxlength="40" value="${esc((members.find(x=>x.id===me)||{}).name||'')}" placeholder="${t('namePh')}" autocomplete="name">
+      <button class="primary" data-act="namesave">${t('pwSave').split(' ')[0]}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='pw'){
     h=`<h2>${t('setPw')}</h2><p>${t('pwLead')}</p>
       <input type="text" autocomplete="username" value="${esc(me||'')}" hidden>
@@ -924,7 +939,7 @@ function renderSheet(){
       <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${COMPS.map(x=>opt('comp',x,x)).join('')}</div>
       <label class="lbl2" for="ng-opp">${t('opponent')}</label><input class="field-in" id="ng-opp" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">
       <span class="lbl2">${t('starts')}</span><div class="grid2">${opt('start','H','Hammers')}${opt('start','A',t('opponent'))}</div>
-      <p>${cloud.db&&cloud.canWrite?t('willShare'):t('willLocal')}</p>
+      ${cloud.db&&cloud.canWrite?`<span class="lbl2">${t('visLbl')}</span><div class="grid2">${opt('vis','team',`${t('visTeam')}<small>${t('visTeamS')}</small>`)}${opt('vis','private',`🔒 ${t('visMe')}<small>${t('visMeS')}</small>`)}</div>`:`<p>${t('willLocal')}</p>`}
       <button class="primary" data-act="ngcreate">${t('start')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='help'){
     cls='help';const H=helpData();
@@ -1014,11 +1029,11 @@ document.addEventListener('click',ev=>{
     case 'pickgame':sheet=null;document.getElementById('layer').innerHTML='';selectGame(b.dataset.id);break;
     case 'delgame':if(!sheet.delc){sheet.delc=true;renderSheet();break}
       {const id=g.id;sheet=null;document.getElementById('layer').innerHTML='';S().remove(id);curId=null;selectGame(games.find(x=>x.id!==id).id)}break;
-    case 'newgame':openSheet('newgame',{ng:{team:'Elite',comp:'LFFF1',opp:'',start:'H'}});break;
+    case 'newgame':openSheet('newgame',{ng:{team:'Elite',comp:'LFFF1',opp:'',start:'H',vis:'team'}});break;
     case 'ng':sheet.ng.opp=(document.getElementById('ng-opp')||{}).value||sheet.ng.opp;sheet.ng[b.dataset.k]=b.dataset.v;renderSheet();break;
     case 'ngcreate':{const n=sheet.ng;n.opp=(document.getElementById('ng-opp').value||'').trim();
       const target=(cloud.db&&cloud.canWrite)?cloudStore:local;
-      const id=target.create(newMeta(n));sheet=null;document.getElementById('layer').innerHTML='';view='reg';an.side='H';
+      const meta=newMeta(n);if(target===cloudStore){meta.owner=me;meta.visibility=n.vis||'team'}const id=target.create(meta);sheet=null;document.getElementById('layer').innerHTML='';view='reg';an.side='H';
       selectGame(id);toast(t('gameCreated'));break}
     case 'an':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down')v=+v;if(k==='form'&&v==='')v=null;an[k]=v;if(k==='side'){an.rec=null;an.form=null}render();break}
     case 'anannul':an.annul=b.checked;render();break;
@@ -1037,11 +1052,14 @@ document.addEventListener('click',ev=>{
     case 'members':openSheet('members');break;
     case 'madd':{const em=(document.getElementById('m-email').value||'').trim().toLowerCase();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){toast(t('badEmail'));break}
-      addMember(em,b.dataset.r).then(()=>toast(t('memberAdded',em)));break}
+      addMember(em,b.dataset.r,(document.getElementById('m-name').value||'').trim()).then(()=>toast(t('memberAdded',em)));break}
     case 'mrole':addMember(b.dataset.id,b.dataset.r);break;
     case 'mdel':if(sheet.mdel!==b.dataset.id){sheet.mdel=b.dataset.id;renderSheet()}else{removeMember(b.dataset.id);sheet.mdel=null}break;
     case 'signout':signOutNow();break;
     case 'setpw':openSheet('pw');break;
+    case 'setvis':if(canChangeVis(g)){updGame({visibility:b.dataset.v});toast(b.dataset.v==='private'?t('visNowMe'):t('visNowTeam'))}break;
+    case 'myname':openSheet('myname');break;
+    case 'namesave':{const v=(document.getElementById('my-name').value||'').trim();if(v)saveMyName(v);closeSheet();break}
     case 'pwsave':{const p1=document.getElementById('pw1').value||'',p2=document.getElementById('pw2').value||'';
       if(p1.length<8){sheet.err=t('pwShort');renderSheet();break}
       if(p1!==p2){sheet.err=t('pwMismatch');renderSheet();break}
@@ -1105,12 +1123,16 @@ async function onUser(u){
   isAdmin=m.role==='admin';authed=true;
   cloud.db=fb.shim;cloud.canWrite=true;
   let first=true;
-  fb.shim.collection('games').onSnapshot(s=>{
-    const mm={};s.docs.forEach(d=>{mm[d.id]=d.data()});cloud.remoteGames=mm;
+  const parts={};
+  const onPart=k=>s=>{parts[k]={};s.docs.forEach(d=>{parts[k][d.id]=d.data()});cloud.remoteGames=Object.assign({},...Object.values(parts));
     if(first){first=false;cloud.ready=true}
-    refresh();
-  },()=>{cloud.ready=true;refresh()});
-  if(isAdmin)fb.shim.collection('members').onSnapshot(s=>{members=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.id<b.id?-1:1);if(sheet&&sheet.kind==='members')renderSheet()},()=>{});
+    if(isAdmin&&k==='all')backfill(parts.all);
+    refresh()};
+  const onErr=()=>{cloud.ready=true;refresh()};
+  if(isAdmin)fb.shim.collection('games').onSnapshot(onPart('all'),onErr);
+  else{fb.shim.collection('games').where('visibility','==','team').onSnapshot(onPart('team'),onErr);
+    fb.shim.collection('games').where('owner','==',me).onSnapshot(onPart('own'),onErr)}
+  fb.shim.collection('members').onSnapshot(s=>{members=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.id<b.id?-1:1);if(sheet&&(sheet.kind==='members'||sheet.kind==='games'))renderSheet();refresh()},()=>{});
   setTimeout(()=>{if(!cloud.ready){cloud.ready=true;refresh()}},8000);
   refresh();flush();
   const seen=lsGet(LS_HELP)==='1';lsSet(LS_HELP,'1');
@@ -1149,10 +1171,17 @@ document.addEventListener('click',async ev=>{
   if(a==='lgback'){loginState={step:'email',email:'',msg:''};loginView()}
   if(a==='lgout'){await fb.signOut(fb.auth);loginState={step:'email',email:'',msg:''};loginView()}
 });
-async function addMember(email,roleName){
-  try{await fb.setDoc(fb.doc(fb.fs,'members/'+email),{role:roleName,added:Date.now(),addedBy:me})}catch(e){toast(t('noWrite'))}
+async function addMember(email,roleName,name){
+  const prev=members.find(x=>x.id===email);
+  const body=prev?{role:roleName}:{role:roleName,added:Date.now(),addedBy:me,...(name?{name}:{})};
+  try{await fb.setDoc(fb.doc(fb.fs,'members/'+email),body,{merge:true})}catch(e){toast(t('noWrite'))}
 }
+async function saveMyName(name){try{await fb.setDoc(fb.doc(fb.fs,'members/'+me),{name},{merge:true});toast(t('nameSaved'))}catch(e){toast(t('noWrite'))}}
+/* older games had no owner/visibility: an admin fills them in once */
+function backfill(all){for(const id in all){const d=all[id];if(!d.owner||!d.visibility)cloudStore.updGame(id,{...(d.owner?{}:{owner:me}),...(d.visibility?{}:{visibility:'team'})})}}
 async function removeMember(email){try{await fb.deleteDoc(fb.doc(fb.fs,'members/'+email))}catch(e){toast(t('noWrite'))}}
+function personName(email){if(!email)return '';const m=members.find(x=>x.id===email);return (m&&m.name)||email.split('@')[0]}
+const canChangeVis=x=>x.store==='cloud'&&(isAdmin||x.owner===me);
 async function signOutNow(){try{await fb.signOut(fb.auth)}catch(e){}location.reload()}
 
 (async()=>{
@@ -1167,7 +1196,7 @@ async function signOutNow(){try{await fb.signOut(fb.auth)}catch(e){}location.rel
     let fs;try{fs=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){fs=F.getFirestore(app)}
     const shim={
       doc:p=>{const d=F.doc(fs,p);return {set:b=>F.setDoc(d,b),update:b=>F.setDoc(d,b,{merge:true}),delete:()=>F.deleteDoc(d)}},
-      collection:p=>{const cons=[];const api={orderBy(f,dir){cons.push(F.orderBy(f,dir||'asc'));return api},limit(n){cons.push(F.limit(n));return api},
+      collection:p=>{const cons=[];const api={where(f,op,v){cons.push(F.where(f,op,v));return api},orderBy(f,dir){cons.push(F.orderBy(f,dir||'asc'));return api},limit(n){cons.push(F.limit(n));return api},
         onSnapshot(next,err){const q=cons.length?F.query(F.collection(fs,p),...cons):F.collection(fs,p);
           return F.onSnapshot(q,s=>next({docs:s.docs.map(d=>({id:d.id,data:()=>d.data()}))}),err)}};return api}
     };
