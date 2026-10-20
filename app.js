@@ -51,11 +51,16 @@ pt:{
   csvHead:'data,equipa,competicao,adversario,parte,lado,down,tipo,mapa,zona,recetor,resultado,defensor,primeiro_down,formacao,dois_qb,pick6,retorno_conv,anulada',
   typeNum:'Escreve um número', typeForm:'Escreve o nome da formação', deleted:'Apagada', possChanged:'Posse mudada',
   gameCreated:'Jogo criado', csvCopied:'CSV copiado', selectCopy:'Seleciona e copia.', kind:{pass:'passe',run:'corrida',sack:'sack',conv:'conversão'},
-  loginLead:'Escreve o teu email. Recebes um link para entrar, sem password.', sendLink:'Enviar link', linkSent:e=>`Enviámos um link para <b>${e}</b>. Abre o email neste aparelho e toca no link. Se não aparecer, vê a pasta de spam.`,
+  loginLead:'Entra com a tua password ou pede um link de acesso por email.', sendLink:'Enviar link', linkSent:e=>`Enviámos um link para <b>${e}</b>. Abre o email neste aparelho e toca no link. Se não aparecer, vê a pasta de spam.`,
   pasteLabel:'Se usas a app instalada no iPhone, copia o link do email e cola-o aqui', signIn:'Entrar', otherEmail:'Usar outro email',
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
   signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
-  badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`, sendFail:'Não foi possível enviar o link. Tenta outra vez.', offlineStart:'Sem rede. Liga-te à internet para entrar pela primeira vez.',
+  badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
+  pwOptional:'Password (se já criaste uma)', signInPw:'Entrar com password', pwHint:'Ainda não tens password? Usa "Enviar link" e cria uma dentro da app, em Jogo ▾ → Definir password.',
+  pwEmpty:'Escreve a password, ou usa "Enviar link".', pwWrong:'Email ou password errados. Se ainda não criaste password, usa "Enviar link".', pwTooMany:'Demasiadas tentativas. Espera uns minutos ou usa "Enviar link".',
+  setPw:'Definir password', pwLead:'Com uma password podes entrar sem esperar pelo email. O link continua a funcionar sempre que precisares.',
+  pwNew:'Nova password (mínimo 8 caracteres)', pwRepeat:'Repete a password', pwSave:'Guardar password', pwShort:'A password tem de ter pelo menos 8 caracteres.',
+  pwMismatch:'As duas passwords não são iguais.', pwSaved:'Password guardada', pwRecent:'Por segurança, sai e volta a entrar com o link antes de mudar a password.', pwFail:'Não foi possível guardar a password. Tenta outra vez.', sendFail:'Não foi possível enviar o link. Tenta outra vez.', offlineStart:'Sem rede. Liga-te à internet para entrar pela primeira vez.',
   signedAs:'Sessão:', members:'Membros', membersLead:'Só estes emails conseguem entrar na app. Membros criam e editam jogos. Admins também apagam jogos e gerem esta lista.',
   addMember:'Acrescentar email', roleMember:'Membro', roleAdmin:'Admin', memberS:'cria e edita jogos', adminS:'também gere membros',
   makeAdmin:'Tornar admin', makeMember:'Tornar membro', remove:'Remover', you:'tu', memberAdded:e=>`${e} acrescentado`,
@@ -123,11 +128,16 @@ en:{
   csvHead:'date,team,competition,opponent,half,side,down,type,map,zone,receiver,result,defender,first_down,formation,double_qb,pick6,conv_return,nullified',
   typeNum:'Type a number', typeForm:'Type the formation name', deleted:'Deleted', possChanged:'Possession changed',
   gameCreated:'Game created', csvCopied:'CSV copied', selectCopy:'Select and copy.', kind:{pass:'pass',run:'run',sack:'sack',conv:'conversion'},
-  loginLead:'Type your email. You will get a link to sign in, no password.', sendLink:'Send link', linkSent:e=>`We sent a link to <b>${e}</b>. Open the email on this device and tap the link. If you can't find it, check spam.`,
+  loginLead:'Sign in with your password or get a sign-in link by email.', sendLink:'Send link', linkSent:e=>`We sent a link to <b>${e}</b>. Open the email on this device and tap the link. If you can't find it, check spam.`,
   pasteLabel:'If you use the installed app on iPhone, copy the link from the email and paste it here', signIn:'Sign in', otherEmail:'Use another email',
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
   signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
-  badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`, sendFail:'Could not send the link. Try again.', offlineStart:'No network. Connect to the internet to sign in for the first time.',
+  badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
+  pwOptional:'Password (if you already created one)', signInPw:'Sign in with password', pwHint:'No password yet? Use "Send link" and create one inside the app, in Game ▾ → Set password.',
+  pwEmpty:'Type the password, or use "Send link".', pwWrong:'Wrong email or password. If you have not created a password yet, use "Send link".', pwTooMany:'Too many attempts. Wait a few minutes or use "Send link".',
+  setPw:'Set password', pwLead:'With a password you can sign in without waiting for the email. The link keeps working whenever you need it.',
+  pwNew:'New password (at least 8 characters)', pwRepeat:'Repeat the password', pwSave:'Save password', pwShort:'The password must have at least 8 characters.',
+  pwMismatch:'The two passwords do not match.', pwSaved:'Password saved', pwRecent:'For security, sign out and sign in again with the link before changing the password.', pwFail:'Could not save the password. Try again.', sendFail:'Could not send the link. Try again.', offlineStart:'No network. Connect to the internet to sign in for the first time.',
   signedAs:'Signed in:', members:'Members', membersLead:'Only these emails can sign in. Members create and edit games. Admins also delete games and manage this list.',
   addMember:'Add email', roleMember:'Member', roleAdmin:'Admin', memberS:'creates and edits games', adminS:'also manages members',
   makeAdmin:'Make admin', makeMember:'Make member', remove:'Remove', you:'you', memberAdded:e=>`${e} added`,
@@ -228,6 +238,7 @@ function helpData(){
       <li>Quando a tua equipa ataca, registas normalmente. Quando a outra ataca, o ecrã fica em espera e mostra as jogadas da outra pessoa ao vivo.</li></ol>
       <p>O down, a posse e o resultado são os mesmos nos dois aparelhos. Se a outra pessoa ficar sem bateria, toca em <b>Registar eu esta posse</b>. Para mudar de equipa, toca no nome do jogo no topo.</p>`},
     {id:'data',t:'Onde ficam os dados',b:`<p>Os jogos com a etiqueta <b>Partilhado</b> ficam guardados online e aparecem em qualquer aparelho, também para a tape review depois do torneio. Só os emails da lista de <b>Membros</b> conseguem entrar. Os admins gerem a lista em ${btn('',t('game'))} → <b>Membros</b>.</p>
+      <p>Para entrar usas o link enviado por email, só uma vez por aparelho. Se preferires, cria uma password em ${btn('',t('game'))} → <b>Definir password</b> e passas a poder entrar com email e password.</p>
       <p>Sem rede, a app continua a funcionar: guarda as jogadas e envia-as quando a rede voltar. No topo aparece <b>A enviar</b> enquanto houver jogadas por enviar.</p>
       <p>Usa o botão <b>PT / EN</b> no topo para mudar a língua. Os dados não mudam.</p>`}
   ]:[
@@ -287,6 +298,7 @@ function helpData(){
       <li>When your team is on offense, you track as usual. When the other team is on offense, your screen waits and shows the other person's plays live.</li></ol>
       <p>Down, possession and score are the same on both devices. If the other person's battery dies, tap <b>I will track this drive</b>. To change team, tap the game name at the top.</p>`},
     {id:'data',t:'Where the data lives',b:`<p>Games tagged <b>Shared</b> are saved online and show on any device, including for tape review after the tournament. Only emails on the <b>Members</b> list can sign in. Admins manage the list in ${btn('',t('game'))} → <b>Members</b>.</p>
+      <p>To sign in you use the link sent by email, once per device. If you prefer, create a password in ${btn('',t('game'))} → <b>Set password</b> and sign in with email and password from then on.</p>
       <p>Without network the app keeps working: it saves plays and sends them when the network is back. <b>Sending</b> shows at the top while plays are waiting to be sent.</p>
       <p>Use the <b>PT / EN</b> switch at the top to change the language. Your data stays the same.</p>`}
   ];
@@ -880,7 +892,7 @@ function renderSheet(){
       <button class="primary" data-act="newgame">${t('newGame')}</button>
       ${g.store==='demo'||readOnly()||(g.store==='cloud'&&!isAdmin)?'':`<button class="ghost" data-act="delgame" style="color:var(--bad)">${sheet.delc?t('delGameC'):t('delGame')}</button>`}
       <div class="acct"><span>${t('signedAs')} <b>${esc(me||'')}</b>${isAdmin?` · ${t('roleAdmin')}`:''}</span>
-        ${isAdmin?`<button class="btn" data-act="members">${t('members')}</button>`:''}<button class="btn" data-act="signout">${t('signOut')}</button></div>
+        ${isAdmin?`<button class="btn" data-act="members">${t('members')}</button>`:''}<button class="btn" data-act="setpw">${t('setPw')}</button><button class="btn" data-act="signout">${t('signOut')}</button></div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
   }else if(sheet.kind==='members'){
     h=`<h2>${t('members')}</h2><p>${t('membersLead')}</p>
@@ -892,6 +904,13 @@ function renderSheet(){
       <div class="grid2"><button class="big" data-act="madd" data-r="member">${t('roleMember')}<small>${t('memberS')}</small></button>
         <button class="big" data-act="madd" data-r="admin">${t('roleAdmin')}<small>${t('adminS')}</small></button></div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
+  }else if(sheet.kind==='pw'){
+    h=`<h2>${t('setPw')}</h2><p>${t('pwLead')}</p>
+      <input type="text" autocomplete="username" value="${esc(me||'')}" hidden>
+      <label class="lbl2" for="pw1">${t('pwNew')}</label><input class="field-in" id="pw1" type="password" autocomplete="new-password">
+      <label class="lbl2" for="pw2">${t('pwRepeat')}</label><input class="field-in" id="pw2" type="password" autocomplete="new-password">
+      ${sheet.err?`<p class="err">${esc(sheet.err)}</p>`:''}
+      <button class="primary" data-act="pwsave">${t('pwSave')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='role'){
     const rb=(v,l,d)=>`<button class="big" data-act="role" data-r="${v}">${l}<small>${d}</small></button>`;
     h=`<h2>${t('roleQ')}</h2><p>${t('roleNote')}</p>
@@ -1022,10 +1041,17 @@ document.addEventListener('click',ev=>{
     case 'mrole':addMember(b.dataset.id,b.dataset.r);break;
     case 'mdel':if(sheet.mdel!==b.dataset.id){sheet.mdel=b.dataset.id;renderSheet()}else{removeMember(b.dataset.id);sheet.mdel=null}break;
     case 'signout':signOutNow();break;
+    case 'setpw':openSheet('pw');break;
+    case 'pwsave':{const p1=document.getElementById('pw1').value||'',p2=document.getElementById('pw2').value||'';
+      if(p1.length<8){sheet.err=t('pwShort');renderSheet();break}
+      if(p1!==p2){sheet.err=t('pwMismatch');renderSheet();break}
+      fb.updatePassword(fb.auth.currentUser,p1).then(()=>{closeSheet();toast(t('pwSaved'))})
+        .catch(e=>{const c=e&&e.code||'';sheet.err=c==='auth/requires-recent-login'?t('pwRecent'):c==='auth/weak-password'?t('pwShort'):t('pwFail');renderSheet()});break}
     case 'helpgo':goHelp(b.dataset.sec);break;
   }
 });
 document.addEventListener('keydown',e=>{
+  if(!authed&&e.key==='Enter'&&e.target&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){const b=document.querySelector(e.target.id==='lg-pw'?'[data-act="lgpw"]':'[data-act="lgsend"],[data-act="lgconfirm"]');if(b){e.preventDefault();b.click()}return}
   if(e.key==='Escape'&&sheet)closeSheet();
   if(e.key==='Enter'&&sheet&&sheet.kind==='addform'){e.preventDefault();document.querySelector('[data-act="formaddin"]').click()}
 });
@@ -1049,8 +1075,12 @@ function loginView(){
     :L.step==='denied'?`<p>${t('noAccess',esc(L.email))}</p><button class="primary" data-act="lgout">${t('signOut')}</button>`
     :`<p>${t('loginLead')}</p>
       <label class="lbl2" for="lg-email">Email</label>
-      <input class="field-in" id="lg-email" type="email" autocomplete="email" value="${esc(L.email)}" placeholder="nome@email.com">
-      <button class="primary" data-act="lgsend">${t('sendLink')}</button>`;
+      <input class="field-in" id="lg-email" type="email" autocomplete="username" value="${esc(L.email)}" placeholder="nome@email.com">
+      <label class="lbl2" for="lg-pw">${t('pwOptional')}</label>
+      <input class="field-in" id="lg-pw" type="password" autocomplete="current-password" placeholder="••••••••">
+      <button class="primary" data-act="lgpw">${t('signInPw')}</button>
+      <button class="btn" data-act="lgsend">${t('sendLink')}</button>
+      <p class="note">${t('pwHint')}</p>`;
   document.getElementById('app').innerHTML=`<div class="login">
     <div class="lang" role="group" aria-label="Language" style="align-self:flex-end">
       <button data-act="lang" data-l="pt" aria-pressed="${lang==='pt'}">PT</button><button data-act="lang" data-l="en" aria-pressed="${lang==='en'}">EN</button></div>
@@ -1102,6 +1132,17 @@ document.addEventListener('click',async ev=>{
     catch(e){loginState={step:'email',email,msg:t('sendFail')}}
     loginView();
   }
+  if(a==='lgpw'){
+    const email=(document.getElementById('lg-email').value||'').trim().toLowerCase(), pw=document.getElementById('lg-pw').value||'';
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){loginState={...loginState,email,msg:t('badEmail')};return loginView()}
+    if(!pw){loginState={...loginState,email,msg:t('pwEmpty')};return loginView()}
+    loginState={step:'loading',email,msg:''};loginView();
+    try{if(!(await fb.getDoc(fb.doc(fb.fs,'members/'+email))).exists()){loginState={step:'email',email,msg:t('notMember',email)};return loginView()}}
+    catch(e){loginState={step:'email',email,msg:t('sendFail')};return loginView()}
+    try{await fb.signInWithEmailAndPassword(fb.auth,email,pw);lsSet('hgo.loginEmail',email)}
+    catch(e){const c=e&&e.code||'';loginState={step:'email',email,msg:c==='auth/too-many-requests'?t('pwTooMany'):t('pwWrong')};loginView()}
+    return;
+  }
   if(a==='lgpaste'){const url=(document.getElementById('lg-paste').value||'').trim();
     if(!fb.isSignInWithEmailLink(fb.auth,url)){loginState={...loginState,msg:t('linkInvalid')};return loginView()}
     finishLink(url,loginState.email)}
@@ -1131,7 +1172,7 @@ async function signOutNow(){try{await fb.signOut(fb.auth)}catch(e){}location.rel
           return F.onSnapshot(q,s=>next({docs:s.docs.map(d=>({id:d.id,data:()=>d.data()}))}),err)}};return api}
     };
     fb={auth,fs,shim,doc:F.doc,getDoc:F.getDoc,setDoc:F.setDoc,deleteDoc:F.deleteDoc,
-      sendSignInLinkToEmail:U.sendSignInLinkToEmail,isSignInWithEmailLink:U.isSignInWithEmailLink,signInWithEmailLink:U.signInWithEmailLink,signOut:U.signOut};
+      sendSignInLinkToEmail:U.sendSignInLinkToEmail,isSignInWithEmailLink:U.isSignInWithEmailLink,signInWithEmailLink:U.signInWithEmailLink,signOut:U.signOut,signInWithEmailAndPassword:U.signInWithEmailAndPassword,updatePassword:U.updatePassword};
     U.onAuthStateChanged(auth,u=>{onUser(u)});
   }catch(e){loginState={step:'email',email:'',msg:t('offlineStart')};loginView()}
 })();
