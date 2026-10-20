@@ -8,7 +8,10 @@ service cloud.firestore {
                         get(/databases/$(db)/documents/members/$(email())).data.role == 'admin'; }
 
     match /members/{id} {
-      allow read: if member();
+      // anyone may check one exact email (so the login page sends links only to members);
+      // only members may list the whole team
+      allow get: if true;
+      allow list: if member();
       allow write: if admin();
     }
     match /games/{gid} {
