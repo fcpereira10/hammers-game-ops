@@ -9,7 +9,7 @@ App para registar os jogos dos Hammers (Elite, Academy e Girls) na LFFF1, LFFF2 
 
 ## Acesso
 
-O login é feito com um link enviado por email, sem password. Só entram os emails da lista de **Membros**:
+O login é feito com um link enviado por email ou, para quem a definir, com email e password. Só entram os emails da lista de **Membros**:
 
 | Papel | Pode |
 |---|---|

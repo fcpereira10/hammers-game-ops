@@ -1,5 +1,5 @@
 // Funciona sem rede: guarda a app em cache e serve-a quando não há ligação.
-const CACHE = 'hgo-v6';
+const CACHE = 'hgo-v7';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'firebase-config.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 self.addEventListener('install', e => {
