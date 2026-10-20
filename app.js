@@ -25,7 +25,7 @@ pt:{
   targets:'alvos', saveNoNum:'Gravar sem número', noNumShort:'sem nº', newNum:'Novo número',
   conv:'Conversão', failed:'Falhou', offenseArrow:'▲ ataque', los:'Linha de scrimmage', yards:'jardas',
   receiver:'Recetor', hammers:'Hammers', mostUsed:'mais usados primeiro', formation:'Formação', formSticky:'fica selecionada até mudar',
-  newForm:'+ nova', fd:'1º Down', td:'TD', int:'INT', penalty:'Falta', run:'Corrida', game:'Jogo ▾',
+  newForm:'+ nova', fd:'1º Down', td:'TD', int:'INT', penalty:'Falta', run:'Corrida', game:'⋮ Opções',
   tiles:['Passes','Comp %','TD','INT','Corridas','1º downs','2 QB'],
   passes:'Passes', runs:'Corridas', all:'Tudo', allM:'Todos', allF:'Todas', downs:['1º','2º','3º','4º'],
   inclAnnul:'Incluir anuladas', distribution:'Distribuição', marks:'Marcas', heatmap:'Heatmap',
@@ -56,16 +56,19 @@ pt:{
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
   signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
   badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
+  options:'Opções', curGame:'Jogo atual', gamesMenu:'Jogos', gamesS:'mudar de jogo, criar um novo ou apagar', membersS:'quem tem acesso à app',
+  helpMenu:'Ajuda e guia', helpS:'como usar a app', language:'Língua', account:'Conta', edit:'Editar', editMember:'Editar membro', saveName:'Guardar nome',
+  nameRequired:'Escreve o nome.',
   visLbl:'Visível para', visTeam:'Equipa', visMe:'Só eu', visTeamS:'toda a Game Ops vê e edita', visMeS:'só tu e os admins (testes, treinos)',
   byOwner:n=>`por ${n}`, visNowMe:'Jogo visível só para ti e para os admins', visNowTeam:'Jogo visível para toda a equipa',
-  myName:'O meu nome', myNameLead:'É o nome que aparece nos jogos que crias.', nameLbl:'Nome (opcional)', namePh:'ex.: Francisco', nameSaved:'Nome guardado',
-  pwOptional:'Password (se já criaste uma)', signInPw:'Entrar com password', pwHint:'Ainda não tens password? Usa "Enviar link" e cria uma dentro da app, em Jogo ▾ → Definir password.',
+  myName:'O meu nome', myNameLead:'É o nome que aparece nos jogos que crias.', nameLbl:'Nome', namePh:'ex.: Francisco', nameSaved:'Nome guardado',
+  pwOptional:'Password (se já criaste uma)', signInPw:'Entrar com password', pwHint:'Ainda não tens password? Usa "Enviar link" e cria uma dentro da app, em Opções → Definir password.',
   pwEmpty:'Escreve a password, ou usa "Enviar link".', pwWrong:'Email ou password errados. Se ainda não criaste password, usa "Enviar link".', pwTooMany:'Demasiadas tentativas. Espera uns minutos ou usa "Enviar link".',
   setPw:'Definir password', pwLead:'Com uma password podes entrar sem esperar pelo email. O link continua a funcionar sempre que precisares.',
   pwNew:'Nova password (mínimo 8 caracteres)', pwRepeat:'Repete a password', pwSave:'Guardar password', pwShort:'A password tem de ter pelo menos 8 caracteres.',
   pwMismatch:'As duas passwords não são iguais.', pwSaved:'Password guardada', pwRecent:'Por segurança, sai e volta a entrar com o link antes de mudar a password.', pwFail:'Não foi possível guardar a password. Tenta outra vez.', sendFail:'Não foi possível enviar o link. Tenta outra vez.', offlineStart:'Sem rede. Liga-te à internet para entrar pela primeira vez.',
   signedAs:'Sessão:', members:'Membros', membersLead:'Só estes emails conseguem entrar na app. Membros criam e editam jogos. Admins também apagam jogos e gerem esta lista.',
-  addMember:'Acrescentar email', roleMember:'Membro', roleAdmin:'Admin', memberS:'cria e edita jogos', adminS:'também gere membros',
+  addMember:'Acrescentar membro', roleMember:'Membro', roleAdmin:'Admin', memberS:'cria e edita jogos', adminS:'também gere membros',
   makeAdmin:'Tornar admin', makeMember:'Tornar membro', remove:'Remover', you:'tu', memberAdded:e=>`${e} acrescentado`,
   sack:'Sack', sacks:'Sacks', hSack:'Sack: toca no número de <b>quem fez o sack</b>.', hIntBy:'INT: agora toca no número de <b>quem intercetou</b>.',
   hConv:p=>`Conversão de ${p} pt: toca na zona, escolhe o resultado e o número.`, convRes:{G:'Good',NG:'No Good',INT:'INT'}, convSkip:'Sem conversão', retYes:n=>`Sim, +${n}`,
@@ -105,7 +108,7 @@ en:{
   targets:'targets', saveNoNum:'Save without number', noNumShort:'no #', newNum:'New number',
   conv:'Conversion', failed:'Failed', offenseArrow:'▲ offense', los:'Line of scrimmage', yards:'yards',
   receiver:'Receiver', hammers:'Hammers', mostUsed:'most used first', formation:'Formation', formSticky:'stays selected until changed',
-  newForm:'+ new', fd:'1st Down', td:'TD', int:'INT', penalty:'Penalty', run:'Run', game:'Game ▾',
+  newForm:'+ new', fd:'1st Down', td:'TD', int:'INT', penalty:'Penalty', run:'Run', game:'⋮ Options',
   tiles:['Passes','Comp %','TD','INT','Runs','1st downs','2 QB'],
   passes:'Passes', runs:'Runs', all:'All', allM:'All', allF:'All', downs:['1st','2nd','3rd','4th'],
   inclAnnul:'Include nullified', distribution:'Distribution', marks:'Marks', heatmap:'Heatmap',
@@ -136,16 +139,19 @@ en:{
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
   signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
   badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
+  options:'Options', curGame:'Current game', gamesMenu:'Games', gamesS:'switch game, create a new one or delete', membersS:'who has access to the app',
+  helpMenu:'Help and guide', helpS:'how to use the app', language:'Language', account:'Account', edit:'Edit', editMember:'Edit member', saveName:'Save name',
+  nameRequired:'Type the name.',
   visLbl:'Visible to', visTeam:'Team', visMe:'Only me', visTeamS:'all of Game Ops sees and edits', visMeS:'only you and the admins (tests, practice)',
   byOwner:n=>`by ${n}`, visNowMe:'Game visible only to you and the admins', visNowTeam:'Game visible to the whole team',
-  myName:'My name', myNameLead:'This is the name shown on the games you create.', nameLbl:'Name (optional)', namePh:'e.g. Francisco', nameSaved:'Name saved',
-  pwOptional:'Password (if you already created one)', signInPw:'Sign in with password', pwHint:'No password yet? Use "Send link" and create one inside the app, in Game ▾ → Set password.',
+  myName:'My name', myNameLead:'This is the name shown on the games you create.', nameLbl:'Name', namePh:'e.g. Francisco', nameSaved:'Name saved',
+  pwOptional:'Password (if you already created one)', signInPw:'Sign in with password', pwHint:'No password yet? Use "Send link" and create one inside the app, in Options → Set password.',
   pwEmpty:'Type the password, or use "Send link".', pwWrong:'Wrong email or password. If you have not created a password yet, use "Send link".', pwTooMany:'Too many attempts. Wait a few minutes or use "Send link".',
   setPw:'Set password', pwLead:'With a password you can sign in without waiting for the email. The link keeps working whenever you need it.',
   pwNew:'New password (at least 8 characters)', pwRepeat:'Repeat the password', pwSave:'Save password', pwShort:'The password must have at least 8 characters.',
   pwMismatch:'The two passwords do not match.', pwSaved:'Password saved', pwRecent:'For security, sign out and sign in again with the link before changing the password.', pwFail:'Could not save the password. Try again.', sendFail:'Could not send the link. Try again.', offlineStart:'No network. Connect to the internet to sign in for the first time.',
   signedAs:'Signed in:', members:'Members', membersLead:'Only these emails can sign in. Members create and edit games. Admins also delete games and manage this list.',
-  addMember:'Add email', roleMember:'Member', roleAdmin:'Admin', memberS:'creates and edits games', adminS:'also manages members',
+  addMember:'Add member', roleMember:'Member', roleAdmin:'Admin', memberS:'creates and edits games', adminS:'also manages members',
   makeAdmin:'Make admin', makeMember:'Make member', remove:'Remove', you:'you', memberAdded:e=>`${e} added`,
   sack:'Sack', sacks:'Sacks', hSack:'Sack: tap the number of <b>who made the sack</b>.', hIntBy:'INT: now tap the number of <b>who intercepted</b>.',
   hConv:p=>`${p} pt conversion: tap the zone, pick the result and the number.`, convRes:{G:'Good',NG:'No Good',INT:'INT'}, convSkip:'No conversion', retYes:n=>`Yes, +${n}`,
@@ -189,11 +195,11 @@ function helpData(){
   ];
   const S=pt?[
     {id:'start',t:'Antes do jogo',b:`<ol>
-      <li>Toca em ${btn('',t('game'))} e depois em <b>+ Novo jogo</b>.</li>
+      <li>Toca em ${btn('',t('game'))}, depois em <b>Jogos</b> e em <b>+ Novo jogo</b>.</li>
       <li>Escolhe a equipa (Elite, Academy, Girls), a competição (LFFF1, LFFF2, LFFFW) e escreve o adversário.</li>
       <li>Escolhe quem começa a atacar.</li>
       <li>Escolhe <b>que equipa segues</b>: Hammers, Adversário ou as duas (se estiveres sozinho).</li></ol>
-      <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))}.</p>`},
+      <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))} → <b>Jogos</b>.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
       <li>Toca na <b>zona</b> para onde a bola foi lançada.</li>
       <li>Escolhe o <b>resultado</b> na linha que aparece: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('td','TD')} ou ${btn('int','INT')}.</li>
@@ -238,22 +244,22 @@ function helpData(){
       <li><b>Anular</b> tira a jogada das stats mas guarda-a. <b>Apagar</b> remove-a (pede confirmação).</li>
       <li><b>Copiar CSV</b> copia tudo para colar numa folha de Excel ou Google Sheets.</li></ul>`},
     {id:'team',t:'Duas pessoas no mesmo jogo',b:`<ol>
-      <li>Uma pessoa cria o jogo. Ele aparece logo em ${btn('',t('game'))} para toda a equipa.</li>
+      <li>Uma pessoa cria o jogo. Ele aparece logo em ${btn('',t('game'))} → <b>Jogos</b> para toda a equipa.</li>
       <li>A outra pessoa abre o mesmo link e escolhe esse jogo na lista.</li>
       <li>Cada uma escolhe a equipa que segue: <b>Hammers</b> ou <b>Adversário</b>.</li>
       <li>Quando a tua equipa ataca, registas normalmente. Quando a outra ataca, o ecrã fica em espera e mostra as jogadas da outra pessoa ao vivo.</li></ol>
-      <p>O down, a posse e o resultado são os mesmos nos dois aparelhos. Se a outra pessoa ficar sem bateria, toca em <b>Registar eu esta posse</b>. Para mudar de equipa, toca no nome do jogo no topo.</p>`},
-    {id:'data',t:'Onde ficam os dados',b:`<p>Os jogos com a etiqueta <b>Partilhado</b> ficam guardados online e aparecem em qualquer aparelho, também para a tape review depois do torneio. Só os emails da lista de <b>Membros</b> conseguem entrar. Os admins gerem a lista em ${btn('',t('game'))} → <b>Membros</b>.</p>
+      <p>O down, a posse e o resultado são os mesmos nos dois aparelhos. Se a outra pessoa ficar sem bateria, toca em <b>Registar eu esta posse</b>. Para mudar de equipa, usa ${btn('',t('game'))} no topo.</p>`},
+    {id:'data',t:'Onde ficam os dados',b:`<p>Os jogos ficam guardados online e aparecem em qualquer aparelho, também para a tape review depois do torneio. Só os emails da lista de <b>Membros</b> conseguem entrar. Os admins gerem a lista em ${btn('',t('game'))} → <b>Membros</b>.</p>
       <p>Para entrar usas o link enviado por email, só uma vez por aparelho. Se preferires, cria uma password em ${btn('',t('game'))} → <b>Definir password</b> e passas a poder entrar com email e password.</p>
       <p>Sem rede, a app continua a funcionar: guarda as jogadas e envia-as quando a rede voltar. No topo aparece <b>A enviar</b> enquanto houver jogadas por enviar.</p>
-      <p>Usa o botão <b>PT / EN</b> no topo para mudar a língua. Os dados não mudam.</p>`}
+      <p>A língua muda-se em ${btn('',t('game'))} → <b>Língua</b>. Os dados não mudam.</p>`}
   ]:[
     {id:'start',t:'Before the game',b:`<ol>
-      <li>Tap ${btn('',t('game'))} and then <b>+ New game</b>.</li>
+      <li>Tap ${btn('',t('game'))}, then <b>Games</b> and <b>+ New game</b>.</li>
       <li>Pick the team (Elite, Academy, Girls), the competition (LFFF1, LFFF2, LFFFW) and type the opponent.</li>
       <li>Pick who starts on offense.</li>
       <li>Pick <b>which team you follow</b>: Hammers, Opponent or both (if you are alone).</li></ol>
-      <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time with ${btn('',t('game'))}.</p>`},
+      <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time in ${btn('',t('game'))} → <b>Games</b>.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
       <li>Tap the <b>zone</b> the ball was thrown to.</li>
       <li>Pick the <b>result</b> on the row that appears: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('td','TD')} or ${btn('int','INT')}.</li>
@@ -298,19 +304,19 @@ function helpData(){
       <li><b>Nullify</b> removes the play from stats but keeps it. <b>Delete</b> removes it (asks to confirm).</li>
       <li><b>Copy CSV</b> copies everything to paste into Excel or Google Sheets.</li></ul>`},
     {id:'team',t:'Two people, one game',b:`<ol>
-      <li>One person creates the game. It shows up right away in ${btn('',t('game'))} for the whole team.</li>
+      <li>One person creates the game. It shows up right away in ${btn('',t('game'))} → <b>Games</b> for the whole team.</li>
       <li>The other person opens the same link and picks that game from the list.</li>
       <li>Each person picks the team they follow: <b>Hammers</b> or <b>Opponent</b>.</li>
       <li>When your team is on offense, you track as usual. When the other team is on offense, your screen waits and shows the other person's plays live.</li></ol>
-      <p>Down, possession and score are the same on both devices. If the other person's battery dies, tap <b>I will track this drive</b>. To change team, tap the game name at the top.</p>`},
-    {id:'data',t:'Where the data lives',b:`<p>Games tagged <b>Shared</b> are saved online and show on any device, including for tape review after the tournament. Only emails on the <b>Members</b> list can sign in. Admins manage the list in ${btn('',t('game'))} → <b>Members</b>.</p>
+      <p>Down, possession and score are the same on both devices. If the other person's battery dies, tap <b>I will track this drive</b>. To change team, use ${btn('',t('game'))} at the top.</p>`},
+    {id:'data',t:'Where the data lives',b:`<p>Games are saved online and show on any device, including for tape review after the tournament. Only emails on the <b>Members</b> list can sign in. Admins manage the list in ${btn('',t('game'))} → <b>Members</b>.</p>
       <p>To sign in you use the link sent by email, once per device. If you prefer, create a password in ${btn('',t('game'))} → <b>Set password</b> and sign in with email and password from then on.</p>
       <p>Without network the app keeps working: it saves plays and sends them when the network is back. <b>Sending</b> shows at the top while plays are waiting to be sent.</p>
-      <p>Use the <b>PT / EN</b> switch at the top to change the language. Your data stays the same.</p>`}
+      <p>Change the language in ${btn('',t('game'))} → <b>Language</b>. Your data stays the same.</p>`}
   ];
   return {quick,S,title:pt?'Guia':'Guide',quickT:pt?'Guia rápido':'Quick start',full:pt?'Guia completo':'Full guide'};
 }
-const qh=sec=>`<button class="qh" data-act="help" data-sec="${sec}" aria-label="${t('help')}">?</button>`;
+const qh=()=>'';
 
 /* ---------- device, role ---------- */
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
@@ -602,16 +608,13 @@ function render(){
     :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
   document.getElementById('app').innerHTML=`
   <header class="top">
-    <button class="chip game" data-act="games" aria-label="${t('chooseGame')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
+    <button class="chip game" data-act="opts" aria-label="${t('options')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
       <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></span></button>
     <button class="chip poss ${st.poss}" data-act="poss" ${showPoss?'':'disabled'}><small style="color:inherit;opacity:.8">${t('offense')}</small>${sideName(st.poss)}</button>
     <button class="chip down num" data-act="down"><b>${ord(st.down)}</b> ${t('down')}<small>${st.half===2?t('h2'):t('h1')}</small></button>
     <div class="chip score num"><small>${t('ham')}</small><span class="s">${st.score.H}</span><small>:</small><span class="s">${st.score.A}</span><small>${t('opp')}</small></div>
     <button class="chip undo" data-act="undo">↶ ${t('undo')}</button>
-    <div class="lang" role="group" aria-label="Language">
-      <button data-act="lang" data-l="pt" aria-pressed="${lang==='pt'}">PT</button><button data-act="lang" data-l="en" aria-pressed="${lang==='en'}">EN</button>
-    </div>
-    <button class="chip icon-btn" data-act="help" data-sec="" aria-label="${t('help')}">? <small>${t('help')}</small></button>
+    <button class="chip opts" data-act="opts" aria-label="${t('options')}"><span class="dots" aria-hidden="true">⋮</span>${t('options')}</button>
   </header>
   <nav class="tabs" role="tablist">
     ${['reg','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${t('tabs')[k]}</button>`).join('')}
@@ -672,7 +675,7 @@ function regView(st){
         <p>${t('defBody',r==='H'?'Hammers':t('roleA'),s==='H'?'Hammers':t('roleA'))}</p>
         ${recent.length?`<span class="lbl2">${t('lastPlays')}</span><div class="mini">${recent.map(e=>`<div><b class="num">${ord(e._down)}</b><span>${e.rec!=null?'#'+e.rec:e.dby!=null?'#'+e.dby:''}</span><span>${e.zone?zoneName(e.zone):''}</span><span class="tag ${e.res}">${resTxt(e)}</span></div>`).join('')}</div>`:''}
         <button class="btn" data-act="defover">${t('defOverride')}</button>
-        <button class="btn" data-act="games">${t('changeRole')}</button></div>`;
+        <button class="btn" data-act="opts">${t('changeRole')}</button></div>`;
     return `<div class="reg side-${s}">
       <section class="fieldwrap">
         <div class="hint">${readOnly()?t('roTitle'):t('defHint',sideName(s))} ${qh('team')}</div>
@@ -725,7 +728,6 @@ function regView(st){
         <button class="a pen" data-act="pen">${t('penalty')}</button>
         <button class="a" data-act="run" aria-pressed="${runMode||(draft&&draft.kind==='run')}">${t('run')}</button>
         <button class="a int" data-act="sack" aria-pressed="${!!(draft&&draft.kind==='sack')}">${t('sack')}</button>
-        <button class="a" data-act="games" style="font-size:16px">${t('game')}</button>
       </div>
     </section>
   </div>`;
@@ -886,34 +888,49 @@ function renderSheet(){
       <label class="lbl2" for="form-name">${t('orType')}</label>
       <input class="field-in" id="form-name" maxlength="24" placeholder="${t('formPh')}" autocomplete="off">
       <button class="primary" data-act="formaddin">${t('add')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
-  }else if(sheet.kind==='games'){
-    const tag=x=>x.store==='cloud'?`<span class="owner">${x.owner?t('byOwner',esc(personName(x.owner))):''}</span>${x.visibility==='private'?` <span class="sync local">🔒 ${t('visMe')}</span>`:''}`:x.store==='local'?`<span class="sync local">${t('localOnly')}</span>`:`<span class="sample">${t('sample')}</span>`;
-    const cnt=x=>{const ev=x.id===g.id?g.events:(x.events||null);return ev?`${ev.filter(e=>e.t==='play').length} ${t('playsAbbr')}`:''};
+  }else if(sheet.kind==='opts'){
     const rb=(v,l,d)=>`<button class="big" data-act="role" data-r="${v}" aria-pressed="${role()===v}">${l}<small>${d}</small></button>`;
-    h=`<h2>${t('games')}</h2>
+    const row=(act,icon,l,d)=>`<button class="optrow" data-act="${act}"><span class="oi" aria-hidden="true">${icon}</span><span><b>${l}</b><small>${d}</small></span><span aria-hidden="true">›</span></button>`;
+    h=`<div class="help-head"><h2>${t('options')}</h2><button class="ghost" data-act="close" aria-label="${t('close')}" style="font-size:22px">✕</button></div>
+      <span class="lbl2">${t('curGame')}</span>
+      <div class="curgame"><b>${esc(g.team)} vs ${esc(g.opp)}</b><small>${esc(g.comp)} · ${g.date}${g.store==='cloud'&&g.owner?' · '+t('byOwner',esc(personName(g.owner))):''}</small></div>
       ${g.store!=='demo'&&!readOnly()?`<span class="lbl2">${t('roleQ')}</span><div class="grid4" style="grid-template-columns:repeat(3,1fr)">${rb('H','Hammers',t('roleHs'))}${rb('A',t('roleA'),t('roleAs'))}${rb('both',t('roleB'),t('roleBs'))}</div>`:''}
       ${canChangeVis(g)?`<span class="lbl2">${t('visLbl')}</span><div class="grid2">
         <button class="big" data-act="setvis" data-v="team" aria-pressed="${g.visibility!=='private'}">${t('visTeam')}<small>${t('visTeamS')}</small></button>
         <button class="big" data-act="setvis" data-v="private" aria-pressed="${g.visibility==='private'}">🔒 ${t('visMe')}<small>${t('visMeS')}</small></button></div>`:''}
-      <span class="lbl2">${t('allGames')}</span>
+      <div class="optlist">
+        ${row('games','▦',t('gamesMenu'),t('gamesS'))}
+        ${isAdmin?row('members','👥',t('members'),t('membersS')):''}
+        ${row('help','?',t('helpMenu'),t('helpS'))}
+        <div class="optrow static"><span class="oi" aria-hidden="true">🌐</span><span><b>${t('language')}</b></span>
+          <div class="lang" role="group" aria-label="Language"><button data-act="lang" data-l="pt" aria-pressed="${lang==='pt'}">PT</button><button data-act="lang" data-l="en" aria-pressed="${lang==='en'}">EN</button></div></div>
+      </div>
+      <span class="lbl2">${t('account')}</span>
+      <div class="acct"><span><b>${esc(personName(me))}</b> · ${esc(me||'')}${isAdmin?` · ${t('roleAdmin')}`:''}</span></div>
+      <div class="row"><button class="btn" data-act="myname">${t('myName')}</button><button class="btn" data-act="setpw">${t('setPw')}</button><button class="btn" data-act="signout">${t('signOut')}</button></div>`;
+  }else if(sheet.kind==='games'){
+    const tag=x=>x.store==='cloud'?`<span class="owner">${x.owner?t('byOwner',esc(personName(x.owner))):''}</span>${x.visibility==='private'?` <span class="sync local">🔒 ${t('visMe')}</span>`:''}`:x.store==='local'?`<span class="sync local">${t('localOnly')}</span>`:`<span class="sample">${t('sample')}</span>`;
+    const cnt=x=>{const ev=x.id===g.id?g.events:(x.events||null);return ev?`${ev.filter(e=>e.t==='play').length} ${t('playsAbbr')}`:''};
+    h=`<div class="help-head"><h2>${t('games')}</h2><button class="ghost" data-act="opts">‹ ${t('options')}</button></div>
       <div class="gl">${games.map(x=>`<button data-act="pickgame" data-id="${x.id}" aria-current="${x.id===g.id}"><span><b>${esc(x.team)} vs ${esc(x.opp)}</b><br><small>${esc(x.comp)} · ${x.date}</small> ${tag(x)}</span><span class="num">${cnt(x)}</span></button>`).join('')}</div>
       ${cloud.db&&!cloud.ready?`<p>${t('loadingShared')}</p>`:''}
       <button class="primary" data-act="newgame">${t('newGame')}</button>
       ${g.store==='demo'||readOnly()||(g.store==='cloud'&&!isAdmin)?'':`<button class="ghost" data-act="delgame" style="color:var(--bad)">${sheet.delc?t('delGameC'):t('delGame')}</button>`}
-      <div class="acct"><span>${t('signedAs')} <b>${esc(personName(me))}</b> · ${esc(me||'')}${isAdmin?` · ${t('roleAdmin')}`:''}</span>
-        ${isAdmin?`<button class="btn" data-act="members">${t('members')}</button>`:''}<button class="btn" data-act="myname">${t('myName')}</button><button class="btn" data-act="setpw">${t('setPw')}</button><button class="btn" data-act="signout">${t('signOut')}</button></div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
   }else if(sheet.kind==='members'){
-    h=`<h2>${t('members')}</h2><p>${t('membersLead')}</p>
-      <div class="gl">${members.map(m=>`<div class="mrow"><span><b>${esc(m.name||m.id.split('@')[0])}</b><br><small>${esc(m.id)} · ${m.role==='admin'?t('roleAdmin'):t('roleMember')}</small></span>
-        ${m.id===me?`<small>${t('you')}</small>`:`<span class="row"><button class="btn" data-act="mrole" data-id="${esc(m.id)}" data-r="${m.role==='admin'?'member':'admin'}">${m.role==='admin'?t('makeMember'):t('makeAdmin')}</button>
-        <button class="btn" data-act="mdel" data-id="${esc(m.id)}" style="color:var(--bad)">${sheet.mdel===m.id?t('confirm'):t('remove')}</button></span>`}</div>`).join('')}</div>
-      <label class="lbl2" for="m-email">${t('addMember')}</label>
-      <input class="field-in" id="m-email" type="email" placeholder="nome@email.com" autocomplete="off">
+    h=`<div class="help-head"><h2>${t('members')}</h2><button class="ghost" data-act="opts">‹ ${t('options')}</button></div><p>${t('membersLead')}</p>
+      <div class="gl">${members.map(m=>`<div class="mrow"><span class="mname"><b>${esc(m.name||'—')}</b><span class="memail">${esc(m.id)}</span><small>${m.role==='admin'?t('roleAdmin'):t('roleMember')}</small></span>
+        <span class="row"><button class="btn" data-act="medit" data-id="${esc(m.id)}">${t('edit')}</button>
+        ${m.id===me?`<small>${t('you')}</small>`:`<button class="btn" data-act="mrole" data-id="${esc(m.id)}" data-r="${m.role==='admin'?'member':'admin'}">${m.role==='admin'?t('makeMember'):t('makeAdmin')}</button>
+        <button class="btn" data-act="mdel" data-id="${esc(m.id)}" style="color:var(--bad)">${sheet.mdel===m.id?t('confirm'):t('remove')}</button>`}</span></div>`).join('')}</div>
+      <span class="lbl2">${sheet.medit?t('editMember'):t('addMember')}</span>
       <label class="lbl2" for="m-name">${t('nameLbl')}</label>
-      <input class="field-in" id="m-name" maxlength="40" placeholder="${t('namePh')}" autocomplete="off">
-      <div class="grid2"><button class="big" data-act="madd" data-r="member">${t('roleMember')}<small>${t('memberS')}</small></button>
-        <button class="big" data-act="madd" data-r="admin">${t('roleAdmin')}<small>${t('adminS')}</small></button></div>
+      <input class="field-in" id="m-name" maxlength="40" placeholder="${t('namePh')}" autocomplete="off" value="${esc(sheet.medit?((members.find(x=>x.id===sheet.medit)||{}).name||''):'')}">
+      <label class="lbl2" for="m-email">Email</label>
+      <input class="field-in" id="m-email" type="email" placeholder="nome@email.com" autocomplete="off" value="${esc(sheet.medit||'')}" ${sheet.medit?'readonly':''}>
+      ${sheet.medit?`<button class="primary" data-act="mrename">${t('saveName')}</button><button class="ghost" data-act="mcancel">${t('cancel')}</button>`
+      :`<div class="grid2"><button class="big" data-act="madd" data-r="member">${t('roleMember')}<small>${t('memberS')}</small></button>
+        <button class="big" data-act="madd" data-r="admin">${t('roleAdmin')}<small>${t('adminS')}</small></button></div>`}
       <button class="ghost" data-act="close">${t('close')}</button>`;
   }else if(sheet.kind==='myname'){
     h=`<h2>${t('myName')}</h2><p>${t('myNameLead')}</p>
@@ -1025,7 +1042,7 @@ document.addEventListener('click',ev=>{
     case 'defover':override=st.drive;render();break;
     case 'close':closeSheet();break;
     case 'games':openSheet('games');break;
-    case 'role':setRole(g.id,b.dataset.r);override=null;closeSheet();toast(t('roleSet'));break;
+    case 'role':setRole(g.id,b.dataset.r);override=null;if(sheet&&sheet.kind==='opts')renderSheet();else closeSheet();render();toast(t('roleSet'));break;
     case 'pickgame':sheet=null;document.getElementById('layer').innerHTML='';selectGame(b.dataset.id);break;
     case 'delgame':if(!sheet.delc){sheet.delc=true;renderSheet();break}
       {const id=g.id;sheet=null;document.getElementById('layer').innerHTML='';S().remove(id);curId=null;selectGame(games.find(x=>x.id!==id).id)}break;
@@ -1050,7 +1067,13 @@ document.addEventListener('click',ev=>{
     case 'lang':{lang=b.dataset.l;lsSet(LS_LANG,lang);render();if(sheet){if(sheet.kind==='help')sheet.sec=null;renderSheet()}break}
     case 'help':openSheet('help',{sec:b.dataset.sec||''});break;
     case 'members':openSheet('members');break;
+    case 'opts':openSheet('opts');break;
+    case 'medit':sheet.medit=b.dataset.id;renderSheet();break;
+    case 'mcancel':sheet.medit=null;renderSheet();break;
+    case 'mrename':{const nm=(document.getElementById('m-name').value||'').trim();if(!nm){toast(t('nameRequired'));break}
+      const id=sheet.medit;(id===me?saveMyName(nm):fb.setDoc(fb.doc(fb.fs,'members/'+id),{name:nm},{merge:true}).then(()=>toast(t('nameSaved')),()=>toast(t('noWrite'))));sheet.medit=null;renderSheet();break}
     case 'madd':{const em=(document.getElementById('m-email').value||'').trim().toLowerCase();
+      if(!(document.getElementById('m-name').value||'').trim()){toast(t('nameRequired'));break}
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){toast(t('badEmail'));break}
       addMember(em,b.dataset.r,(document.getElementById('m-name').value||'').trim()).then(()=>toast(t('memberAdded',em)));break}
     case 'mrole':addMember(b.dataset.id,b.dataset.r);break;

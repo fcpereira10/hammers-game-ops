@@ -114,7 +114,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 .f[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .f.qb{margin-left:auto;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.04em}
 .f.qb[aria-pressed="true"]{background:var(--gold);color:#1a1205;border-color:var(--gold)}
-.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:auto}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:auto}
 .a{min-height:60px;border-radius:var(--r);font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:.04em;text-transform:uppercase;
   background:var(--surface);border:2px solid var(--line)}
 .a[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -280,3 +280,20 @@ td.jn{font-family:var(--f-display);font-weight:800;font-size:20px}
 .mrow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);border:1px solid var(--line)}
 .mrow span{min-width:0;overflow-wrap:anywhere}
 .owner{font-size:12px;font-weight:600;color:var(--muted)}
+
+/* options menu */
+.chip.opts{margin-left:auto;gap:10px;font-size:18px}
+.chip.opts .dots{font-size:24px;line-height:1}
+.curgame{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);border:1px solid var(--line)}
+.curgame b{font-family:var(--f-display);font-size:20px}
+.curgame small{color:var(--muted)}
+.optlist{display:flex;flex-direction:column;gap:6px}
+.optrow{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:60px;padding:8px 12px;border-radius:var(--r);background:var(--surface-2);border:1px solid var(--line);text-align:left}
+.optrow .oi{display:grid;place-items:center;width:36px;height:36px;border-radius:8px;background:var(--surface);font-weight:800}
+.optrow b{display:block;font-family:var(--f-display);font-size:18px;text-transform:uppercase;letter-spacing:.03em}
+.optrow small{display:block;color:var(--muted);font-size:13px}
+.optrow.static .lang{min-height:40px}
+.mname{display:flex;flex-direction:column;gap:2px}
+.mname b{font-family:var(--f-display);font-size:18px}
+.memail{font-size:13px;color:var(--ink);overflow-wrap:anywhere}
+.mname small{color:var(--muted)}

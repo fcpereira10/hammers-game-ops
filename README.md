@@ -18,7 +18,7 @@ O login é feito com um link enviado por email, sem password. Só entram os emai
 
 Cada jogo mostra quem o criou. Por defeito fica visível para a **Equipa**. Quem o cria pode escolher **Só eu** (para testes ou treinos) e mudar isso mais tarde.
 
-Os admins gerem a lista na app, em **Jogo ▾ → Membros**.
+Os admins gerem a lista (nome e email) na app, em **Opções → Membros**. Os jogos, a língua, a ajuda e a conta também estão no botão **Opções**, no canto superior direito.
 
 ## Como está feita
 
