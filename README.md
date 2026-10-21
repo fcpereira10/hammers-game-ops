@@ -5,7 +5,7 @@ App para registar os jogos dos Hammers (Elite, Academy e Girls) na LFFF1, LFFF2 
 - Funciona no telemóvel, no tablet e no computador, e instala-se como app ("Adicionar ao ecrã principal").
 - Continua a funcionar sem rede: guarda as jogadas no aparelho e envia-as quando a rede volta.
 - Duas pessoas podem registar o mesmo jogo, cada uma a seguir uma equipa.
-- Português e inglês. O guia completo está no botão **? Ajuda** da app.
+- Português e inglês. O guia completo está em **Opções → Ajuda e guia**.
 
 ## Acesso
 

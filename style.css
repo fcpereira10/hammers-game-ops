@@ -310,3 +310,62 @@ td.jn{font-family:var(--f-display);font-weight:800;font-size:20px}
 .optrow .oi{color:var(--accent-text)}
 .login-head{display:flex;align-items:center;gap:14px}
 .login-head img{width:72px;height:auto;flex:none}
+
+/* header logo */
+.hlogo{width:52px;height:auto;align-self:center;flex:none;filter:drop-shadow(0 1px 0 rgba(0,0,0,.08))}
+@media (max-width:560px){.hlogo{width:40px}}
+
+/* ---------- motion (all of it switched off with "reduce motion") ---------- */
+button{transition:transform .12s ease,background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease}
+button:not(:disabled):active{transform:scale(.96)}
+.zone:active{transform:none}
+.zone{transition:background-color .15s ease}
+.tabs button[aria-selected="true"]{transition:background-color .25s ease,box-shadow .25s ease}
+.az.heat{transition:background-color .4s ease}
+
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes dropin{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.45);color:var(--accent)}100%{transform:scale(1)}}
+@keyframes tick{0%{transform:translateY(0)}30%{transform:translateY(-5px)}60%{transform:translateY(2px)}100%{transform:none}}
+@keyframes swap{0%{transform:scale(1)}40%{transform:scale(1.08) rotate(-1deg)}100%{transform:none}}
+@keyframes mkpop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.35);opacity:1}100%{transform:scale(1)}}
+@keyframes scrimin{from{background:rgba(5,10,7,0)}to{background:rgba(5,10,7,.55)}}
+@keyframes sheetin{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes scrimout{to{background:rgba(5,10,7,0)}}
+@keyframes sheetout{to{opacity:0;transform:translateY(20px) scale(.98)}}
+@keyframes tin{from{opacity:0;transform:translate(-50%,14px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes swing{0%,100%{transform:rotate(0)}20%{transform:rotate(-18deg)}45%{transform:rotate(12deg)}70%{transform:rotate(-6deg)}}
+@keyframes logoin{0%{opacity:0;transform:rotate(-40deg) scale(.6)}60%{opacity:1;transform:rotate(8deg) scale(1.05)}100%{transform:none}}
+@keyframes cboxin{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.12)}40%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+@keyframes fly{0%{opacity:1;transform:rotate(var(--a)) translateX(0) scale(1)}100%{opacity:0;transform:rotate(var(--a)) translateX(var(--d)) scale(.4)}}
+@keyframes glow{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+
+@media (prefers-reduced-motion:no-preference){
+  .fadein{animation:fadein .28s ease-out both}
+  .dropin{animation:dropin .35s ease-out both}
+  .bump{display:inline-block;animation:bump .5s cubic-bezier(.3,1.6,.5,1)}
+  .tick{animation:tick .4s ease-out}
+  .swap{animation:swap .45s ease-out}
+  .pop{animation:mkpop .45s cubic-bezier(.3,1.6,.5,1)}
+  .scrim.enter{animation:scrimin .2s ease-out both}
+  .scrim.enter .sheet{animation:sheetin .26s cubic-bezier(.2,.9,.3,1.1) both}
+  .scrim.leave{animation:scrimout .17s ease-in both;pointer-events:none}
+  .scrim.leave .sheet{animation:sheetout .17s ease-in both}
+  .toast.tin{animation:tin .22s ease-out}
+  .hlogo.swing{transform-origin:70% 70%;animation:swing .9s ease-in-out}
+  .login-head.anim img{animation:logoin .7s cubic-bezier(.3,1.4,.5,1) both}
+  .rb[aria-pressed="true"],.big[aria-pressed="true"]{animation:swap .3s ease-out}
+}
+
+/* touchdown / big play celebration */
+.celebrate{position:fixed;inset:0;z-index:40;pointer-events:none;display:grid;place-items:center}
+.celebrate::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,51,0,.35),rgba(255,51,0,0) 60%);animation:glow 1.6s ease-out both}
+.celebrate .burst{position:absolute;left:50%;top:50%;width:0;height:0}
+.celebrate .burst i{position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:3px;background:var(--c);animation:fly var(--t) cubic-bezier(.1,.7,.3,1) both}
+.celebrate .cbox{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 30px;border-radius:16px;background:#141414;color:#fff;
+  box-shadow:0 10px 40px rgba(0,0,0,.35);border-bottom:6px solid #FF3300;animation:cboxin 1.6s ease-out both}
+.celebrate .cbox b{font-family:var(--f-display);font-weight:800;font-size:clamp(40px,9vw,72px);line-height:1;letter-spacing:.02em;color:#FF3300}
+.celebrate .cbox span{font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase}
+.celebrate.mini .cbox{padding:10px 20px;animation-duration:1.05s}
+.celebrate.mini .cbox b{font-size:clamp(28px,6vw,44px)}
+.celebrate.mini::before{animation-duration:1s}

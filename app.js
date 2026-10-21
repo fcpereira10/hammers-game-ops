@@ -477,7 +477,7 @@ function convPending(){
 
 /* writes with undo */
 function act(fn){const grp=[];fn(grp);if(grp.length){undoStack.push(grp);if(undoStack.length>80)undoStack.shift()}}
-function addEv(ev,grp){ev.id=Date.now().toString(36)+uid();ev.ts=Date.now();ev.by=DEV;S().put(g.id,ev);grp.push({k:'add',id:ev.id})}
+function addEv(ev,grp){ev.id=Date.now().toString(36)+uid();lastAdded=ev.id;ev.ts=Date.now();ev.by=DEV;S().put(g.id,ev);grp.push({k:'add',id:ev.id})}
 function chEv(e,patch,grp){const before=strip(e);S().put(g.id,{...before,...patch});grp.push({k:'put',before})}
 function rmEv(e,grp){grp.push({k:'put',before:strip(e)});S().del(g.id,e.id)}
 function updGame(patch){S().updGame(g.id,patch)}
@@ -544,6 +544,9 @@ function finalize(){
   else if(e.res==='SACK')toast(`${t('sack')} · ${who(e.dby)}`);
   else if(e.res==='INT')toast(`INT · ${who(e.dby)}`);
   else toast(`${ord(st.down)} ${t('down')} · ${who(e.rec)} · ${t('res')[e.res]}`);
+  if(e.res==='TD')celebrate('TOUCHDOWN',sideName(st.poss));
+  else if(e.t==='conv'&&e.res==='G')celebrate('+'+e.pts,sideName(e.side),true);
+  else if(e.res==='INT'&&e.t==='play')celebrate('INT',sideName(other(st.poss)),true);
 }
 function tapNum(n){
   if(!draft){
@@ -583,7 +586,8 @@ function applyPen(eff,annul){
 
 /* ---------- render ---------- */
 const isGL=z=>!!z&&z[0]==='g';
-function markOf(e){
+function markOf(e){return markHTML(e).replace('<span class="mk','<span data-e="'+e.id+'" class="mk')}
+function markHTML(e){
   const d=e._down;
   if(e.t==='conv'){
     if(e.res==='G')return `<span class="mk">+${e.pts}</span>`;
@@ -608,6 +612,7 @@ function render(){
     :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
   document.getElementById('app').innerHTML=`
   <header class="top">
+    <img class="hlogo" src="icons/logo.png" alt="Hammers" width="52" height="50">
     <button class="chip game" data-act="opts" aria-label="${t('options')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
       <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></span></button>
     <button class="chip poss ${st.poss}" data-act="poss" ${showPoss?'':'disabled'}><small style="color:inherit;opacity:.8">${t('offense')}</small>${sideName(st.poss)}</button>
@@ -620,6 +625,32 @@ function render(){
     ${['reg','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${t('tabs')[k]}</button>`).join('')}
   </nav>
   ${view==='reg'?regView(st):view==='ana'?anaView():logView()}`;
+  animateRender(st);
+}
+/* ---------- motion ---------- */
+let lastAdded=null, prevRender=null, loginAnimated=false;
+const motionOK=()=>!matchMedia('(prefers-reduced-motion: reduce)').matches;
+function flash(el,cls){if(!el)return;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
+function animateRender(st){
+  const app=document.getElementById('app'), cur={gid:g.id,view,H:st.score.H,A:st.score.A,down:st.down,poss:st.poss,half:st.half};
+  const p=prevRender;prevRender=cur;
+  if(!motionOK())return;
+  if(!p||p.gid!==cur.gid||p.view!==cur.view){[...app.children].slice(2).forEach(el=>flash(el,'fadein'));if(!p)flash(app.querySelector('.top'),'dropin');lastAdded=null;return}
+  const sc=app.querySelectorAll('.score .s');
+  if(p.H!==cur.H)flash(sc[0],'bump');
+  if(p.A!==cur.A)flash(sc[1],'bump');
+  if(p.down!==cur.down||p.half!==cur.half)flash(app.querySelector('.down'),'tick');
+  if(p.poss!==cur.poss){flash(app.querySelector('.poss'),'swap');flash(app.querySelector('.field'),'fadein')}
+  if(lastAdded){const m=app.querySelector(`[data-e="${lastAdded}"]`);if(m)flash(m,'pop');lastAdded=null}
+}
+function celebrate(big,small,mini){
+  if(!motionOK())return;
+  const el=document.createElement('div');el.className='celebrate'+(mini?' mini':'');el.setAttribute('aria-hidden','true');
+  let bits='';for(let i=0;i<(mini?10:22);i++){const a=Math.random()*360,d=90+Math.random()*(mini?110:220),c=['#FF3300','#C8102E','#141414','#F2C14E','#FFFFFF'][i%5];
+    bits+=`<i style="--a:${a}deg;--d:${d}px;--c:${c};--t:${(.55+Math.random()*.5).toFixed(2)}s"></i>`}
+  el.innerHTML=`<div class="burst">${bits}</div><div class="cbox"><b>${big}</b><span>${small}</span></div>`;
+  document.body.appendChild(el);flash(document.querySelector('.hlogo'),'swing');
+  setTimeout(()=>el.remove(),mini?1100:1700);
 }
 function hintText(){
   if(draft){
@@ -853,7 +884,8 @@ function logView(){
 
 /* ---------- sheets ---------- */
 function openSheet(kind,data){sheet={kind,...(data||{})};renderSheet()}
-function closeSheet(){sheet=null;document.getElementById('layer').innerHTML='';render()}
+function closeSheet(){sheet=null;const Lr=document.getElementById('layer'),sc=Lr.querySelector('.scrim');
+  if(sc&&motionOK()){sc.classList.add('leave');setTimeout(()=>{if(!sheet)Lr.innerHTML=''},170)}else Lr.innerHTML='';render()}
 function renderSheet(){
   const Lr=document.getElementById('layer');if(!sheet){Lr.innerHTML='';return}
   const st=replay();let h='', cls='';
@@ -971,7 +1003,8 @@ function renderSheet(){
   }else if(sheet.kind==='csv'){
     h=`<h2>CSV</h2><p>${t('selectCopy')}</p><textarea id="csv-out" class="field-in" style="min-height:240px;padding:10px;font-family:monospace;font-size:12px">${esc(sheet.text)}</textarea><button class="ghost" data-act="close">${t('close')}</button>`;
   }
-  Lr.innerHTML=`<div class="scrim" data-act="scrim"><div class="sheet ${cls}" role="dialog" aria-modal="true">${h}</div></div>`;
+  const fresh=!Lr.querySelector('.scrim')||Lr.querySelector('.scrim.leave');
+  Lr.innerHTML=`<div class="scrim${fresh&&motionOK()?' enter':''}" data-act="scrim"><div class="sheet ${cls}" role="dialog" aria-modal="true">${h}</div></div>`;
   const f=Lr.querySelector('#form-name');if(f)f.focus();
   const ta=Lr.querySelector('#csv-out');if(ta){ta.focus();ta.select()}
   if(sheet.kind==='help'&&sheet.sec)setTimeout(()=>goHelp(sheet.sec),30);
@@ -983,7 +1016,7 @@ function goHelp(sec){
 }
 function toast(msg){
   let el=document.querySelector('.toast');if(!el){el=document.createElement('div');el.className='toast';el.setAttribute('role','status');document.body.appendChild(el)}
-  el.textContent=msg;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{el.hidden=true},1600);
+  el.textContent=msg;el.hidden=false;flash(el,'tin');clearTimeout(toastT);toastT=setTimeout(()=>{el.hidden=true},1600);
 }
 function numSide(st){const s=draft&&draft.kind==='conv'?draft.side:st.poss;return draft&&draft.step==='by'?other(s):s}
 function csv(){
@@ -1032,7 +1065,7 @@ document.addEventListener('click',ev=>{
     case 'run':toggleRun();break;
     case 'pen':openSheet('pen');break;
     case 'peneff':{const c=document.getElementById('pen-annul');applyPen(b.dataset.e,c?c.checked:false);break}
-    case 'pick6':{const p=lastPlay();if(p&&p.res==='INT'){const y=b.dataset.v==='1';act(grp=>chEv(p,{pick6:y},grp));if(y)toast(t('pick6Done',sideName(other(p._side))))}break}
+    case 'pick6':{const p=lastPlay();if(p&&p.res==='INT'){const y=b.dataset.v==='1';act(grp=>chEv(p,{pick6:y},grp));if(y){toast(t('pick6Done',sideName(other(p._side))));celebrate('PICK-6',sideName(other(p._side)))}}break}
     case 'pat':{const p=lastPlay();if(p)act(grp=>chEv(p,{pat:+b.dataset.p},grp));break}
     case 'undo':undo();break;
     case 'down':openSheet('down');break;
@@ -1101,6 +1134,7 @@ document.addEventListener('keydown',e=>{
 let authed=false, me=null, isAdmin=false, members=[], loginState={step:'email',email:lsGet('hgo.loginEmail')||'',msg:''};
 let fb=null;
 function loginView(){
+  setTimeout(()=>{loginAnimated=true},50);
   const L=loginState;
   const body=L.step==='setup'?`<p>${t('setupMissing')}</p>`
     :L.step==='loading'?`<p>${t('loggingIn')}</p>`
@@ -1125,7 +1159,7 @@ function loginView(){
   document.getElementById('app').innerHTML=`<div class="login">
     <div class="lang" role="group" aria-label="Language" style="align-self:flex-end">
       <button data-act="lang" data-l="pt" aria-pressed="${lang==='pt'}">PT</button><button data-act="lang" data-l="en" aria-pressed="${lang==='en'}">EN</button></div>
-    <div class="sheet login-card"><div class="login-head"><img src="icons/logo.png" alt="Hammers" width="88" height="85"><h2>Hammers Game Ops</h2></div>${body}${L.msg?`<p class="err">${esc(L.msg)}</p>`:''}</div></div>`;
+    <div class="sheet login-card"><div class="login-head${loginAnimated?'':' anim'}"><img src="icons/logo.png" alt="Hammers" width="88" height="85"><h2>Hammers Game Ops</h2></div>${body}${L.msg?`<p class="err">${esc(L.msg)}</p>`:''}</div></div>`;
 }
 const continueUrl=()=>location.origin+location.pathname;
 async function finishLink(url,email){
