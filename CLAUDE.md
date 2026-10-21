@@ -1,7 +1,7 @@
 # Hammers Game Ops
 
 Static web app (no build step) served by GitHub Pages from `main` at https://gameops.hammersflagfootball.pt.
-Login and data are Firebase (Auth email link / password, Firestore). See README.md.
+Login and data are Firebase (Auth email + password only, accounts created by admins in the app; Firestore). See README.md.
 
 ## How changes go live
 - Never push to `main` directly. Every change goes on its own branch and a Pull Request that says what changed, what was tested and whether Firebase needs anything.

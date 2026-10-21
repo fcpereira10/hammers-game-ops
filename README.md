@@ -9,7 +9,7 @@ App para registar os jogos dos Hammers (Elite, Academy e Girls) na LFFF1, LFFF2 
 
 ## Acesso
 
-O login é feito com email e password. Os admins criam a conta de cada pessoa em **Opções → Membros → Criar conta**, que gera uma password temporária (sem enviar email). A pessoa muda-a depois em **Opções → Definir password**. O link por email também existe, mas o plano grátis do Firebase só envia 5 emails por dia. Só entram os emails da lista de **Membros**:
+O login é feito só com email e password, e não há registo livre. Os admins criam a conta de cada pessoa em **Opções → Membros → Criar conta**, que gera uma password temporária (sem enviar email). A pessoa troca-a depois em **Opções → Definir password**. Só entram os emails da lista de **Membros**:
 
 | Papel | Pode |
 |---|---|
@@ -22,7 +22,7 @@ Os admins gerem a lista (nome e email) na app, em **Opções → Membros**. Os j
 
 ## Como está feita
 
-Site estático (HTML, CSS e JavaScript sem build), publicado no GitHub Pages. O login e a base de dados são do Firebase (Authentication com link por email e Firestore).
+Site estático (HTML, CSS e JavaScript sem build), publicado no GitHub Pages. O login e a base de dados são do Firebase (Authentication com email e password, e Firestore).
 
 | Ficheiro | Para quê |
 |---|---|
@@ -36,7 +36,7 @@ Site estático (HTML, CSS e JavaScript sem build), publicado no GitHub Pages. O 
 ## Configuração (uma vez)
 
 1. **Firebase**: criar o projeto, registar uma app web e copiar o `firebaseConfig` para `firebase-config.js`.
-2. **Authentication**: ativar *Email/Password* com *Email link (passwordless sign-in)* e acrescentar `gameops.hammersflagfootball.pt` (e `fcpereira10.github.io`) em *Authorized domains*.
+2. **Authentication**: ativar *Email/Password* (o *Email link* pode ficar desligado) e acrescentar `gameops.hammersflagfootball.pt` (e `fcpereira10.github.io`) em *Authorized domains*.
 3. **Firestore**: criar a base de dados (modo de produção, `eur3`) e colar `firestore.rules` no separador *Regras*.
 4. **Primeiro admin**: no Firestore, coleção `members`, documento com o email (em minúsculas) e o campo `role` = `admin`.
 5. **GitHub Pages**: em *Settings → Pages*, escolher *Deploy from a branch*, `main`, pasta `/ (root)`.
