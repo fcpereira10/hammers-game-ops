@@ -54,7 +54,7 @@ pt:{
   loginLead:'Entra com a tua password ou pede um link de acesso por email.', sendLink:'Enviar link', linkSent:e=>`Enviámos um link para <b>${e}</b>. Abre o email neste aparelho e toca no link. Se não aparecer, vê a pasta de spam.`,
   pasteLabel:'Se usas a app instalada no iPhone, copia o link do email e cola-o aqui', signIn:'Entrar', otherEmail:'Usar outro email',
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
-  signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
+  signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', loading:'A carregar', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
   badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
   options:'Opções', curGame:'Jogo atual', gamesMenu:'Jogos', gamesS:'mudar de jogo, criar um novo ou apagar', membersS:'quem tem acesso à app',
   helpMenu:'Ajuda e guia', helpS:'como usar a app', language:'Língua', account:'Conta', edit:'Editar', editMember:'Editar membro', saveName:'Guardar nome',
@@ -137,7 +137,7 @@ en:{
   loginLead:'Sign in with your password or get a sign-in link by email.', sendLink:'Send link', linkSent:e=>`We sent a link to <b>${e}</b>. Open the email on this device and tap the link. If you can't find it, check spam.`,
   pasteLabel:'If you use the installed app on iPhone, copy the link from the email and paste it here', signIn:'Sign in', otherEmail:'Use another email',
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
-  signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
+  signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', loading:'Loading', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
   badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
   options:'Options', curGame:'Current game', gamesMenu:'Games', gamesS:'switch game, create a new one or delete', membersS:'who has access to the app',
   helpMenu:'Help and guide', helpS:'how to use the app', language:'Language', account:'Account', edit:'Edit', editMember:'Edit member', saveName:'Save name',
@@ -428,7 +428,7 @@ function refresh(){
   g.roster=g.roster||{H:[],A:[]};g.roster.H=g.roster.H||[];g.roster.A=g.roster.A||[];
   g.formations=g.formations||{H:[],A:[]};g.formations.H=g.formations.H||[];g.formations.A=g.formations.A||[];
   g.curForm=g.curForm||{H:null,A:null};
-  if(!rendering&&authed)render();
+  if(!rendering&&authed){if(cloud.db&&!cloud.ready)return splashView();render()}
 }
 function role(){if(!g||g.store==='demo')return 'both';const r=getRole(g.id);if(r)return r;return g.mode&&g.mode!=='both'?g.mode:'both'}
 const readOnly=()=>g.store==='cloud'&&!cloud.canWrite;
@@ -1133,7 +1133,10 @@ document.addEventListener('keydown',e=>{
 /* ---------- boot: Firebase login, members, shared games ---------- */
 let authed=false, me=null, isAdmin=false, members=[], loginState={step:'email',email:lsGet('hgo.loginEmail')||'',msg:''};
 let fb=null;
+const SPLASH=`<div class="splash" role="status" aria-label="${t('loading')}"><img src="icons/logo.png" alt="" width="96" height="92"><div class="sbar"><i></i></div></div>`;
+function splashView(){const app=document.getElementById('app');if(!app.querySelector('.splash'))app.innerHTML=SPLASH;prevRender=null}
 function loginView(){
+  if(loginState.step==='loading')return splashView();
   setTimeout(()=>{loginAnimated=true},50);
   const L=loginState;
   const body=L.step==='setup'?`<p>${t('setupMissing')}</p>`
