@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.2.0';
+const APP_VERSION='1.3.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -55,14 +55,14 @@ pt:{
   csvHead:'data,equipa,competicao,adversario,parte,lado,down,tipo,mapa,zona,recetor,resultado,defensor,primeiro_down,formacao,dois_qb,pick6,retorno_conv,anulada',
   typeNum:'Escreve um número', typeForm:'Escreve o nome da formação', deleted:'Apagada', possChanged:'Posse mudada',
   gameCreated:'Jogo criado', csvCopied:'CSV copiado', selectCopy:'Seleciona e copia.', kind:{pass:'passe',run:'corrida',sack:'sack',conv:'conversão'},
-  loginLead:'Entra com a tua password ou pede um link de acesso por email.', sendLink:'Enviar link', linkSent:e=>`Enviámos um link para <b>${e}</b>. Abre o email neste aparelho e toca no link. Se não aparecer, vê a pasta de spam.`,
+  loginLead:'Entra com o email e a password que um admin da Game Ops te deu.', sendLink:'Enviar link', linkSent:e=>`Enviámos um link para <b>${e}</b>. Abre o email neste aparelho e toca no link. Se não aparecer, vê a pasta de spam.`,
   pasteLabel:'Se usas a app instalada no iPhone, copia o link do email e cola-o aqui', signIn:'Entrar', otherEmail:'Usar outro email',
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
   signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', loading:'A carregar', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
   badEmail:'Escreve um email válido.', createAcc:'Criar conta', accCreated:'Conta criada', accLead:'Manda estes dados à pessoa. Ela entra com "Entrar com password" e muda a password em Opções → Definir password.',
   tempPw:'Password temporária', copyMsg:'Copiar mensagem', copied:'Copiado', accNote:'Esta password só aparece agora. Se a perderes, apaga a conta no Firebase (Authentication → Utilizadores) e cria outra aqui.',
   credsMsg:(e,p)=>`Hammers Game Ops\nhttps://gameops.hammersflagfootball.pt\nEmail: ${e}\nPassword temporária: ${p}\nDepois de entrares, muda a password em ⋮ Opções → Definir password.`,
-  accExistsT:'Esta pessoa já tem conta', accExists:e=>`<b>${e}</b> já tem conta (por exemplo, porque já entrou com o link). Pode entrar com a password dela. Se não tiver password ou a esqueceu, apaga a conta no Firebase (Authentication → Utilizadores) e volta a carregar em Criar conta.`,
+  accExistsT:'Esta pessoa já tem conta', accExists:e=>`<b>${e}</b> já tem conta (por exemplo, porque foi criada antes). Pode entrar com a password dela. Se não tiver password ou a esqueceu, apaga a conta no Firebase (Authentication → Utilizadores) e volta a carregar em Criar conta.`,
   accFail:'Não foi possível criar a conta.', emailQuota:'Hoje já não é possível enviar mais links de acesso (limite diário de emails). Entra com a tua password ou tenta amanhã.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
   version:'versão', previewTag:'pré-visualização', previewNote:'Pré-visualização para testes: sem login, e os jogos ficam só neste browser. Não mexe nos jogos da equipa.', options:'Opções', home:'Início', homeS:'escolher o que queres fazer', hello:n=>n?`Olá, ${n}`:'Olá', continueG:'Continuar', track:'Registar', viewAna:'Análise',
   allGamesBtn:'Todos os jogos', recent:'Jogos recentes', noGames:'Ainda não há jogos. Cria o primeiro em Novo jogo.', newGameS:'começar a registar um jogo', demoS:'jogo de exemplo para experimentar', curGame:'Jogo atual', gamesMenu:'Jogos', gamesS:'mudar de jogo, criar um novo ou apagar', membersS:'quem tem acesso à app',
@@ -71,11 +71,11 @@ pt:{
   visLbl:'Visível para', visTeam:'Equipa', visMe:'Só eu', visTeamS:'toda a Game Ops vê e edita', visMeS:'só tu e os admins (testes, treinos)',
   byOwner:n=>`por ${n}`, visNowMe:'Jogo visível só para ti e para os admins', visNowTeam:'Jogo visível para toda a equipa',
   myName:'O meu nome', myNameLead:'É o nome que aparece nos jogos que crias.', nameLbl:'Nome', namePh:'ex.: Francisco', nameSaved:'Nome guardado',
-  pwOptional:'Password', signInPw:'Entrar com password', pwHint:'Ainda não tens password? Pede-a a um admin da Game Ops. O link por email é só para quando não houver outra opção.',
-  pwEmpty:'Escreve a password, ou usa "Enviar link".', pwWrong:'Email ou password errados. Se não tens password, pede-a a um admin da Game Ops.', pwTooMany:'Demasiadas tentativas. Espera uns minutos ou usa "Enviar link".',
-  setPw:'Definir password', pwLead:'Com uma password podes entrar sem esperar pelo email. O link continua a funcionar sempre que precisares.',
+  pwOptional:'Password', signInPw:'Entrar', pwHint:'Não tens conta ou esqueceste a password? Fala com um admin da Game Ops.',
+  pwEmpty:'Escreve a password.', pwWrong:'Email ou password errados. Se esqueceste a password, fala com um admin da Game Ops.', pwTooMany:'Demasiadas tentativas. Espera uns minutos e tenta outra vez.',
+  setPw:'Definir password', pwLead:'Troca a password temporária que recebeste por uma tua.',
   pwNew:'Nova password (mínimo 8 caracteres)', pwRepeat:'Repete a password', pwSave:'Guardar password', pwShort:'A password tem de ter pelo menos 8 caracteres.',
-  pwMismatch:'As duas passwords não são iguais.', pwSaved:'Password guardada', pwRecent:'Por segurança, sai e volta a entrar com o link antes de mudar a password.', pwFail:'Não foi possível guardar a password. Tenta outra vez.', sendFail:'Não foi possível enviar o link. Tenta outra vez.', offlineStart:'Sem rede. Liga-te à internet para entrar pela primeira vez.',
+  pwMismatch:'As duas passwords não são iguais.', pwSaved:'Password guardada', pwRecent:'Por segurança, sai e volta a entrar com a password atual antes de a mudar.', pwFail:'Não foi possível guardar a password. Tenta outra vez.', sendFail:'Não foi possível verificar o acesso. Confirma a rede e tenta outra vez.', offlineStart:'Sem rede. Liga-te à internet para entrar pela primeira vez.',
   signedAs:'Sessão:', members:'Membros', membersLead:'Só estes emails conseguem entrar na app. Membros criam e editam jogos. Admins também apagam jogos e gerem esta lista.',
   addMember:'Acrescentar membro', roleMember:'Membro', roleAdmin:'Admin', memberS:'cria e edita jogos', adminS:'também gere membros',
   makeAdmin:'Tornar admin', makeMember:'Tornar membro', remove:'Remover', you:'tu', memberAdded:e=>`${e} acrescentado`,
@@ -143,14 +143,14 @@ en:{
   csvHead:'date,team,competition,opponent,half,side,down,type,map,zone,receiver,result,defender,first_down,formation,double_qb,pick6,conv_return,nullified',
   typeNum:'Type a number', typeForm:'Type the formation name', deleted:'Deleted', possChanged:'Possession changed',
   gameCreated:'Game created', csvCopied:'CSV copied', selectCopy:'Select and copy.', kind:{pass:'pass',run:'run',sack:'sack',conv:'conversion'},
-  loginLead:'Sign in with your password or get a sign-in link by email.', sendLink:'Send link', linkSent:e=>`We sent a link to <b>${e}</b>. Open the email on this device and tap the link. If you can't find it, check spam.`,
+  loginLead:'Sign in with the email and password a Game Ops admin gave you.', sendLink:'Send link', linkSent:e=>`We sent a link to <b>${e}</b>. Open the email on this device and tap the link. If you can't find it, check spam.`,
   pasteLabel:'If you use the installed app on iPhone, copy the link from the email and paste it here', signIn:'Sign in', otherEmail:'Use another email',
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
   signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', loading:'Loading', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
   badEmail:'Type a valid email.', createAcc:'Create account', accCreated:'Account created', accLead:'Send these details to the person. They sign in with "Sign in with password" and change the password in Options → Set password.',
   tempPw:'Temporary password', copyMsg:'Copy message', copied:'Copied', accNote:'This password is only shown now. If you lose it, delete the account in Firebase (Authentication → Users) and create another one here.',
   credsMsg:(e,p)=>`Hammers Game Ops\nhttps://gameops.hammersflagfootball.pt\nEmail: ${e}\nTemporary password: ${p}\nAfter signing in, change the password in ⋮ Options → Set password.`,
-  accExistsT:'This person already has an account', accExists:e=>`<b>${e}</b> already has an account (for example, because they signed in with the link). They can sign in with their password. If they have none or forgot it, delete the account in Firebase (Authentication → Users) and tap Create account again.`,
+  accExistsT:'This person already has an account', accExists:e=>`<b>${e}</b> already has an account (for example, because it was created before). They can sign in with their password. If they have none or forgot it, delete the account in Firebase (Authentication → Users) and tap Create account again.`,
   accFail:'Could not create the account.', emailQuota:'No more sign-in links can be sent today (daily email limit). Sign in with your password or try tomorrow.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
   version:'version', previewTag:'preview', previewNote:'Preview for testing: no sign-in, and games stay in this browser only. Team games are not touched.', options:'Options', home:'Home', homeS:'choose what you want to do', hello:n=>n?`Hi, ${n}`:'Hi', continueG:'Continue', track:'Track', viewAna:'Analysis',
   allGamesBtn:'All games', recent:'Recent games', noGames:'No games yet. Create the first one in New game.', newGameS:'start tracking a game', demoS:'sample game to try things out', curGame:'Current game', gamesMenu:'Games', gamesS:'switch game, create a new one or delete', membersS:'who has access to the app',
@@ -159,11 +159,11 @@ en:{
   visLbl:'Visible to', visTeam:'Team', visMe:'Only me', visTeamS:'all of Game Ops sees and edits', visMeS:'only you and the admins (tests, practice)',
   byOwner:n=>`by ${n}`, visNowMe:'Game visible only to you and the admins', visNowTeam:'Game visible to the whole team',
   myName:'My name', myNameLead:'This is the name shown on the games you create.', nameLbl:'Name', namePh:'e.g. Francisco', nameSaved:'Name saved',
-  pwOptional:'Password', signInPw:'Sign in with password', pwHint:'No password yet? Ask a Game Ops admin. The email link is only for when there is no other option.',
-  pwEmpty:'Type the password, or use "Send link".', pwWrong:'Wrong email or password. If you have no password, ask a Game Ops admin.', pwTooMany:'Too many attempts. Wait a few minutes or use "Send link".',
-  setPw:'Set password', pwLead:'With a password you can sign in without waiting for the email. The link keeps working whenever you need it.',
+  pwOptional:'Password', signInPw:'Sign in', pwHint:'No account or forgot your password? Talk to a Game Ops admin.',
+  pwEmpty:'Type the password.', pwWrong:'Wrong email or password. If you forgot your password, talk to a Game Ops admin.', pwTooMany:'Too many attempts. Wait a few minutes and try again.',
+  setPw:'Set password', pwLead:'Replace the temporary password you received with your own.',
   pwNew:'New password (at least 8 characters)', pwRepeat:'Repeat the password', pwSave:'Save password', pwShort:'The password must have at least 8 characters.',
-  pwMismatch:'The two passwords do not match.', pwSaved:'Password saved', pwRecent:'For security, sign out and sign in again with the link before changing the password.', pwFail:'Could not save the password. Try again.', sendFail:'Could not send the link. Try again.', offlineStart:'No network. Connect to the internet to sign in for the first time.',
+  pwMismatch:'The two passwords do not match.', pwSaved:'Password saved', pwRecent:'For security, sign out and sign in again with your current password before changing it.', pwFail:'Could not save the password. Try again.', sendFail:'Could not check your access. Check the network and try again.', offlineStart:'No network. Connect to the internet to sign in for the first time.',
   signedAs:'Signed in:', members:'Members', membersLead:'Only these emails can sign in. Members create and edit games. Admins also delete games and manage this list.',
   addMember:'Add member', roleMember:'Member', roleAdmin:'Admin', memberS:'creates and edits games', adminS:'also manages members',
   makeAdmin:'Make admin', makeMember:'Make member', remove:'Remove', you:'you', memberAdded:e=>`${e} added`,
@@ -264,7 +264,7 @@ function helpData(){
       <li>Quando a tua equipa ataca, registas normalmente. Quando a outra ataca, o ecrã fica em espera e mostra as jogadas da outra pessoa ao vivo.</li></ol>
       <p>O down, a posse e o resultado são os mesmos nos dois aparelhos. Se a outra pessoa ficar sem bateria, toca em <b>Registar eu esta posse</b>. Para mudar de equipa, usa ${btn('',t('game'))} no topo.</p>`},
     {id:'data',t:'Onde ficam os dados',b:`<p>Os jogos ficam guardados online e aparecem em qualquer aparelho, também para a tape review depois do torneio. Só os emails da lista de <b>Membros</b> conseguem entrar. Os admins gerem a lista em ${btn('',t('game'))} → <b>Membros</b>.</p>
-      <p>Para entrar usas o link enviado por email, só uma vez por aparelho. Se preferires, cria uma password em ${btn('',t('game'))} → <b>Definir password</b> e passas a poder entrar com email e password.</p>
+      <p>Para entrar usas o email e a password. A conta é criada por um admin em ${btn('',t('game'))} → <b>Membros</b> → <b>Criar conta</b>, com uma password temporária que depois trocas em ${btn('',t('game'))} → <b>Definir password</b>.</p>
       <p>Sem rede, a app continua a funcionar: guarda as jogadas e envia-as quando a rede voltar. No topo aparece <b>A enviar</b> enquanto houver jogadas por enviar.</p>
       <p>A língua muda-se em ${btn('',t('game'))} → <b>Língua</b>. Os dados não mudam.</p>`}
   ]:[
@@ -324,7 +324,7 @@ function helpData(){
       <li>When your team is on offense, you track as usual. When the other team is on offense, your screen waits and shows the other person's plays live.</li></ol>
       <p>Down, possession and score are the same on both devices. If the other person's battery dies, tap <b>I will track this drive</b>. To change team, use ${btn('',t('game'))} at the top.</p>`},
     {id:'data',t:'Where the data lives',b:`<p>Games are saved online and show on any device, including for tape review after the tournament. Only emails on the <b>Members</b> list can sign in. Admins manage the list in ${btn('',t('game'))} → <b>Members</b>.</p>
-      <p>To sign in you use the link sent by email, once per device. If you prefer, create a password in ${btn('',t('game'))} → <b>Set password</b> and sign in with email and password from then on.</p>
+      <p>To sign in you use your email and password. An admin creates the account in ${btn('',t('game'))} → <b>Members</b> → <b>Create account</b>, with a temporary password you then replace in ${btn('',t('game'))} → <b>Set password</b>.</p>
       <p>Without network the app keeps working: it saves plays and sends them when the network is back. <b>Sending</b> shows at the top while plays are waiting to be sent.</p>
       <p>Change the language in ${btn('',t('game'))} → <b>Language</b>. Your data stays the same.</p>`}
   ];
@@ -1195,7 +1195,7 @@ document.addEventListener('click',ev=>{
   }
 });
 document.addEventListener('keydown',e=>{
-  if(!authed&&e.key==='Enter'&&e.target&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){const b=document.querySelector(e.target.id==='lg-pw'?'[data-act="lgpw"]':'[data-act="lgsend"],[data-act="lgconfirm"]');if(b){e.preventDefault();b.click()}return}
+  if(!authed&&e.key==='Enter'&&e.target&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){e.preventDefault();if(e.target.id==='lg-email'){const p=document.getElementById('lg-pw');if(p)p.focus()}else{const b=document.querySelector('[data-act="lgpw"]');if(b)b.click()}return}
   if(e.key==='Escape'&&sheet)closeSheet();
   if(e.key==='Enter'&&sheet&&sheet.kind==='addform'){e.preventDefault();document.querySelector('[data-act="formaddin"]').click()}
 });
@@ -1211,15 +1211,6 @@ function loginView(){
   const L=loginState;
   const body=L.step==='setup'?`<p>${t('setupMissing')}</p>`
     :L.step==='loading'?`<p>${t('loggingIn')}</p>`
-    :L.step==='sent'?`<p>${t('linkSent',esc(L.email))}</p>
-      <label class="lbl2" for="lg-paste">${t('pasteLabel')}</label>
-      <input class="field-in" id="lg-paste" autocomplete="off" placeholder="https://...">
-      <button class="primary" data-act="lgpaste">${t('signIn')}</button>
-      <button class="ghost" data-act="lgback">${t('otherEmail')}</button>`
-    :L.step==='confirm'?`<p>${t('confirmEmail')}</p>
-      <label class="lbl2" for="lg-email">Email</label>
-      <input class="field-in" id="lg-email" type="email" autocomplete="email" value="${esc(L.email)}">
-      <button class="primary" data-act="lgconfirm">${t('signIn')}</button>`
     :L.step==='denied'?`<p>${t('noAccess',esc(L.email))}</p><button class="primary" data-act="lgout">${t('signOut')}</button>`
     :`<p>${t('loginLead')}</p>
       <label class="lbl2" for="lg-email">Email</label>
@@ -1227,7 +1218,6 @@ function loginView(){
       <label class="lbl2" for="lg-pw">${t('pwOptional')}</label>
       <input class="field-in" id="lg-pw" type="password" autocomplete="current-password" placeholder="••••••••">
       <button class="primary" data-act="lgpw">${t('signInPw')}</button>
-      <button class="btn" data-act="lgsend">${t('sendLink')}</button>
       <p class="note">${t('pwHint')}</p>`;
   document.getElementById('app').innerHTML=`<div class="login">
     <div class="lang" role="group" aria-label="Language" style="align-self:flex-end">
@@ -1235,17 +1225,8 @@ function loginView(){
     <div class="sheet login-card"><div class="login-head${loginAnimated?'':' anim'}"><img src="icons/logo.png" alt="Hammers" width="88" height="85"><h2>Hammers Game Ops</h2></div>${body}${L.msg?`<p class="err">${esc(L.msg)}</p>`:''}</div><p class="appver">${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p></div>`;
 }
 const continueUrl=()=>location.origin+location.pathname;
-async function finishLink(url,email){
-  loginState={...loginState,step:'loading',msg:''};loginView();
-  try{await fb.signInWithEmailLink(fb.auth,email,url);lsSet('hgo.loginEmail',email);history.replaceState(null,'',continueUrl())}
-  catch(e){loginState={step:'email',email,msg:t('linkInvalid')};loginView()}
-}
 async function onUser(u){
-  if(!u){authed=false;me=null;
-    if(fb.isSignInWithEmailLink(fb.auth,location.href)){const em=lsGet('hgo.loginEmail');if(em)return finishLink(location.href,em);loginState={step:'confirm',email:'',msg:''}}
-    else if(loginState.step==='loading')loginState.step='email';
-    return loginView();
-  }
+  if(!u){authed=false;me=null;if(loginState.step==='loading')loginState.step='email';return loginView()}
   me=(u.email||'').toLowerCase();
   let m=null;
   try{const snap=await fb.getDoc(fb.doc(fb.fs,'members/'+me));m=snap.exists()?snap.data():null}catch(e){m=null}
@@ -1270,18 +1251,6 @@ document.addEventListener('click',async ev=>{
   const b=ev.target.closest('[data-act]');if(!b||authed)return;
   const a=b.dataset.act;
   if(a==='lang'){lang=b.dataset.l;lsSet(LS_LANG,lang);loginView();return}
-  if(a==='lgsend'||a==='lgconfirm'){
-    const email=(document.getElementById('lg-email').value||'').trim().toLowerCase();
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){loginState={...loginState,email,msg:t('badEmail')};return loginView()}
-    if(a==='lgconfirm')return finishLink(location.href,email);
-    loginState={step:'loading',email,msg:''};loginView();
-    let allowed=false;
-    try{allowed=(await fb.getDoc(fb.doc(fb.fs,'members/'+email))).exists()}catch(e){loginState={step:'email',email,msg:t('sendFail')};return loginView()}
-    if(!allowed){loginState={step:'email',email,msg:t('notMember',email)};return loginView()}
-    try{await fb.sendSignInLinkToEmail(fb.auth,email,{url:continueUrl(),handleCodeInApp:true});lsSet('hgo.loginEmail',email);loginState={step:'sent',email,msg:''}}
-    catch(e){const c=e&&e.code||'';loginState={step:'email',email,msg:c==='auth/quota-exceeded'?t('emailQuota'):c==='auth/too-many-requests'?t('pwTooMany'):t('sendFail')+(c?` (${c})`:'')}}
-    loginView();
-  }
   if(a==='lgpw'){
     const email=(document.getElementById('lg-email').value||'').trim().toLowerCase(), pw=document.getElementById('lg-pw').value||'';
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){loginState={...loginState,email,msg:t('badEmail')};return loginView()}
@@ -1293,10 +1262,6 @@ document.addEventListener('click',async ev=>{
     catch(e){const c=e&&e.code||'';loginState={step:'email',email,msg:c==='auth/too-many-requests'?t('pwTooMany'):t('pwWrong')};loginView()}
     return;
   }
-  if(a==='lgpaste'){const url=(document.getElementById('lg-paste').value||'').trim();
-    if(!fb.isSignInWithEmailLink(fb.auth,url)){loginState={...loginState,msg:t('linkInvalid')};return loginView()}
-    finishLink(url,loginState.email)}
-  if(a==='lgback'){loginState={step:'email',email:'',msg:''};loginView()}
   if(a==='lgout'){await fb.signOut(fb.auth);loginState={step:'email',email:'',msg:''};loginView()}
 });
 async function addMember(email,roleName,name){
