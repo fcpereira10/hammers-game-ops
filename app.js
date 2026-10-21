@@ -1197,8 +1197,6 @@ async function onUser(u){
   fb.shim.collection('members').onSnapshot(s=>{members=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.id<b.id?-1:1);if(sheet&&(sheet.kind==='members'||sheet.kind==='games'))renderSheet();refresh()},()=>{});
   setTimeout(()=>{if(!cloud.ready){cloud.ready=true;refresh()}},8000);
   refresh();flush();
-  const seen=lsGet(LS_HELP)==='1';lsSet(LS_HELP,'1');
-  if(!seen&&lsGet(LS_HELP)==='1')openSheet('help',{sec:''});
 }
 document.addEventListener('click',async ev=>{
   const b=ev.target.closest('[data-act]');if(!b||authed)return;
