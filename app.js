@@ -544,9 +544,9 @@ function finalize(){
   else if(e.res==='SACK')toast(`${t('sack')} · ${who(e.dby)}`);
   else if(e.res==='INT')toast(`INT · ${who(e.dby)}`);
   else toast(`${ord(st.down)} ${t('down')} · ${who(e.rec)} · ${t('res')[e.res]}`);
-  if(e.res==='TD')celebrate('TOUCHDOWN',sideName(st.poss));
-  else if(e.t==='conv'&&e.res==='G')celebrate('+'+e.pts,sideName(e.side),true);
-  else if(e.res==='INT'&&e.t==='play')celebrate('INT',sideName(other(st.poss)),true);
+  if(e.res==='TD')celebrate('TOUCHDOWN',st.poss);
+  else if(e.t==='conv'&&e.res==='G')celebrate('+'+e.pts,e.side,true);
+  else if(e.res==='INT'&&e.t==='play')celebrate('INT',other(st.poss),true);
 }
 function tapNum(n){
   if(!draft){
@@ -644,13 +644,14 @@ function animateRender(st){
   if(p.poss!==cur.poss){flash(app.querySelector('.poss'),'swap');flash(app.querySelector('.field'),'fadein')}
   if(lastAdded){const m=app.querySelector(`[data-e="${lastAdded}"]`);if(m)flash(m,'pop');lastAdded=null}
 }
-function celebrate(big,small,mini){
+function celebrate(big,side,mini){
   if(!motionOK())return;
-  const el=document.createElement('div');el.className='celebrate'+(mini?' mini':'');el.setAttribute('aria-hidden','true');
-  let bits='';for(let i=0;i<(mini?10:22);i++){const a=Math.random()*360,d=90+Math.random()*(mini?110:220),c=['#FF3300','#C8102E','#141414','#F2C14E','#FFFFFF'][i%5];
+  const ours=side==='H', small=sideName(side);
+  const el=document.createElement('div');el.className='celebrate'+(mini?' mini':'')+(ours?'':' opp');el.setAttribute('aria-hidden','true');
+  let bits='';for(let i=0;i<(mini?10:22);i++){const a=Math.random()*360,d=90+Math.random()*(mini?110:220),c=(ours?['#FF3300','#C8102E','#141414','#F2C14E','#FFFFFF']:['#9AA1AA','#5F6670','#D6D9DD','#FFFFFF','#3F4650'])[i%5];
     bits+=`<i style="--a:${a}deg;--d:${d}px;--c:${c};--t:${(.55+Math.random()*.5).toFixed(2)}s"></i>`}
   el.innerHTML=`<div class="burst">${bits}</div><div class="cbox"><b>${big}</b><span>${small}</span></div>`;
-  document.body.appendChild(el);flash(document.querySelector('.hlogo'),'swing');
+  document.body.appendChild(el);if(ours)flash(document.querySelector('.hlogo'),'swing');
   setTimeout(()=>el.remove(),mini?1100:1700);
 }
 function hintText(){
@@ -1066,7 +1067,7 @@ document.addEventListener('click',ev=>{
     case 'run':toggleRun();break;
     case 'pen':openSheet('pen');break;
     case 'peneff':{const c=document.getElementById('pen-annul');applyPen(b.dataset.e,c?c.checked:false);break}
-    case 'pick6':{const p=lastPlay();if(p&&p.res==='INT'){const y=b.dataset.v==='1';act(grp=>chEv(p,{pick6:y},grp));if(y){toast(t('pick6Done',sideName(other(p._side))));celebrate('PICK-6',sideName(other(p._side)))}}break}
+    case 'pick6':{const p=lastPlay();if(p&&p.res==='INT'){const y=b.dataset.v==='1';act(grp=>chEv(p,{pick6:y},grp));if(y){toast(t('pick6Done',sideName(other(p._side))));celebrate('PICK-6',other(p._side))}}break}
     case 'pat':{const p=lastPlay();if(p)act(grp=>chEv(p,{pat:+b.dataset.p},grp));break}
     case 'undo':undo();break;
     case 'down':openSheet('down');break;
