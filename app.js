@@ -626,6 +626,7 @@ function render(){
   </nav>
   ${view==='reg'?regView(st):view==='ana'?anaView():logView()}`;
   animateRender(st);
+  if(pendingReload)setTimeout(reloadIfIdle,300);
 }
 /* ---------- motion ---------- */
 let lastAdded=null, prevRender=null, loginAnimated=false;
@@ -884,7 +885,7 @@ function logView(){
 
 /* ---------- sheets ---------- */
 function openSheet(kind,data){sheet={kind,...(data||{})};renderSheet()}
-function closeSheet(){sheet=null;const Lr=document.getElementById('layer'),sc=Lr.querySelector('.scrim');
+function closeSheet(){sheet=null;setTimeout(reloadIfIdle,200);const Lr=document.getElementById('layer'),sc=Lr.querySelector('.scrim');
   if(sc&&motionOK()){sc.classList.add('leave');setTimeout(()=>{if(!sheet)Lr.innerHTML=''},170)}else Lr.innerHTML='';render()}
 function renderSheet(){
   const Lr=document.getElementById('layer');if(!sheet){Lr.innerHTML='';return}
@@ -1265,5 +1266,16 @@ async function signOutNow(){try{await fb.signOut(fb.auth)}catch(e){}location.rel
     U.onAuthStateChanged(auth,u=>{onUser(u)});
   }catch(e){loginState={step:'email',email:'',msg:t('offlineStart')};loginView()}
 })();
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+/* updates: check for a new version when the app opens or comes back to the front, and reload as soon as nothing is in progress */
+let pendingReload=false;
+function reloadIfIdle(){if(pendingReload&&!draft&&!sheet)location.reload()}
+if('serviceWorker' in navigator){
+  const hadController=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!pendingReload){pendingReload=true;reloadIfIdle()}});
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    const check=()=>reg.update().catch(()=>{});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
+    setInterval(check,30*60*1000);
+  }).catch(()=>{}));
+}
 })();
