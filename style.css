@@ -430,3 +430,5 @@ body.preview::before{content:"PRÉ-VISUALIZAÇÃO · TESTES";position:fixed;left
   font-family:var(--f-display);font-weight:800;font-size:12px;letter-spacing:.14em;color:#141414;
   background:repeating-linear-gradient(45deg,#F2C14E 0 14px,#FFD86B 14px 28px);pointer-events:none}
 body.preview{padding-bottom:30px}
+.creds{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;align-items:baseline;padding:12px;border-radius:var(--r);background:var(--surface-2);border:1px solid var(--line)}
+.creds b{font-size:17px;overflow-wrap:anywhere}

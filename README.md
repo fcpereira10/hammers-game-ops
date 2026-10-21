@@ -9,7 +9,7 @@ App para registar os jogos dos Hammers (Elite, Academy e Girls) na LFFF1, LFFF2 
 
 ## Acesso
 
-O login é feito com um link enviado por email ou, para quem a definir, com email e password. Só entram os emails da lista de **Membros**:
+O login é feito com email e password. Os admins criam a conta de cada pessoa em **Opções → Membros → Criar conta**, que gera uma password temporária (sem enviar email). A pessoa muda-a depois em **Opções → Definir password**. O link por email também existe, mas o plano grátis do Firebase só envia 5 emails por dia. Só entram os emails da lista de **Membros**:
 
 | Papel | Pode |
 |---|---|
