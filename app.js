@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.1.1';
+const APP_VERSION='1.1.2';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -59,7 +59,7 @@ pt:{
   pasteLabel:'Se usas a app instalada no iPhone, copia o link do email e cola-o aqui', signIn:'Entrar', otherEmail:'Usar outro email',
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
   signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', loading:'A carregar', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
-  badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
+  badEmail:'Escreve um email válido.', emailQuota:'Hoje já não é possível enviar mais links de acesso (limite diário de emails). Entra com a tua password ou tenta amanhã.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
   version:'versão', previewTag:'pré-visualização', previewNote:'Pré-visualização para testes: sem login, e os jogos ficam só neste browser. Não mexe nos jogos da equipa.', options:'Opções', home:'Início', homeS:'escolher o que queres fazer', hello:n=>n?`Olá, ${n}`:'Olá', continueG:'Continuar', track:'Registar', viewAna:'Análise',
   allGamesBtn:'Todos os jogos', recent:'Jogos recentes', noGames:'Ainda não há jogos. Cria o primeiro em Novo jogo.', newGameS:'começar a registar um jogo', demoS:'jogo de exemplo para experimentar', curGame:'Jogo atual', gamesMenu:'Jogos', gamesS:'mudar de jogo, criar um novo ou apagar', membersS:'quem tem acesso à app',
   helpMenu:'Ajuda e guia', helpS:'como usar a app', language:'Língua', account:'Conta', edit:'Editar', editMember:'Editar membro', saveName:'Guardar nome',
@@ -143,7 +143,7 @@ en:{
   pasteLabel:'If you use the installed app on iPhone, copy the link from the email and paste it here', signIn:'Sign in', otherEmail:'Use another email',
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
   signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', loading:'Loading', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
-  badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
+  badEmail:'Type a valid email.', emailQuota:'No more sign-in links can be sent today (daily email limit). Sign in with your password or try tomorrow.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
   version:'version', previewTag:'preview', previewNote:'Preview for testing: no sign-in, and games stay in this browser only. Team games are not touched.', options:'Options', home:'Home', homeS:'choose what you want to do', hello:n=>n?`Hi, ${n}`:'Hi', continueG:'Continue', track:'Track', viewAna:'Analysis',
   allGamesBtn:'All games', recent:'Recent games', noGames:'No games yet. Create the first one in New game.', newGameS:'start tracking a game', demoS:'sample game to try things out', curGame:'Current game', gamesMenu:'Games', gamesS:'switch game, create a new one or delete', membersS:'who has access to the app',
   helpMenu:'Help and guide', helpS:'how to use the app', language:'Language', account:'Account', edit:'Edit', editMember:'Edit member', saveName:'Save name',
@@ -1259,7 +1259,7 @@ document.addEventListener('click',async ev=>{
     try{allowed=(await fb.getDoc(fb.doc(fb.fs,'members/'+email))).exists()}catch(e){loginState={step:'email',email,msg:t('sendFail')};return loginView()}
     if(!allowed){loginState={step:'email',email,msg:t('notMember',email)};return loginView()}
     try{await fb.sendSignInLinkToEmail(fb.auth,email,{url:continueUrl(),handleCodeInApp:true});lsSet('hgo.loginEmail',email);loginState={step:'sent',email,msg:''}}
-    catch(e){loginState={step:'email',email,msg:t('sendFail')}}
+    catch(e){const c=e&&e.code||'';loginState={step:'email',email,msg:c==='auth/quota-exceeded'?t('emailQuota'):c==='auth/too-many-requests'?t('pwTooMany'):t('sendFail')+(c?` (${c})`:'')}}
     loginView();
   }
   if(a==='lgpw'){
