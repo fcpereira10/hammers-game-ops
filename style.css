@@ -424,3 +424,9 @@ button:not(:disabled):active{transform:scale(.96)}
 .gtxt small{color:var(--muted);font-size:13px}
 .gtxt .sync{align-self:flex-start;margin-top:2px}
 .appver{margin:8px 0 0;text-align:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* preview build: striped ribbon so nobody mistakes it for production */
+body.preview::before{content:"PRÉ-VISUALIZAÇÃO · TESTES";position:fixed;left:0;right:0;bottom:0;z-index:50;padding:4px 0 calc(4px + env(safe-area-inset-bottom,0px));text-align:center;
+  font-family:var(--f-display);font-weight:800;font-size:12px;letter-spacing:.14em;color:#141414;
+  background:repeating-linear-gradient(45deg,#F2C14E 0 14px,#FFD86B 14px 28px);pointer-events:none}
+body.preview{padding-bottom:30px}
