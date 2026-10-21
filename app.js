@@ -56,7 +56,8 @@ pt:{
   confirmEmail:'Para terminar, confirma o email para onde foi enviado o link.', noAccess:e=>`<b>${e}</b> ainda não tem acesso. Pede a um admin da Game Ops para te acrescentar.`,
   signOut:'Sair', setupMissing:'Falta configurar o Firebase (ficheiro firebase-config.js).', loggingIn:'A entrar...', loading:'A carregar', linkInvalid:'O link não é válido ou já expirou. Pede um novo.',
   badEmail:'Escreve um email válido.', notMember:e=>`${e} não está na lista de membros. Pede a um admin da Game Ops para te acrescentar.`,
-  options:'Opções', curGame:'Jogo atual', gamesMenu:'Jogos', gamesS:'mudar de jogo, criar um novo ou apagar', membersS:'quem tem acesso à app',
+  options:'Opções', home:'Início', homeS:'escolher o que queres fazer', hello:n=>n?`Olá, ${n}`:'Olá', continueG:'Continuar', track:'Registar', viewAna:'Análise',
+  allGamesBtn:'Todos os jogos', recent:'Jogos recentes', noGames:'Ainda não há jogos. Cria o primeiro em Novo jogo.', newGameS:'começar a registar um jogo', demoS:'jogo de exemplo para experimentar', curGame:'Jogo atual', gamesMenu:'Jogos', gamesS:'mudar de jogo, criar um novo ou apagar', membersS:'quem tem acesso à app',
   helpMenu:'Ajuda e guia', helpS:'como usar a app', language:'Língua', account:'Conta', edit:'Editar', editMember:'Editar membro', saveName:'Guardar nome',
   nameRequired:'Escreve o nome.',
   visLbl:'Visível para', visTeam:'Equipa', visMe:'Só eu', visTeamS:'toda a Game Ops vê e edita', visMeS:'só tu e os admins (testes, treinos)',
@@ -139,7 +140,8 @@ en:{
   confirmEmail:'To finish, confirm the email the link was sent to.', noAccess:e=>`<b>${e}</b> has no access yet. Ask a Game Ops admin to add you.`,
   signOut:'Sign out', setupMissing:'Firebase is not configured yet (firebase-config.js file).', loggingIn:'Signing in...', loading:'Loading', linkInvalid:'The link is not valid or has expired. Ask for a new one.',
   badEmail:'Type a valid email.', notMember:e=>`${e} is not on the members list. Ask a Game Ops admin to add you.`,
-  options:'Options', curGame:'Current game', gamesMenu:'Games', gamesS:'switch game, create a new one or delete', membersS:'who has access to the app',
+  options:'Options', home:'Home', homeS:'choose what you want to do', hello:n=>n?`Hi, ${n}`:'Hi', continueG:'Continue', track:'Track', viewAna:'Analysis',
+  allGamesBtn:'All games', recent:'Recent games', noGames:'No games yet. Create the first one in New game.', newGameS:'start tracking a game', demoS:'sample game to try things out', curGame:'Current game', gamesMenu:'Games', gamesS:'switch game, create a new one or delete', membersS:'who has access to the app',
   helpMenu:'Help and guide', helpS:'how to use the app', language:'Language', account:'Account', edit:'Edit', editMember:'Edit member', saveName:'Save name',
   nameRequired:'Type the name.',
   visLbl:'Visible to', visTeam:'Team', visMe:'Only me', visTeamS:'all of Game Ops sees and edits', visMeS:'only you and the admins (tests, practice)',
@@ -409,7 +411,7 @@ addEventListener('online',()=>flush());
 
 /* ---------- current game ---------- */
 let games=[], g=null, curId=lsGet(LS_CUR), draft=null, runMode=false, qbNext=false, override=null;
-let view='reg', undoStack=[], sheet=null, toastT=null, confirmDel=null, rendering=false;
+let view='home', undoStack=[], sheet=null, toastT=null, confirmDel=null, rendering=false;
 const an={side:'H',down:0,rec:null,form:null,kind:'pass',mode:'marks',annul:false,area:'field',half:0};
 const storeOf=G=>G.store==='cloud'?cloudStore:G.store==='demo'?demo:local;
 const S=()=>storeOf(g);
@@ -604,6 +606,7 @@ function sideName(s){return s==='H'?'Hammers':esc(g.opp)}
 function render(){
   document.documentElement.lang=lang==='pt'?'pt-PT':'en';
   const st=replay();
+  if(view==='home'){document.getElementById('app').innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
   const showPoss=g.mode==='both'&&!readOnly();
   const r=role(), roleTxt=r==='both'?t('roleB'):r==='H'?'Hammers':t('roleA');
   const pend=cloud.outbox.length;
@@ -612,7 +615,7 @@ function render(){
     :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
   document.getElementById('app').innerHTML=`
   <header class="top">
-    <img class="hlogo" src="icons/logo.png" alt="Hammers" width="52" height="50">
+    <button class="hlogo-btn" data-act="home" aria-label="${t('home')}"><img class="hlogo" src="icons/logo.png" alt="" width="52" height="50"></button>
     <button class="chip game" data-act="opts" aria-label="${t('options')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
       <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></span></button>
     <button class="chip poss ${st.poss}" data-act="poss" ${showPoss?'':'disabled'}><small style="color:inherit;opacity:.8">${t('offense')}</small>${sideName(st.poss)}</button>
@@ -653,6 +656,42 @@ function celebrate(big,side,mini){
   el.innerHTML=`<div class="burst">${bits}</div><div class="cbox"><b>${big}</b><span>${small}</span></div>`;
   document.body.appendChild(el);if(ours)flash(document.querySelector('.hlogo'),'swing');
   setTimeout(()=>el.remove(),mini?1100:1700);
+}
+/* ---------- home ---------- */
+function homeView(st){
+  const name=personName(me)||'';
+  const list=games.filter(x=>x.store!=='demo');
+  const demoG=games.find(x=>x.store==='demo');
+  const cur=g&&g.store!=='demo'?g:null;
+  const lock=x=>x.visibility==='private'?`<span class="sync local">🔒 ${t('visMe')}</span>`:'';
+  const card=x=>`<div class="gcard">
+      <div class="gtxt"><b>${esc(x.team)} vs ${esc(x.opp)}</b><small>${esc(x.comp)} · ${x.date}${x.owner?' · '+t('byOwner',esc(personName(x.owner))):''}</small>${lock(x)}</div>
+      <div class="gbtns"><button class="btn" data-act="openg" data-id="${x.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="ana">${t('viewAna')}</button></div></div>`;
+  const tile=(act,icon,l,d,cls='')=>`<button class="htile ${cls}" data-act="${act}"><span class="hi" aria-hidden="true">${icon}</span><b>${l}</b><small>${d}</small></button>`;
+  const recent=list.filter(x=>!cur||x.id!==cur.id).slice(0,5);
+  return `<header class="top home-top">
+      <button class="hlogo-btn" data-act="home" aria-label="${t('home')}"><img class="hlogo" src="icons/logo.png" alt="" width="52" height="50"></button>
+      <div class="htitle"><b>Hammers Game Ops</b><small>${t('hello',esc(name))}</small></div>
+      <button class="chip opts" data-act="opts" aria-label="${t('options')}"><span class="dots" aria-hidden="true">⋮</span>${t('options')}</button>
+    </header>
+    ${cur?`<section class="hero">
+      <span class="lbl2">${t('continueG')}</span>
+      <div class="hero-row"><div class="gtxt"><b>${esc(cur.team)} vs ${esc(cur.opp)}</b><small>${esc(cur.comp)} · ${cur.date}${cur.owner?' · '+t('byOwner',esc(personName(cur.owner))):''}</small>${lock(cur)}</div>
+        <div class="hscore num"><span>${st.score.H}</span><small>:</small><span>${st.score.A}</span><em>${ord(st.down)} ${t('down')} · ${st.half===2?t('h2'):t('h1')}</em></div></div>
+      <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
+    </section>`:''}
+    <section class="htiles">
+      ${tile('newgame','+',t('newGameT'),t('newGameS'),'accent')}
+      ${tile('games','▦',t('allGamesBtn'),t('gamesS'))}
+      ${tile('help','?',t('helpMenu'),t('helpS'))}
+      ${isAdmin?tile('members','👥',t('members'),t('membersS')):''}
+    </section>
+    <section class="hlist">
+      <span class="lbl2">${t('recent')}</span>
+      ${recent.length?recent.map(card).join(''):`<p class="note">${list.length?'':t('noGames')}</p>`}
+      ${demoG?`<div class="gcard demo"><div class="gtxt"><b>${esc(demoG.team)} vs ${esc(demoG.opp)}</b><small>${t('demoS')}</small></div>
+        <div class="gbtns"><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="ana">${t('viewAna')}</button></div></div>`:''}
+    </section>`;
 }
 function hintText(){
   if(draft){
@@ -933,6 +972,7 @@ function renderSheet(){
         <button class="big" data-act="setvis" data-v="team" aria-pressed="${g.visibility!=='private'}">${t('visTeam')}<small>${t('visTeamS')}</small></button>
         <button class="big" data-act="setvis" data-v="private" aria-pressed="${g.visibility==='private'}">🔒 ${t('visMe')}<small>${t('visMeS')}</small></button></div>`:''}
       <div class="optlist">
+        ${row('home','⌂',t('home'),t('homeS'))}
         ${row('games','▦',t('gamesMenu'),t('gamesS'))}
         ${isAdmin?row('members','👥',t('members'),t('membersS')):''}
         ${row('help','?',t('helpMenu'),t('helpS'))}
@@ -1040,6 +1080,8 @@ document.addEventListener('click',ev=>{
   const st=replay();
   switch(a){
     case 'view':view=b.dataset.v;render();break;
+    case 'home':sheet=null;document.getElementById('layer').innerHTML='';draft=null;runMode=false;view='home';render();break;
+    case 'openg':{const v=b.dataset.v||'reg';view=v;if(b.dataset.id!==g.id)selectGame(b.dataset.id);else{render();if(g.store!=='demo'&&!getRole(g.id)&&!readOnly()&&v==='reg')openSheet('role')}break}
     case 'zone':tapZone(b.dataset.z);break;
     case 'num':tapNum(+b.dataset.n);break;
     case 'nonum':if(draft){if(draft.step==='by'){draft.by=null;finalize()}else{draft.rec=null;if(draft.res==='INT'){draft.step='by';render()}else finalize()}}break;
@@ -1078,7 +1120,7 @@ document.addEventListener('click',ev=>{
     case 'close':closeSheet();break;
     case 'games':openSheet('games');break;
     case 'role':setRole(g.id,b.dataset.r);override=null;if(sheet&&sheet.kind==='opts')renderSheet();else closeSheet();render();toast(t('roleSet'));break;
-    case 'pickgame':sheet=null;document.getElementById('layer').innerHTML='';selectGame(b.dataset.id);break;
+    case 'pickgame':sheet=null;document.getElementById('layer').innerHTML='';if(view==='home')view='reg';selectGame(b.dataset.id);break;
     case 'delgame':if(!sheet.delc){sheet.delc=true;renderSheet();break}
       {const id=g.id;sheet=null;document.getElementById('layer').innerHTML='';S().remove(id);curId=null;selectGame(games.find(x=>x.id!==id).id)}break;
     case 'newgame':openSheet('newgame',{ng:{team:'Elite',comp:'LFFF1',opp:'',start:'H',vis:'team'}});break;
