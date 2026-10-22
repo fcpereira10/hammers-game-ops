@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.6.1';
+const APP_VERSION='1.7.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -119,6 +119,24 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  sc:'Relatório de adversário', scS:'tendências de uma equipa em todos os jogos', scTeam:'Equipa', scUs:'Hammers (auto-scouting)', scGamesN:n=>n===1?'1 jogo':`${n} jogos`,
+  scPrint:'Imprimir', scNone:'Ainda não há jogos registados.', scNoPlays:'Sem jogadas registadas nos jogos escolhidos.', scLoading:n=>`A carregar ${n===1?'1 jogo':n+' jogos'}...`,
+  scRecord:'Resultados', scRecVs:'contra os Hammers', scPtsFor:'marcados por jogo', scPtsAg:'sofridos por jogo', scWDL:['V','E','D'],
+  scKey:'Tendências principais', scFew:n=>`Só ${n} jogadas: lê estas tendências com cuidado.`, scSample:n=>`${n} jogadas de ataque`,
+  scPassK:'Passe ou corrida', scPassTxt:(p,r)=>`${p} passes e ${r} corridas`, scZoneK:'Zona favorita', scZoneTxt:(s,c)=>`${s} dos passes · ${c} completos`,
+  scDeepK:'Bolas fundas', scDeepTxt:n=>`dos passes vão a mais de 15 jardas (${n})`, scRecK:'Alvo principal', scRecTxt:(s,c,td)=>`${s} dos alvos · ${c} completos · ${td} TD`,
+  scLateK:'3º e 4º down', scPassPct:p=>`${p} passe`, scFavZone:z=>`zona favorita ${z}`, scFavRec:n=>`alvo #${n}`, scPlaysN:n=>`${n} jogadas`,
+  scFormK:'Formação mais usada', scFormTxt:(s,p)=>`${s} das jogadas · ${p} passe`, scGlK:'Perto da end zone', scGlTxt:(s,n)=>`${s} das bolas no mapa GL (${n})`,
+  scConvK:'Conversões', scConvBig:p=>`${p} de 1 pt`, scConvTxt:(a,b,c,d)=>`good: 1 pt ${a}/${b} · 2 pts ${c}/${d}`,
+  scDefK:h=>h?'A nossa defesa':'A defesa deles', scCompPct:p=>`${p} comp`, scDefTxt:(h,i,k)=>`completos ${h?'contra nós':'contra eles'} · ${i} INT · ${k} sacks`,
+  scAttack:h=>h?'Como atacamos':'Como atacam', scMapT:'Para onde vai a bola', scMapNote:'% das bolas em cada zona, com o número de bolas e a % de completos. Os filtros mudam o mapa e as tabelas. Toca numa linha de uma tabela para filtrar.',
+  scPosAll:'Todo o campo', scPosOwn:'Meio-campo próprio', scPosGoal:'Goal to go', scClear:'Limpar filtros', scNoForm:'sem formação',
+  scByForm:'Por formação', scByDown:'Por down', scByDist:'Por distância', scTargets:'Alvos', scQbs:'QB',
+  thScForm:['Formação','Jog.','% passe','Comp %','Zona +','Alvo +'], thScDown:['Down','Jog.','% passe','Comp %','Zona +','Alvo +','Formação +'],
+  thScDist:['Distância','Jog.','% passe','Comp %','Zona +','Alvo +','Formação +'], thScRec:['Nº','Alvos','% alvos','Comp %','TD','Corr','Zona +'], thScQb:['QB','Passes','Comp %','TD','INT'],
+  scDefence:h=>h?'Como defendemos':'Como defendem', scDefMap:h=>h?'Para onde nos atiram':'Para onde se lhes atira', scDefMapNote:'Passes dos adversários contra esta defesa, no campo (sem GL).',
+  scDefPl:'Defensores em destaque', thScDef:['Nº','Flags','PBU','INT','Pick-6','Sacks'], scGamesT:'Jogos incluídos', scGamesNote:'Toca num jogo para o tirar do relatório ou voltar a incluir.',
+  scLoadingG:'a carregar', scLoadFail:'não foi possível carregar', scOff:'fora do relatório', scOpenA:'Abrir análise', scBtn:'Relatório de adversário',
 },
 en:{
   rows:['Deep','Mid','Short','Behind the line'], glRows:['EZ back','EZ front','0-5','5-10'], cols:['Left','Middle','Right'], colsLong:['Left','Middle','Right'],
@@ -228,6 +246,24 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  sc:'Opponent report', scS:"one team's tendencies across every game", scTeam:'Team', scUs:'Hammers (self-scout)', scGamesN:n=>n===1?'1 game':`${n} games`,
+  scPrint:'Print', scNone:'No games tracked yet.', scNoPlays:'No plays tracked in the chosen games.', scLoading:n=>`Loading ${n===1?'1 game':n+' games'}...`,
+  scRecord:'Results', scRecVs:'against the Hammers', scPtsFor:'scored per game', scPtsAg:'allowed per game', scWDL:['W','D','L'],
+  scKey:'Key tendencies', scFew:n=>`Only ${n} plays: read these tendencies with care.`, scSample:n=>`${n} offensive plays`,
+  scPassK:'Pass or run', scPassTxt:(p,r)=>`${p} passes and ${r} runs`, scZoneK:'Favorite zone', scZoneTxt:(s,c)=>`${s} of passes · ${c} complete`,
+  scDeepK:'Deep balls', scDeepTxt:n=>`of passes go more than 15 yards (${n})`, scRecK:'Main target', scRecTxt:(s,c,td)=>`${s} of targets · ${c} complete · ${td} TD`,
+  scLateK:'3rd and 4th down', scPassPct:p=>`${p} pass`, scFavZone:z=>`favorite zone ${z}`, scFavRec:n=>`target #${n}`, scPlaysN:n=>`${n} plays`,
+  scFormK:'Most used formation', scFormTxt:(s,p)=>`${s} of plays · ${p} pass`, scGlK:'Near the end zone', scGlTxt:(s,n)=>`${s} of balls on the GL map (${n})`,
+  scConvK:'Conversions', scConvBig:p=>`${p} go for 1`, scConvTxt:(a,b,c,d)=>`good: 1 pt ${a}/${b} · 2 pts ${c}/${d}`,
+  scDefK:h=>h?'Our defense':'Their defense', scCompPct:p=>`${p} comp`, scDefTxt:(h,i,k)=>`completed ${h?'against us':'against them'} · ${i} INT · ${k} sacks`,
+  scAttack:h=>h?'How we attack':'How they attack', scMapT:'Where the ball goes', scMapNote:'% of balls in each zone, with the number of balls and the completion %. Filters change the map and the tables. Tap a table row to filter.',
+  scPosAll:'Whole field', scPosOwn:'Own half', scPosGoal:'Goal to go', scClear:'Clear filters', scNoForm:'no formation',
+  scByForm:'By formation', scByDown:'By down', scByDist:'By distance', scTargets:'Targets', scQbs:'QB',
+  thScForm:['Formation','Plays','% pass','Comp %','Zone +','Target +'], thScDown:['Down','Plays','% pass','Comp %','Zone +','Target +','Formation +'],
+  thScDist:['Distance','Plays','% pass','Comp %','Zone +','Target +','Formation +'], thScRec:['No.','Targets','% targets','Comp %','TD','Runs','Zone +'], thScQb:['QB','Passes','Comp %','TD','INT'],
+  scDefence:h=>h?'How we defend':'How they defend', scDefMap:h=>h?'Where teams throw on us':'Where teams throw on them', scDefMapNote:'Opponent passes against this defense, on the field map (no GL).',
+  scDefPl:'Defenders to watch', thScDef:['No.','Flags','PBU','INT','Pick-6','Sacks'], scGamesT:'Games included', scGamesNote:'Tap a game to leave it out of the report or bring it back.',
+  scLoadingG:'loading', scLoadFail:'could not load', scOff:'left out', scOpenA:'Open analysis', scBtn:'Opponent report',
 }};
 function t(k,...a){const v=L[lang][k]!==undefined?L[lang][k]:L.en[k];return typeof v==='function'?v(...a):v}
 const ord=d=>t('ord',d);
@@ -295,6 +331,13 @@ function helpData(){
       <li><b>Heatmap</b>: quanto mais amarelo, mais bolas foram para essa zona. Mostra o número de bolas e a % de completos.</li>
       <li><b>Alvos por jogador</b>: alvos, completos, %, TD, INT e corridas. Toca num jogador para ver só as bolas dele no mapa.</li>
       <li><b>Por down</b>: zona, alvo e formação mais usados em cada down. Toca num down para filtrar.</li></ul>`},
+    {id:'scout',t:'Relatório de adversário',b:`<p>Junta todos os jogos registados contra uma equipa e mostra o que ela costuma fazer. Abre em <b>Início</b> → <b>Relatório de adversário</b>, em ${btn('',t('game'))} ou no botão da <b>Análise</b> de um jogo.</p>
+      <ul><li><b>Equipa</b>: escolhe o adversário (separado por Elite, Academy e Girls) ou <b>Hammers</b>, para vermos se nós próprios estamos a ser previsíveis.</li>
+      <li><b>Tendências principais</b>: passe ou corrida, zona favorita, bolas fundas, alvo principal, 3º e 4º down, formação, perto da end zone, conversões e a defesa deles. Com poucas jogadas, a app avisa.</li>
+      <li><b>Para onde vai a bola</b>: % das bolas em cada zona e % de completos. Filtra por down, distância, zona do campo e formação. Toca numa linha das tabelas para filtrar.</li>
+      <li><b>Como defendem</b>: para onde se lhes atira e quem faz as jogadas (flags, PBU, INT, sacks).</li>
+      <li><b>Jogos incluídos</b>: toca num jogo para o tirar do relatório.</li></ul>
+      <p>A distância e a zona do campo precisam das jardas da tape review. <b>Imprimir</b> dá uma folha para levar para o jogo.</p>`},
     {id:'plays',t:'Lista de jogadas',b:`<ul>
       <li>Todas as jogadas do jogo, a mais recente primeiro.</li>
       <li><b>Anular</b> tira a jogada das stats mas guarda-a. <b>Apagar</b> remove-a (pede confirmação).</li>
@@ -368,6 +411,13 @@ function helpData(){
       <li><b>Heatmap</b>: the more yellow, the more balls went to that zone. Shows the number of balls and completion %.</li>
       <li><b>Targets by player</b>: targets, completions, %, TD, INT and runs. Tap a player to show only their balls on the map.</li>
       <li><b>By down</b>: most used zone, target and formation on each down. Tap a down to filter.</li></ul>`},
+    {id:'scout',t:'Opponent report',b:`<p>Adds up every game tracked against one team and shows what it tends to do. Open it from <b>Home</b> → <b>Opponent report</b>, from ${btn('',t('game'))} or with the button in a game's <b>Analysis</b>.</p>
+      <ul><li><b>Team</b>: pick the opponent (kept apart by Elite, Academy and Girls) or <b>Hammers</b>, to check whether we are predictable ourselves.</li>
+      <li><b>Key tendencies</b>: pass or run, favorite zone, deep balls, main target, 3rd and 4th down, formation, near the end zone, conversions and their defense. With few plays, the app warns you.</li>
+      <li><b>Where the ball goes</b>: % of balls in each zone and completion %. Filter by down, distance, field position and formation. Tap a table row to filter.</li>
+      <li><b>How they defend</b>: where teams throw on them and who makes the plays (flags, PBU, INT, sacks).</li>
+      <li><b>Games included</b>: tap a game to leave it out of the report.</li></ul>
+      <p>Distance and field position need the yards from the tape review. <b>Print</b> gives a sheet to take to the game.</p>`},
     {id:'plays',t:'Play list',b:`<ul>
       <li>Every play of the game, most recent first.</li>
       <li><b>Nullify</b> removes the play from stats but keeps it. <b>Delete</b> removes it (asks to confirm).</li>
@@ -457,8 +507,10 @@ function cloudGames(){
     if(op.k==='set')m[id]=op.body;else if(op.k==='upd'&&m[id])m[id]=merge(m[id],op.patch);else if(op.k==='del')delete m[id]}
   return Object.entries(m).map(([id,b])=>({id,...clone(b)})).sort((a,b)=>(b.created||0)-(a.created||0));
 }
+/* events of other games, read once for the opponent report (the open game has a live subscription instead) */
+const scoutEv={};
 function cloudEvents(gid){
-  const m={};if(cloud.subGid===gid)for(const id in cloud.remoteEv)m[id]=cloud.remoteEv[id];
+  const m={}, src=cloud.subGid===gid?cloud.remoteEv:(scoutEv[gid]&&scoutEv[gid].m)||{};for(const id in src)m[id]=src[id];
   const pre=`games/${gid}/events/`;
   for(const op of overlayOps()){if(!op.path.startsWith(pre))continue;const id=op.path.slice(pre.length);
     if(op.k==='set')m[id]=op.body;else if(op.k==='del')delete m[id]}
@@ -597,39 +649,49 @@ function chEv(e,patch,grp){const before=strip(e);S().put(g.id,{...before,...patc
 function rmEv(e,grp){grp.push({k:'put',before:strip(e)});S().del(g.id,e.id)}
 function updGame(patch){S().updGame(g.id,patch)}
 
-function makeSample(){
-  const G={id:'demo',...newMeta({team:'Elite',comp:'LFFF1',opp:'Demo FC',rosterA:[7,13,88,4,21],formA:['Double','Double QB','Trips']}),events:[]};
+/* sample games against Demo FC: the demo game, and two more (other seeds, earlier dates) that only the opponent report uses */
+function makeSample(seed0=7,id='demo',ago=0){
+  const G={id,...newMeta({team:'Elite',comp:'LFFF1',opp:'Demo FC',rosterA:[7,13,88,4,21],formA:['Double','Double QB','Trips']}),events:[]};
+  if(ago)G.date=new Date(Date.now()-ago*864e5).toISOString().slice(0,10);
   G.roster.A=[7,13,88,4,21,3,9];
-  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  let seed=seed0;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
   const pick=w=>{const tt=w.reduce((a,b)=>a+b[1],0);let r=rnd()*tt;for(const [v,p] of w){if((r-=p)<=0)return v}return w[0][0]};
   const recW={H:[[11,5],[23,4],[8,3],[17,3],[5,1]],A:[[13,6],[7,4],[88,3],[4,1],[21,1]]};
   const defW={H:[[3,2],[9,1]],A:[[2,1],[31,2],[77,1]]};
+  const qbW={H:[[2,5],[5,1]],A:[[4,5],[7,1]]};
   const zW={H:[['21',4],['20',3],['11',3],['22',3],['12',2],['10',2],['01',1],['02',1],['30',1],['32',1]],
             A:[['22',6],['12',5],['02',3],['21',3],['20',1],['11',2],['01',1],['32',2]]};
   const fW={H:[['Double',3],['Trips',2],['Bunch',1]],A:[['Double',3],['Double QB',2],['Trips',1]]};
-  let ts=1;const push=e=>{e.id='d'+ts;e.ts=ts++;G.events.push(e)};
+  /* yards by depth band (deep, mid, short, behind the line): first downs and goal to go come from the ball spot */
+  const ydsW=[[16,10],[8,7],[2,4],[-1,5]], ydsOf=z=>{const b=ydsW[+z[0]];return b[0]+Math.floor(rnd()*b[1])};
+  let ts=1;const push=e=>{e.id=id[0]+id.slice(4)+'-'+ts;e.ts=ts++;G.events.push(e)};
   for(let i=0;i<46;i++){
     if(i===24)push({t:'half'});
-    const st=replay(G), s=st.poss;
+    const st=replay(G), s=st.poss, spot=st.spot==null?{spot:8+Math.floor(rnd()*12)}:{};
     const prev=G.events[G.events.length-1];
     if(prev&&prev.t==='play'&&prev.res==='TD'&&!prev.convSkip){
       const pts=rnd()<.6?1:2,res=rnd()<.6?'G':'NG';
-      push({t:'conv',side:prev._side||s,pts,zone:pick([['g11',2],['g10',1],['g12',1],['g01',1]]),rec:pick(recW[prev._side||s]),res});
+      push({t:'conv',side:prev._side||s,pts,zone:pick([['g11',2],['g10',1],['g12',1],['g01',1]]),rec:pick(recW[prev._side||s]),res,qb:pick(qbW[prev._side||s])});
       replay(G);continue;
     }
-    if(rnd()<.06){push({t:'play',kind:'sack',zone:null,rec:null,res:'SACK',dby:pick(defW[s]),fd:false,form:pick(fW[s]),qb2:false,annul:false});continue}
-    if(rnd()<.1){push({t:'play',kind:'run',zone:pick([['21',1],['20',1],['22',1]]),rec:pick(recW[s]),res:'R',fd:rnd()<.3,form:pick(fW[s]),qb2:false,annul:false});continue}
+    const fby=rnd()<.6?{fby:pick(defW[s])}:{};
+    if(rnd()<.06){push({t:'play',kind:'sack',zone:null,rec:null,res:'SACK',dby:pick(defW[s]),fd:false,form:pick(fW[s]),qb2:false,annul:false,yds:-2,...spot});continue}
+    if(rnd()<.1){push({t:'play',kind:'run',zone:pick([['21',1],['20',1],['22',1]]),rec:pick(recW[s]),res:'R',fd:false,form:pick(fW[s]),qb2:false,annul:false,yds:1+Math.floor(rnd()*8),...fby,...spot});continue}
     const zone=pick(zW[s]);let res=rnd()<.64?'C':'X';
     if(res==='C'&&zone[0]==='0'&&rnd()<.45)res='TD';
     if(res==='X'&&rnd()<.08)res='INT';
     if(res==='C'&&st.down>=3&&rnd()<.25&&s==='H')res='TD';
+    let yds=res==='C'?ydsOf(zone):null;
+    const los=spot.spot!=null?spot.spot:st.spot;
+    if(yds!=null&&los+yds>=FIELD){res='TD';yds=null}
     const form=pick(fW[s]);
-    push({t:'play',kind:'pass',zone,rec:pick(recW[s]),res,fd:res==='C'&&rnd()<.35,form,
-      qb2:form==='Double QB'||(s==='A'&&rnd()<.08),annul:false,...(res==='INT'?{dby:pick(defW[s]),pick6:false}:{})});
+    push({t:'play',kind:'pass',zone,rec:pick(recW[s]),res,fd:false,form,qb:pick(qbW[s]),
+      qb2:form==='Double QB'||(s==='A'&&rnd()<.08),annul:false,...(yds!=null?{yds}:{}),...(res==='C'?fby:{}),...spot,
+      ...(res==='INT'?{dby:pick(defW[s]),pick6:false}:{})});
     if(i===17){const p=G.events[G.events.length-1];p.annul=true;push({t:'pen',eff:'rep',annulId:p.id})}
     replay(G);
   }
-  G.events.forEach(e=>{delete e._side;delete e._down;delete e._tod;delete e._half});
+  G.events.forEach(e=>{for(const k in e)if(k[0]==='_')delete e[k]});
   return G;
 }
 
@@ -770,6 +832,7 @@ function render(){
   if(document.getElementById('vbox')&&!vidAway()){const tt=vTime();if(tt!=null)vid.resume=tt}
   app.dataset.tape=view==='tape'?g.id:'';
   if(view==='home'){app.innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
+  if(view==='scout'){app.innerHTML=scoutView();prevRender=null;if(pendingReload)setTimeout(reloadIfIdle,300);return}
   app.innerHTML=`${topHTML(st)}
   <nav class="tabs" role="tablist">
     ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape')+'<span class="beta">BETA</span>':t('tabs')[k]}</button>`).join('')}
@@ -855,6 +918,7 @@ function homeView(st){
     <section class="htiles">
       ${tile('newgame','+',t('newGameT'),t('newGameS'),'accent')}
       ${tile('games','▦',t('allGamesBtn'),t('gamesS'))}
+      ${tile('scout','◎',t('sc'),t('scS'))}
       ${tile('help','?',t('helpMenu'),t('helpS'))}
       ${isAdmin?tile('members','👥',t('members'),t('membersS')):''}
     </section>
@@ -1005,7 +1069,7 @@ function anaView(){
   const tiles=conv?[[passes.length,t('convTries')],[pct(comp,passes.length),t('convGood')],[passes.filter(e=>e.res==='INT').length,'INT'],
       [passes.filter(e=>e.res==='G'&&e.pts===1).length+'/'+passes.filter(e=>e.pts===1).length,'1 pt'],[passes.filter(e=>e.res==='G'&&e.pts===2).length+'/'+passes.filter(e=>e.pts===2).length,'2 pts']]
     :[[passes.length,TL[0]],[pct(comp,passes.length),TL[1]],[P.filter(e=>e.res==='TD').length,TL[2]],
-      [passes.filter(e=>e.res==='INT').length,TL[3]],[runs.length,TL[4]],[base.filter(e=>e.kind==='sack').length,t('sacks')],[P.filter(e=>e.fd).length,TL[5]],[P.filter(e=>e.qb2).length,TL[6]]];
+      [passes.filter(e=>e.res==='INT').length,TL[3]],[runs.length,TL[4]],[base.filter(e=>e.kind==='sack').length,t('sacks')],[P.filter(e=>e.fd||e._autoFd).length,TL[5]],[P.filter(e=>e.qb2).length,TL[6]]];
   // yards come from the tape review
   const Y=P.filter(e=>e.t==='play'&&e.yds!=null), hasY=!conv&&Y.length>0, sum=(l,k)=>l.reduce((a,e)=>a+(e[k]||0),0), avg=l=>l.length?(sum(l,'yds')/l.length).toFixed(1):'-';
   if(hasY){const TY=t('tilesY');tiles.push([sum(Y,'yds'),TY[0]],[avg(Y),TY[1]],[Y.filter(e=>e.yds>=15).length,TY[2]])}
@@ -1063,6 +1127,7 @@ function anaView(){
       ${seg('half',[[0,t('game_')],[1,t('h1')],[2,t('h2')]])}
       ${forms.length&&!conv?seg('form',[['',t('allF')],...forms.map(f=>[esc(f),esc(f)])]):''}
       <label class="check" style="padding:6px 10px"><input type="checkbox" id="an-annul" data-act="anannul" ${an.annul?'checked':''}>${t('inclAnnul')}</label>
+      <button class="btn" data-act="scout" data-key="${esc(scKeyOf(g,an.side))}">◎ ${t('scBtn')}</button>
       ${qh('analysis')}
     </div>
     <div class="tiles">${tiles.map(([v,l])=>`<div class="tile"><b class="num">${v}</b><span>${l}</span></div>`).join('')}</div>
@@ -1090,6 +1155,170 @@ function anaView(){
         </section>
       </div>
     </div>`;
+}
+/* ---------- opponent report: one team's tendencies across every game tracked against it (or our own, to self-scout) ---------- */
+const sc={key:null,off:{},area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null};
+const scReset=()=>Object.assign(sc,{area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null});
+let scFresh={}, demoX=null;
+const normOpp=x=>String(x||'').trim().toLowerCase();
+/* the sample opponent gets two more sample games, so the report has games to add up in the demo and the preview */
+function scoutGames(){
+  const l=games.filter(x=>x.store!=='demo'), d=games.find(x=>x.store==='demo');
+  if(d){if(!demoX)demoX=[makeSample(11,'demo2',14),makeSample(23,'demo3',28)].map(G=>({...G,store:'demo',sample:true,extra:true}));l.push(d,...demoX)}
+  return l;
+}
+/* a team is the opponent's name inside one of our teams (Elite, Academy, Girls), or the Hammers team itself */
+const scKeyOf=(x,s)=>s==='H'?'H|'+(x.store==='demo'?'demo':x.team):'A|'+x.team+'|'+normOpp(x.opp);
+function scoutTeams(){
+  const m={};
+  scoutGames().forEach(x=>['A','H'].forEach(s=>{const k=scKeyOf(x,s);
+    (m[k]=m[k]||{key:k,side:s,name:s==='H'?'Hammers':x.opp,team:x.team,demo:x.store==='demo',games:[]}).games.push(x)}));
+  return Object.values(m).sort((a,b)=>(a.side==='H')-(b.side==='H')||b.games.length-a.games.length||String(a.name).localeCompare(String(b.name)));
+}
+/* shared games other than the open one are read once per visit to the report */
+function scoutFetch(G){
+  if(G.store!=='cloud'||!cloud.db||G.id===cloud.subGid||scFresh[G.id])return;
+  scFresh[G.id]=true;const c=scoutEv[G.id];scoutEv[G.id]={...(c||{}),loading:true};
+  cloud.db.collection(`games/${G.id}/events`).orderBy('ts').limit(1000).get()
+    .then(r=>{const m={};r.docs.forEach(d=>{m[d.id]=d.data()});scoutEv[G.id]={m}})
+    .catch(()=>{scoutEv[G.id]={m:(c&&c.m)||null,err:true}})
+    .then(()=>{if(view==='scout')render()});
+}
+const scoutReady=G=>G.store!=='cloud'||G.id===cloud.subGid||!!(scoutEv[G.id]&&scoutEv[G.id].m);
+function scoutGame(G){const X={...G,events:sortEv(G.store==='cloud'?cloudEvents(G.id):clone(G.events||[]))};X.st=replay(X);return X}
+const scTop=(arr,f)=>{const m={};arr.forEach(e=>{const k=f(e);if(k!=null)m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])[0]||null};
+/* field position: 1 = own half, 2 = beyond midfield (goal to go), 0 = unknown */
+const posOf=e=>e._goal?2:e._spot!=null?1:0;
+function scHeat(P,gl){
+  const ROWS=gl?t('glRows'):t('rows'), COLS=t('cols'), zl=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zl.push((gl?'g':'')+r+c);
+  const tot=P.filter(e=>e.zone).length, max=Math.max(1,...zl.map(z=>P.filter(e=>e.zone===z).length));
+  return zl.map(z=>{
+    const r=+z[gl?1:0], c=+z[gl?2:1], h=P.filter(e=>e.zone===z), a=h.length/max, pc=h.filter(isPassLike), ink=a>.55?'#1a1205':'#fff';
+    return `<div class="az heat r${r}${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}" style="background:rgba(255,214,10,${(a*.8).toFixed(2)})"><span class="zl">${ROWS[r]} ${COLS[c]}</span>
+      ${h.length?`<b class="num" style="color:${ink}">${pct(h.length,tot)}</b><span style="color:${ink}">${h.length} · ${pc.length?pct(pc.filter(isComp).length,pc.length)+' '+t('comp'):t('runsLow')}</span>`:''}</div>`}).join('');
+}
+function scoutView(){
+  const T=scoutTeams();
+  if(!T.find(x=>x.key===sc.key)){const k=g&&scKeyOf(g,'A');sc.key=((T.find(x=>x.key===k)||T[0])||{}).key||null}
+  const team=T.find(x=>x.key===sc.key);
+  const head=`<header class="top home-top">
+      <button class="hlogo-btn" data-act="home" aria-label="${t('home')}"><img class="hlogo" src="icons/logo.png" alt="" width="52" height="50"></button>
+      <div class="htitle"><b>${t('sc')}</b><small>${t('scS')}</small></div>
+      <button class="chip opts noprint" data-act="scprint">${t('scPrint')}</button>
+    </header>`;
+  if(!team)return head+`<p class="note">${t('scNone')}</p>`;
+  const S=team.side, O=other(S), us=S==='H', name=us?'Hammers':esc(team.name);
+  const list=team.games.slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(b.created||0)-(a.created||0));
+  list.forEach(scoutFetch);
+  const R={};list.forEach(G=>{if(scoutReady(G))R[G.id]=scoutGame(G)});
+  const X=list.filter(G=>!sc.off[G.id]&&R[G.id]).map(G=>R[G.id]), waiting=list.filter(G=>!sc.off[G.id]&&!R[G.id]&&!(scoutEv[G.id]&&scoutEv[G.id].err)).length;
+  const opts=T.map(x=>`<option value="${esc(x.key)}" ${x.key===sc.key?'selected':''}>${x.side==='H'?t('scUs'):esc(x.name)} · ${esc(x.team)}${x.demo?' ('+t('sample')+')':''} · ${t('scGamesN',x.games.length)}</option>`).join('');
+  // record and points, from the scouted team's side
+  const nG=X.length, W=X.filter(x=>x.st.score[S]>x.st.score[O]).length, Lo=X.filter(x=>x.st.score[S]<x.st.score[O]).length;
+  const avgPts=k=>nG?(X.reduce((a,x)=>a+x.st.score[k],0)/nG).toFixed(1):'-', WDL=t('scWDL');
+  const hero=`<section class="hero sc-hero side-${S}"><span class="lbl2">${esc(team.team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
+      <div class="gtxt"><b>${name}</b></div>
+      <div class="sc-stats">
+        <div><b class="num">${W}${WDL[0]} ${nG-W-Lo}${WDL[1]} ${Lo}${WDL[2]}</b><small>${t('scRecord')}${us?'':' '+t('scRecVs')}</small></div>
+        <div><b class="num">${avgPts(S)}</b><small>${t('scPtsFor')}</small></div>
+        <div><b class="num">${avgPts(O)}</b><small>${t('scPtsAg')}</small></div>
+      </div></section>`;
+  const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select></div>`;
+  const evs=side=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===side&&!e.annul));
+  const off=evs(S), def=evs(O);
+  // key tendencies: plain numbers a coach can read before the game
+  const plays=off.filter(e=>e.t==='play'), pas=plays.filter(e=>e.kind==='pass'), runs=plays.filter(e=>e.kind==='run');
+  const fp=pas.filter(e=>e.zone&&!isGL(e.zone)), ins=[];
+  if(pas.length+runs.length)ins.push([t('scPassK'),t('scPassPct',pct(pas.length,pas.length+runs.length)),t('scPassTxt',pas.length,runs.length)]);
+  const tz=scTop(fp,e=>e.zone);
+  if(tz){const h=fp.filter(e=>e.zone===tz[0]);ins.push([t('scZoneK'),zoneName(tz[0]),t('scZoneTxt',pct(tz[1],fp.length),pct(h.filter(isComp).length,h.length))])}
+  if(fp.length){const d=fp.filter(e=>e.zone[0]==='0').length;ins.push([t('scDeepK'),pct(d,fp.length),t('scDeepTxt',d)])}
+  const trc=scTop(pas,e=>e.rec);
+  if(trc){const h=pas.filter(e=>String(e.rec)===trc[0]);ins.push([t('scRecK'),'#'+trc[0],t('scRecTxt',pct(trc[1],pas.length),pct(h.filter(isComp).length,h.length),h.filter(e=>e.res==='TD').length)])}
+  const late=plays.filter(e=>e._down>=3&&e.kind!=='sack'), lp=late.filter(e=>e.kind==='pass');
+  if(late.length){const z=scTop(lp.filter(e=>e.zone),e=>e.zone), r=scTop(lp,e=>e.rec);
+    ins.push([t('scLateK'),t('scPassPct',pct(lp.length,late.length)),[z?t('scFavZone',zoneName(z[0])):'',r?t('scFavRec',r[0]):''].filter(Boolean).join(' · ')||t('scPlaysN',late.length)])}
+  const tf=scTop(plays,e=>e.form);
+  if(tf){const h=plays.filter(e=>e.form===tf[0]&&e.kind!=='sack');ins.push([t('scFormK'),esc(tf[0]),t('scFormTxt',pct(tf[1],plays.length),pct(h.filter(e=>e.kind==='pass').length,h.length))])}
+  const gp=plays.filter(e=>isGL(e.zone)), gz=scTop(gp,e=>e.zone);
+  if(gz)ins.push([t('scGlK'),zoneName(gz[0]),t('scGlTxt',pct(gz[1],gp.length),gp.length)]);
+  const cv=off.filter(e=>e.t==='conv');
+  if(cv.length){const one=cv.filter(e=>e.pts===1), two=cv.filter(e=>e.pts===2), gd=l=>l.filter(e=>e.res==='G').length;
+    ins.push([t('scConvK'),t('scConvBig',pct(one.length,cv.length)),t('scConvTxt',gd(one),one.length,gd(two),two.length)])}
+  const dp=def.filter(e=>e.t==='play'&&e.kind==='pass');
+  if(dp.length)ins.push([t('scDefK',us),t('scCompPct',pct(dp.filter(isComp).length,dp.length)),t('scDefTxt',us,def.filter(e=>e.res==='INT').length,def.filter(e=>e.res==='SACK').length)]);
+  const insHTML=ins.length?`<section class="sc-sec"><h2>${t('scKey')}</h2><p class="note">${plays.length<20?t('scFew',plays.length):t('scSample',plays.length)}</p>
+      <div class="sc-ins">${ins.map(([k,b,x])=>`<div class="ins side-${S}"><span class="lbl2">${k}</span><b>${b}</b><small>${x}</small></div>`).join('')}</div></section>`:'';
+  // filters: the map and every table follow them, except each table ignores its own dimension so all its rows stay visible,
+  // and the tables ignore pass / run so their pass % means something
+  const conv=sc.area==='conv', gl=sc.area!=='field';
+  const inA=e=>conv?e.t==='conv':e.t==='play'&&(e.kind==='sack'?sc.area==='field':(sc.area==='gl')===isGL(e.zone));
+  const fil=(l,skip)=>l.filter(e=>inA(e)&&(e.t==='conv'||skip||sc.kind==='all'||(sc.kind==='run'?e.kind==='run':e.kind==='pass'))
+    &&(e.t==='conv'||skip==='down'||!sc.down||e._down===sc.down)&&(e.t==='conv'||skip==='dist'||!sc.dist||distB(e._dist)===sc.dist)
+    &&(e.t==='conv'||skip==='pos'||!sc.pos||posOf(e)===sc.pos)&&(skip==='form'||!sc.form||e.form===sc.form)&&(skip==='rec'||sc.rec==null||e.rec===sc.rec));
+  const P=fil(off), hasDist=plays.some(e=>e._dist!=null&&(e.yds!=null||e.spot!=null)), hasPos=plays.some(e=>posOf(e)===2);
+  const seg=(key,o)=>`<div class="seg">${o.map(([v,l])=>`<button data-act="sc" data-k="${key}" data-v="${esc(v)}" aria-pressed="${String(sc[key]==null?'':sc[key])===String(v)}">${l}</button>`).join('')}</div>`;
+  const D=t('downs'), forms=[...new Set(plays.map(e=>e.form).filter(Boolean))];
+  const filtered=sc.down||sc.dist||sc.pos||sc.form||sc.rec!=null||sc.kind!=='pass'||sc.area!=='field';
+  const filters=`<div class="filters">
+      ${seg('area',[['field',t('mapField')],['gl','GL'],['conv',t('convs')]])}
+      ${conv?'':seg('kind',[['pass',t('passes')],['run',t('runs')],['all',t('all')]])}
+      ${conv?'':seg('down',[[0,t('allM')],[1,D[0]],[2,D[1]],[3,D[2]],[4,D[3]]])}
+      ${!conv&&hasDist?seg('dist',[[0,t('distAll')],[1,'0-5'],[2,'5-10'],[3,'10-15'],[4,'15+']]):''}
+      ${!conv&&hasPos?seg('pos',[[0,t('scPosAll')],[1,t('scPosOwn')],[2,t('scPosGoal')]]):''}
+      ${forms.length&&!conv?seg('form',[['',t('allF')],...forms.map(f=>[f,esc(f)])]):''}
+      ${filtered?`<button class="btn noprint" data-act="scclear">${t('scClear')}</button>`:''}
+    </div>`;
+  const pP=P.filter(isPassLike);
+  const mapHTML=`<section class="panel"><div class="toolbar"><h3>${t('scMapT')}${sc.rec!=null?' · #'+sc.rec:''}</h3>
+      <span class="note">${t('scPlaysN',P.length)} · ${pct(pP.filter(isComp).length,pP.length)} ${t('comp')}</span></div>
+      <div class="amap${gl?' glmap':''}">${scHeat(P,gl)}</div><p class="note">${t('scMapNote')}</p></section>`;
+  // tables
+  const cellsOf=l=>{const np=l.filter(e=>e.kind!=='sack'), p=l.filter(isPassLike), z=scTop(p.filter(e=>e.zone),e=>e.zone), r=scTop(p,e=>e.rec);
+    return [l.length,pct(p.length,np.length),pct(p.filter(isComp).length,p.length),z?zoneName(z[0]):'-',r?'#'+r[0]:'-']};
+  const tr=(k,v,sel,cells)=>`<tr data-act="sc" data-k="${k}" data-v="${esc(v)}" data-tog="1" aria-selected="${sel}">${cells.map((c,i)=>`<td${i===0?' class="jn"':''}>${c}</td>`).join('')}</tr>`;
+  const tbl=(title,head,rows)=>rows?`<section class="panel"><h3>${title}</h3><div class="tablewrap"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></section>`:'';
+  const topForm=l=>{const f=scTop(l,e=>e.form);return f?esc(f[0]):'-'};
+  let tables='';
+  if(!conv){
+    const DL=fil(off,'down').filter(e=>e.t==='play');
+    tables+=tbl(t('scByDown'),t('thScDown'),[1,2,3,4].map(d=>{const l=DL.filter(e=>e._down===d);return l.length?tr('down',d,sc.down===d,[ord(d),...cellsOf(l),topForm(l)]):''}).join(''));
+    if(hasDist){const DS=fil(off,'dist').filter(e=>e.t==='play'&&e._dist!=null), B=['0-5','5-10','10-15','15+'];
+      tables+=tbl(t('scByDist'),t('thScDist'),B.map((b,i)=>{const l=DS.filter(e=>distB(e._dist)===i+1);return l.length?tr('dist',i+1,sc.dist===i+1,[b,...cellsOf(l),topForm(l)]):''}).join(''))}
+    const FL=fil(off,'form').filter(e=>e.t==='play'), fm={};FL.forEach(e=>{(fm[e.form||'']=fm[e.form||'']||[]).push(e)});
+    tables+=tbl(t('scByForm'),t('thScForm'),Object.entries(fm).sort((a,b)=>b[1].length-a[1].length).map(([f,l])=>tr('form',f,(sc.form||'')===f&&!!f,[f?esc(f):t('scNoForm'),...cellsOf(l)])).join(''));
+  }
+  const RL=fil(off,'rec').filter(e=>e.kind!=='sack'), rm={};RL.forEach(e=>{const k=e.rec==null?'?':e.rec;(rm[k]=rm[k]||[]).push(e)});
+  const nT=RL.filter(isPassLike).length;
+  tables+=tbl(t('scTargets'),t('thScRec'),Object.entries(rm).map(([k,l])=>({k,l,p:l.filter(isPassLike)})).sort((a,b)=>b.p.length-a.p.length||b.l.length-a.l.length).map(({k,l,p})=>{
+    const z=scTop(p.filter(e=>e.zone),e=>e.zone);
+    return tr('rec',k==='?'?'':k,String(sc.rec)===k,[k==='?'?t('noNum'):'#'+k,p.length,pct(p.length,nT),pct(p.filter(isComp).length,p.length),l.filter(e=>e.res==='TD').length,l.filter(e=>e.kind==='run').length,z?zoneName(z[0]):'-'])}).join(''));
+  const qm={};P.filter(e=>isPassLike(e)&&e.qb!=null).forEach(e=>{(qm[e.qb]=qm[e.qb]||[]).push(e)});
+  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>`<tr><td class="jn">#${k}</td><td>${l.length}</td><td>${pct(l.filter(isComp).length,l.length)}</td><td>${l.filter(e=>e.res==='TD').length}</td><td>${l.filter(e=>e.res==='INT').length}</td></tr>`).join(''));
+  // the scouted team on defense: where opponents throw on them, and who makes the plays
+  const dfp=dp.filter(e=>e.zone&&!isGL(e.zone));
+  const dv={}, dk=k=>dv[k]=dv[k]||{f:0,b:0,i:0,p6:0,s:0};
+  def.forEach(e=>{if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
+    if(e.fby!=null)dk(e.fby).f++;if(e.pbu!=null)dk(e.pbu).b++});
+  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
+  const defHTML=dfp.length||drows?`<section class="sc-sec"><h2>${t('scDefence',us)}</h2><div class="ana">
+      ${dfp.length?`<section class="panel"><div class="toolbar"><h3>${t('scDefMap',us)}</h3><span class="note">${t('scPlaysN',dfp.length)} · ${pct(dfp.filter(isComp).length,dfp.length)} ${t('comp')}</span></div>
+        <div class="amap">${scHeat(dfp,false)}</div><p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
+      ${tbl(t('scDefPl'),t('thScDef'),drows)}</div></section>`:'';
+  const resOf=x=>x.st.score[S]>x.st.score[O]?0:x.st.score[S]<x.st.score[O]?2:1;
+  const gamesHTML=`<section class="sc-sec"><h2>${t('scGamesT')}</h2><p class="note noprint">${t('scGamesNote')}</p><div class="sc-games">${list.map(G=>{
+      const x=R[G.id], off_=!!sc.off[G.id], e=scoutEv[G.id], r=x?resOf(x):null;
+      const st=off_?t('scOff'):x?`${x.st.score[S]}-${x.st.score[O]} · ${t('scPlaysN',x.events.filter(e=>e.t==='play').length)}`:e&&e.err?t('scLoadFail'):t('scLoadingG');
+      return `<div class="scg${off_?' off':''}"><button class="scg-main" data-act="scgame" data-id="${G.id}" aria-pressed="${!off_}">
+          <span class="res r${r==null?'':r}">${r==null?'·':WDL[r]}</span>
+          <span class="gtxt"><b>${us?'vs '+esc(G.opp):esc(G.date||'')}</b><small>${us?esc(G.date||'')+' · ':''}${esc(G.comp)} · ${st}</small></span></button>
+        ${G.extra?'':`<button class="btn noprint" data-act="openg" data-id="${G.id}" data-v="ana">${t('scOpenA')}</button>`}</div>`}).join('')}</div></section>`;
+  const body=X.length&&off.length?`${insHTML}
+    <section class="sc-sec"><h2>${t('scAttack',us)}</h2>${filters}
+      <div class="ana">${mapHTML}<div class="sc-tables">${tables}</div></div></section>
+    ${defHTML}`:`<p class="note">${waiting?'':t('scNoPlays')}</p>`;
+  return `${head}${pickRow}${hero}${waiting?`<p class="note">${t('scLoading',waiting)}</p>`:''}${body}${gamesHTML}
+    <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
 function logView(){
   replay();
@@ -1484,6 +1713,7 @@ function renderSheet(){
       <div class="optlist">
         ${row('home','⌂',t('home'),t('homeS'))}
         ${row('games','▦',t('gamesMenu'),t('gamesS'))}
+        ${row('scout','◎',t('sc'),t('scS'))}
         ${isAdmin?row('members','👥',t('members'),t('membersS')):''}
         ${row('help','?',t('helpMenu'),t('helpS'))}
         <div class="optrow static"><span class="oi" aria-hidden="true">🌐</span><span><b>${t('language')}</b></span>
@@ -1706,6 +1936,14 @@ document.addEventListener('click',ev=>{
     case 'lang':{lang=b.dataset.l;lsSet(LS_LANG,lang);render();if(sheet){if(sheet.kind==='help')sheet.sec=null;renderSheet()}break}
     case 'help':openSheet('help',{sec:b.dataset.sec||''});break;
     case 'members':openSheet('members');break;
+    case 'scout':{sheet=null;document.getElementById('layer').innerHTML='';draft=null;runMode=false;
+      if(b.dataset.key&&b.dataset.key!==sc.key){sc.key=b.dataset.key;sc.off={};scReset()}scFresh={};view='scout';render();scrollTo(0,0);break}
+    case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=v===''?null:+v;if(k==='form'&&v==='')v=null;
+      if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'?null:0;
+      sc[k]=v;if(k==='area'&&v==='conv'){sc.down=0;sc.dist=0;sc.pos=0;sc.form=null}render();break}
+    case 'scclear':{const k=sc.key,o=sc.off;scReset();sc.key=k;sc.off=o;render();break}
+    case 'scgame':sc.off[b.dataset.id]=!sc.off[b.dataset.id];render();break;
+    case 'scprint':window.print();break;
     case 'opts':openSheet('opts');break;
     case 'medit':sheet.medit=b.dataset.id;renderSheet();break;
     case 'mcancel':sheet.medit=null;renderSheet();break;
@@ -1783,6 +2021,7 @@ document.addEventListener('click',ev=>{
   }
 });
 document.addEventListener('change',ev=>{
+  if(authed&&ev.target&&ev.target.id==='sc-team'){sc.key=ev.target.value;sc.off={};scReset();render();return}
   if(authed&&ev.target&&ev.target.id==='pen-annul'&&sheet&&sheet.kind==='pen'){sheet.annul=ev.target.checked;renderSheet();return}
   if(!authed||!ev.target||ev.target.id!=='t-note')return;
   const e=tapeCur().e,v=ev.target.value.trim();
@@ -1905,9 +2144,10 @@ async function signOutNow(){try{await fb.signOut(fb.auth)}catch(e){}location.rel
     let fs;try{fs=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){fs=F.getFirestore(app)}
     const shim={
       doc:p=>{const d=F.doc(fs,p);return {set:b=>F.setDoc(d,b),update:b=>F.setDoc(d,b,{merge:true}),delete:()=>F.deleteDoc(d)}},
-      collection:p=>{const cons=[];const api={where(f,op,v){cons.push(F.where(f,op,v));return api},orderBy(f,dir){cons.push(F.orderBy(f,dir||'asc'));return api},limit(n){cons.push(F.limit(n));return api},
-        onSnapshot(next,err){const q=cons.length?F.query(F.collection(fs,p),...cons):F.collection(fs,p);
-          return F.onSnapshot(q,s=>next({docs:s.docs.map(d=>({id:d.id,data:()=>d.data()}))}),err)}};return api}
+      collection:p=>{const cons=[];const q=()=>cons.length?F.query(F.collection(fs,p),...cons):F.collection(fs,p), wrap=s=>({docs:s.docs.map(d=>({id:d.id,data:()=>d.data()}))});
+        const api={where(f,op,v){cons.push(F.where(f,op,v));return api},orderBy(f,dir){cons.push(F.orderBy(f,dir||'asc'));return api},limit(n){cons.push(F.limit(n));return api},
+        onSnapshot(next,err){return F.onSnapshot(q(),s=>next(wrap(s)),err)},
+        get(){return F.getDocs(q()).then(wrap)}};return api}
     };
     fb={auth,fs,shim,doc:F.doc,getDoc:F.getDoc,setDoc:F.setDoc,deleteDoc:F.deleteDoc,
       sendSignInLinkToEmail:U.sendSignInLinkToEmail,isSignInWithEmailLink:U.isSignInWithEmailLink,signInWithEmailLink:U.signInWithEmailLink,signOut:U.signOut,signInWithEmailAndPassword:U.signInWithEmailAndPassword,updatePassword:U.updatePassword,A,U,cfg};
