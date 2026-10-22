@@ -296,7 +296,7 @@ function helpData(){
       <li>Vê o clip da jogada e completa: <b>jardas</b>, <b>YAC</b> nos completos, <b>QB</b>, <b>formação</b> e <b>nome da jogada</b> (opcional) quando atacamos. Quando defendemos: QB e formação do adversário, <b>quem tirou a flag</b> e <b>PBU</b>.</li>
       <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou.</li>
       <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte. Na última jogada, o botão passa a <b>Nova jogada</b> e cria a seguinte, como no Registo: depois de um TD é a conversão (1 ou 2 pts, ou <b>Sem conversão</b>), senão um passe que podes mudar para corrida ou sack. Assim dá para registar o jogo todo a partir da tape.</li></ol>
-      <ul><li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (1-5, 6-10, 11-14, 15+).</li>
+      <ul><li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (0-5, 5-10, 10-15, 15+).</li>
       <li>QB e formação vêm preenchidos com os da jogada anterior (tracejado). Só tocas se mudarem.</li>
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
@@ -368,7 +368,7 @@ function helpData(){
       <li>Watch the play's clip and fill in: <b>yards</b>, <b>YAC</b> on completions, <b>QB</b>, <b>formation</b> and <b>play name</b> (optional) when we are on offense. On defense: opponent QB and formation, <b>who pulled the flag</b> and <b>PBU</b>.</li>
       <li>Fix the type, result, zone or receiver if the live tracking got it wrong.</li>
       <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play. On the last play the button becomes <b>New play</b> and creates the next one, like the Track tab: after a TD it is the conversion (1 or 2 pts, or <b>No conversion</b>), otherwise a pass you can switch to run or sack. So a whole game can be tracked from the tape.</li></ol>
-      <ul><li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (1-5, 6-10, 11-14, 15+).</li>
+      <ul><li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (0-5, 5-10, 10-15, 15+).</li>
       <li>QB and formation come filled in from the previous play (dashed). Only tap if they change.</li>
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
@@ -515,7 +515,8 @@ const FIELD=50, MID=25, SPOT0=5;
 /* ▼n = n yards from the offense's own goal line, ▲n = n yards from the end zone it attacks */
 const spotTxt=x=>x==null?'?':x<MID?'▼'+x:x===MID?t('midTag'):'▲'+(FIELD-x);
 const ddTxt=e=>`${ord(e._down)} & ${e._dist==null?'?':e._goal?'Goal':e._dist}`;
-const distB=d=>d==null?null:d<=5?1:d<=10?2:d<=14?3:4;
+/* same bands as the field zones: 0-5, 5-10, 10-15, 15+ (a band includes its upper number) */
+const distB=d=>d==null?null:d<=5?1:d<=10?2:d<=15?3:4;
 /* state machine: replay events to get down, possession, score, half */
 function replay(G){
   G=G||g;
@@ -978,7 +979,7 @@ function anaView(){
       ${seg('area',[['field',t('mapField')],['gl','GL'],['conv',t('convs')]])}
       ${conv?'':seg('kind',[['pass',t('passes')],['run',t('runs')],['all',t('all')]])}
       ${conv?'':seg('down',[[0,t('allM')],[1,D[0]],[2,D[1]],[3,D[2]],[4,D[3]]])}
-      ${!conv&&base.some(e=>e._dist!=null&&(e.yds!=null||e.spot!=null))?seg('dist',[[0,t('distAll')],[1,'1-5'],[2,'6-10'],[3,'11-14'],[4,'15+']]):''}
+      ${!conv&&base.some(e=>e._dist!=null&&(e.yds!=null||e.spot!=null))?seg('dist',[[0,t('distAll')],[1,'0-5'],[2,'5-10'],[3,'10-15'],[4,'15+']]):''}
       ${seg('half',[[0,t('game_')],[1,t('h1')],[2,t('h2')]])}
       ${forms.length&&!conv?seg('form',[['',t('allF')],...forms.map(f=>[esc(f),esc(f)])]):''}
       <label class="check" style="padding:6px 10px"><input type="checkbox" id="an-annul" data-act="anannul" ${an.annul?'checked':''}>${t('inclAnnul')}</label>
