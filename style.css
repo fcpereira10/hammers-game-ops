@@ -466,6 +466,7 @@ body.preview{padding-bottom:30px}
 .vctl .btn{min-height:40px;padding:0 12px;font-size:14px}
 .vctl .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .vctl .vt{font-size:13px;color:var(--muted);padding:0 4px}
+.vctl .btn.vt{padding:0 12px;color:var(--muted)}
 .vctl .vt b{color:var(--ink);font-size:15px}
 .vctl .vsp{flex:1}
 .tblk{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
