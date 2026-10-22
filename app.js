@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.6.0';
+const APP_VERSION='1.6.1';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -779,6 +779,12 @@ function render(){
   animateRender(st);
   if(pendingReload)setTimeout(reloadIfIdle,300);
 }
+/* down, distance and ball spot: the current situation in Track, the play on screen in the tape review */
+function downChip(st){
+  const c=view==='tape'?tapeCur().e:null, e=c&&c.t==='play'?c:null;
+  const d=e?e._down:st.down, sp=e?e._spot:st.spot, gl=e?e._goal:st.goal, h=e?e._half:st.half;
+  return `<b>${ord(d)}</b> ${sp!=null?`& ${gl?'Goal':MID-sp}<span class="dspot">${spotTxt(sp)}</span>`:t('down')}<small>${h===2?t('h2'):t('h1')}</small>`;
+}
 function topHTML(st){
   const showPoss=g.mode==='both'&&!readOnly();
   const r=role(), roleTxt=r==='both'?t('roleB'):r==='H'?'Hammers':t('roleA');
@@ -791,7 +797,7 @@ function topHTML(st){
     <button class="chip game" data-act="opts" aria-label="${t('options')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
       <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></span></button>
     <button class="chip poss ${st.poss}" data-act="poss" ${showPoss?'':'disabled'}><small style="color:inherit;opacity:.8">${t('offense')}</small>${sideName(st.poss)}</button>
-    <button class="chip down num" data-act="down"><b>${ord(st.down)}</b> ${t('down')}<small>${st.half===2?t('h2'):t('h1')}</small></button>
+    <button class="chip down num" data-act="down">${downChip(st)}</button>
     <div class="chip score num"><small>${t('ham')}</small><span class="s">${st.score.H}</span><small>:</small><span class="s">${st.score.A}</span><small>${t('opp')}</small></div>
     <button class="chip undo" data-act="undo">↶ ${t('undo')}</button>
     <button class="chip opts" data-act="opts" aria-label="${t('options')}"><span class="dots" aria-hidden="true">⋮</span>${t('options')}</button>

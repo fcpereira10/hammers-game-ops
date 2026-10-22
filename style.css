@@ -522,3 +522,4 @@ body.preview{padding-bottom:30px}
 .penball{font-weight:600;color:var(--ink)!important}
 .tpens{gap:6px;background:var(--surface-2)}
 .tpenl{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;font-size:14px}
+.dspot{margin-left:8px;padding:2px 7px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);font-size:18px}
