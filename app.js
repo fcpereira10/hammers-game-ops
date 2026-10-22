@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.4.1';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -1208,15 +1208,22 @@ const VDOC=`<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta 
 document.addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT')return;if(['ArrowLeft','ArrowRight',' ','Enter'].indexOf(e.key)>=0){try{if(opener&&opener.HGO_key){e.preventDefault();opener.HGO_key(e.key)}}catch(x){}}});
 setInterval(function(){try{if(opener&&!opener.closed&&opener.HGO_reattach)opener.HGO_reattach(window)}catch(x){}},1500);
 <\/script></body></html>`;
+/* a real page of the site (video.html): YouTube refuses to play in a blank window (error 153). The preview has no such file, so it writes the same page in. */
 function openVideoWindow(){
+  if(vidAway()){try{vid.win.focus()}catch(e){}return}
   const at=vTime();
-  const w=window.open('','hgo-video','popup,width=1100,height=680');
+  const w=window.open(PREVIEW?'':'video.html','hgo-video','popup,width=1100,height=680');
   if(!w){toast(t('vPopBlocked'));return}
-  if(!w.document.getElementById('vbox')){w.document.open();w.document.write(VDOC);w.document.close()}
-  w.document.title=`${t('vWin')} · ${g.team} vs ${g.opp}`;
-  vid.win=w;if(at!=null)vid.seek=at;w.HGO_src=null;
+  if(PREVIEW&&!w.document.getElementById('vbox')){w.document.open();w.document.write(VDOC);w.document.close()}
+  vid.win=w;if(at!=null)vid.seek=at;
   const pane=document.getElementById('vpane');if(pane)pane.innerHTML=vpaneHTML();
-  mountPlayer();tapeUpdate();try{w.focus()}catch(e){}
+  let n=0;const ready=()=>{
+    if(vid.win!==w||w.closed)return;
+    let ok=false;try{ok=w.document.readyState==='complete'&&!!w.document.getElementById('vbox')&&w.location.href!=='about:blank'||PREVIEW&&!!w.document.getElementById('vbox')}catch(e){}
+    if(!ok){if(++n<100)setTimeout(ready,100);return}
+    w.document.title=`${t('vWin')} · ${g.team} vs ${g.opp}`;w.HGO_src=null;
+    mountPlayer();tapeUpdate();try{w.focus()}catch(e){}
+  };ready();
 }
 function bringVideoBack(){
   const at=vTime(), w=vid.win;vid.win=null;

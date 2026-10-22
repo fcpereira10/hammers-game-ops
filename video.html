@@ -1,0 +1,12 @@
+<!doctype html>
+<!-- Janela à parte para o vídeo da tape review: a app (window.opener) mete aqui o leitor e comanda-o. -->
+<html lang="pt-PT"><head><meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hammers Game Ops</title>
+<style>html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+#vbox{position:absolute;left:0;right:0;top:0;bottom:36px}#vbox iframe,#vbox video{width:100%;height:100%;border:0;display:block;background:#000}
+#vlabel{position:absolute;left:0;right:0;bottom:0;height:36px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:600;background:#141414;border-top:3px solid #FF3300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vempty{display:grid;place-items:center;height:100%;color:#aaa;text-align:center;padding:20px}</style></head>
+<body><div id="vbox"></div><div id="vlabel"></div>
+<script>
+document.addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT')return;if(['ArrowLeft','ArrowRight',' ','Enter'].indexOf(e.key)>=0){try{if(opener&&opener.HGO_key){e.preventDefault();opener.HGO_key(e.key)}}catch(x){}}});
+setInterval(function(){try{if(opener&&!opener.closed&&opener.HGO_reattach)opener.HGO_reattach(window)}catch(x){}},1500);
+</script></body></html>
