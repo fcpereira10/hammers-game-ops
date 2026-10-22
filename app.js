@@ -119,6 +119,10 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  zmRings:'Anéis', zmSum:'Resumo', zmDots:'Pontos', zOk:'com sucesso',
+  zmRingsN:'O número é o total de bolas na zona e o anel enche com a % de sucesso (completos e corridas). Por baixo, a % de todas as bolas. Toca numa zona para ver as jogadas.',
+  zmSumN:'Quanto mais amarela, mais bolas. Número de bolas, % de sucesso, alvo mais usado e a barra de completos, TD e falhados. Toca numa zona para ver as jogadas.',
+  zmDotsN:'o número é o down. Toca numa zona para ver as jogadas.',
   lsT:n=>`Habitual em ${n===1?'1 jogo':n+' jogos'} · toca para o relatório`, lsDown:(d,p,z,r)=>`${d} down: ${p} passe${z?' · '+z:''}${r?' · alvo #'+r:''}`, lsNoDown:d=>`${d} down: sem jogadas anteriores`, lsGl:z=>`perto da end zone: ${z}`,
   alRun:(a,b)=>`Hoje correm ${a} das vezes (costumam ${b})`, alRec:(n,a,b)=>`#${n} com ${a} dos alvos hoje (costuma ter ${b})`, alSide:(i,a,b)=>`Hoje ${a} dos passes ${['para a esquerda','para o meio','para a direita'][i]} (costuma ser ${b})`, alForm:f=>`Formação nova hoje: ${f}`,
   scByCall:'Por jogada do playbook', thScCall:['Jogada','Vezes','% passe','Comp %','Jd/jog','TD','Downs'], scCallF:c=>`Jogada: ${c}`,
@@ -264,6 +268,10 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  zmRings:'Rings', zmSum:'Summary', zmDots:'Dots', zOk:'successful',
+  zmRingsN:'The number is the total of balls in the zone and the ring fills with the success % (completions and runs). Below, the % of all balls. Tap a zone to see its plays.',
+  zmSumN:'The more yellow, the more balls. Number of balls, success %, most used target and the bar of completions, TDs and misses. Tap a zone to see its plays.',
+  zmDotsN:'the number is the down. Tap a zone to see its plays.',
   lsT:n=>`Usual in ${n===1?'1 game':n+' games'} · tap for the report`, lsDown:(d,p,z,r)=>`${d} down: ${p} pass${z?' · '+z:''}${r?' · target #'+r:''}`, lsNoDown:d=>`${d} down: no earlier plays`, lsGl:z=>`near the end zone: ${z}`,
   alRun:(a,b)=>`Running ${a} of the time today (usually ${b})`, alRec:(n,a,b)=>`#${n} has ${a} of targets today (usually ${b})`, alSide:(i,a,b)=>`${a} of passes ${['to the left','to the middle','to the right'][i]} today (usually ${b})`, alForm:f=>`New formation today: ${f}`,
   scByCall:'By playbook call', thScCall:['Play','Times','% pass','Comp %','Yds/play','TD','Downs'], scCallF:c=>`Play: ${c}`,
@@ -342,7 +350,7 @@ function helpData(){
       <p><b>Scouting ao vivo</b>: quando o adversário ataca e já há jogos registados contra ele, uma faixa por cima do campo mostra o que costuma fazer nesse down (passe ou corrida, zona e alvo preferidos) e, perto da end zone, a zona favorita. Por baixo aparecem avisos quando hoje está a fazer diferente: corre mais ou menos, procura outro alvo, ataca outro lado ou usa uma formação nova. Toca na faixa para abrir o relatório.</p>`},
     {id:'zones',t:'O campo',b:`<p>O ataque vai sempre para cima. São 12 zonas: 3 colunas e 4 faixas a partir da linha de scrimmage.</p>
       <ul><li><b>Fundo</b>: mais de 15 jardas</li><li><b>Médio</b>: 5 a 15 jardas</li><li><b>Curto</b>: 0 a 5 jardas</li><li><b>Atrás da linha</b>: passes atrás da linha de scrimmage (screens, laterais), completos ou incompletos</li></ul>
-      <p>Cada zona mostra as jogadas anteriores de quem está a atacar: C1 = completo no 1º down, x3 = incompleto no 3º down.</p>`},
+      <p>Cada zona mostra o resumo das jogadas de quem está a atacar: fica mais amarela quanto mais bolas recebe, com o número de bolas, a % de sucesso, o alvo mais usado e uma barra (verde = completos e corridas, dourado = TD, vermelho = falhados). O down de cada jogada vê-se na faixa de scouting e no cartão da drive.</p>`},
     {id:'gl',t:'Goal line e conversões',b:`<p>Perto da end zone, toca em ${btn('','GL')} por cima do campo para usar o mapa de goal line: <b>EZ fundo</b> e <b>EZ frente</b> (a end zone em 2 faixas), <b>0-5</b> e <b>5-10 jardas</b>, sempre em 3 colunas. O GL desliga-se sozinho quando muda a posse.</p>
       <p>Depois de um TD aparece a barra <b>Conversão</b>:</p>
       <ol><li>Escolhe <b>1 pt</b> ou <b>2 pts</b>. Abre o mapa GL.</li>
@@ -367,8 +375,8 @@ function helpData(){
       <li>No <b>intervalo</b>, toca no down e depois em <b>Intervalo</b>: a 2ª parte começa no 1º down, a atacar quem não começou o jogo.</li></ul>`},
     {id:'analysis',t:'Análise',b:`<ul>
       <li><b>Filtros</b>: Hammers ou adversário, passes ou corridas, down, formação e se as jogadas anuladas contam.</li>
-      <li><b>Marcas</b>: o mapa do caderno, com cada jogada na sua zona.</li>
-      <li><b>Heatmap</b>: quanto mais amarelo, mais bolas foram para essa zona. Mostra o número de bolas e a % de completos.</li>
+      <li><b>Mapa</b> em três vistas: <b>Anéis</b> (o número é o total de bolas na zona e o anel enche com a % de sucesso), <b>Resumo</b> (quanto mais amarela, mais bolas, com o alvo mais usado) e <b>Pontos</b> (cada jogada é um ponto com a cor do resultado e o down lá dentro).</li>
+      <li><b>Toca numa zona</b> para ver todas as jogadas que lá caíram: down e distância, resultado, recetor, formação, jogada e jardas.</li>
       <li><b>Alvos por jogador</b>: alvos, completos, %, TD, INT e corridas. Toca num jogador para ver só as bolas dele no mapa.</li>
       <li><b>Por down</b>: zona, alvo e formação mais usados em cada down. Toca num down para filtrar.</li>
       <li><b>Resumo</b>: frases escritas automaticamente a partir dos números, com as tendências principais de quem ataca e da defesa.</li>
@@ -378,7 +386,7 @@ function helpData(){
       <ul><li><b>Equipa</b>: escolhe o adversário (separado por Elite, Academy e Girls) ou <b>Hammers</b>, para vermos se nós próprios estamos a ser previsíveis.</li>
       <li><b>Resumo</b>: frases escritas automaticamente a partir dos números.</li>
       <li><b>Tendências principais</b>: passe ou corrida, zona favorita, bolas fundas, alvo principal, 3º e 4º down, formação, perto da end zone, conversões e a defesa deles. Com poucas jogadas, a app avisa.</li>
-      <li><b>Para onde vai a bola</b>: % das bolas em cada zona e % de completos. Filtra por down, distância, zona do campo e formação. Toca numa linha das tabelas para filtrar.</li>
+      <li><b>Para onde vai a bola</b>: o mapa com as vistas Anéis, Resumo e Pontos, e o toque numa zona para ver as jogadas de todos os jogos. Filtra por down, distância, zona do campo e formação. Toca numa linha das tabelas para filtrar.</li>
       <li><b>Drives</b>: pontos por drive e como acabam, a atacar e a defender.</li>
       <li><b>Por jogada do playbook</b> (só nos Hammers): quantas vezes chamamos cada jogada, em que downs e como corre. Toca numa jogada para filtrar o mapa. Os nomes vêm da tape review.</li>
       <li><b>Como defendem</b>: para onde se lhes atira e quem faz as jogadas (flags, PBU, INT, sacks).</li>
@@ -432,7 +440,7 @@ function helpData(){
       <p><b>Live scouting</b>: when the opponent has the ball and there are earlier games against it, a strip above the field shows what it usually does on this down (pass or run, favorite zone and target) and, near the end zone, its favorite zone. Warnings show when today is different: more or fewer runs, another target, another side or a new formation. Tap the strip to open the report.</p>`},
     {id:'zones',t:'The field',b:`<p>Offense always goes up. There are 12 zones: 3 columns and 4 bands from the line of scrimmage.</p>
       <ul><li><b>Deep</b>: more than 15 yards</li><li><b>Mid</b>: 5 to 15 yards</li><li><b>Short</b>: 0 to 5 yards</li><li><b>Behind the line</b>: passes behind the line of scrimmage (screens, laterals), complete or incomplete</li></ul>
-      <p>Each zone shows earlier plays by the team on offense: C1 = complete on 1st down, x3 = incomplete on 3rd down.</p>`},
+      <p>Each zone shows a summary of the plays of the team on offense: it gets more yellow the more balls it gets, with the number of balls, the success %, the most used target and a bar (green = completions and runs, gold = TD, red = misses). The down of each play shows in the scouting strip and the drive card.</p>`},
     {id:'gl',t:'Goal line and conversions',b:`<p>Near the end zone, tap ${btn('','GL')} above the field to use the goal line map: <b>EZ back</b> and <b>EZ front</b> (the end zone in 2 bands), <b>0-5</b> and <b>5-10 yards</b>, always in 3 columns. GL turns off by itself when possession changes.</p>
       <p>After a TD the <b>Conversion</b> bar appears:</p>
       <ol><li>Pick <b>1 pt</b> or <b>2 pts</b>. The GL map opens.</li>
@@ -457,8 +465,8 @@ function helpData(){
       <li>At <b>halftime</b>, tap the down and then <b>Halftime</b>: the 2nd half starts on 1st down, with the team that did not start on offense.</li></ul>`},
     {id:'analysis',t:'Analysis',b:`<ul>
       <li><b>Filters</b>: Hammers or opponent, passes or runs, down, formation and whether nullified plays count.</li>
-      <li><b>Marks</b>: the notebook map, each play in its zone.</li>
-      <li><b>Heatmap</b>: the more yellow, the more balls went to that zone. Shows the number of balls and completion %.</li>
+      <li><b>Map</b> in three views: <b>Rings</b> (the number is the total of balls in the zone and the ring fills with the success %), <b>Summary</b> (the more yellow, the more balls, with the most used target) and <b>Dots</b> (each play is a dot with the result's color and its down inside).</li>
+      <li><b>Tap a zone</b> to see every play in it: down and distance, result, receiver, formation, play and yards.</li>
       <li><b>Targets by player</b>: targets, completions, %, TD, INT and runs. Tap a player to show only their balls on the map.</li>
       <li><b>By down</b>: most used zone, target and formation on each down. Tap a down to filter.</li>
       <li><b>Summary</b>: sentences written automatically from the numbers, with the main tendencies of the offense and of the defense.</li>
@@ -468,7 +476,7 @@ function helpData(){
       <ul><li><b>Team</b>: pick the opponent (kept apart by Elite, Academy and Girls) or <b>Hammers</b>, to check whether we are predictable ourselves.</li>
       <li><b>Summary</b>: sentences written automatically from the numbers.</li>
       <li><b>Key tendencies</b>: pass or run, favorite zone, deep balls, main target, 3rd and 4th down, formation, near the end zone, conversions and their defense. With few plays, the app warns you.</li>
-      <li><b>Where the ball goes</b>: % of balls in each zone and completion %. Filter by down, distance, field position and formation. Tap a table row to filter.</li>
+      <li><b>Where the ball goes</b>: the map with the Rings, Summary and Dots views, and a tap on a zone to see its plays from every game. Filter by down, distance, field position and formation. Tap a table row to filter.</li>
       <li><b>Drives</b>: points per drive and how drives end, on offense and on defense.</li>
       <li><b>By playbook call</b> (Hammers only): how often we call each play, on which downs and how it goes. Tap a play to filter the map. Play names come from the tape review.</li>
       <li><b>How they defend</b>: where teams throw on them and who makes the plays (flags, PBU, INT, sacks).</li>
@@ -600,7 +608,7 @@ addEventListener('online',()=>flush());
 /* ---------- current game ---------- */
 let games=[], g=null, curId=lsGet(LS_CUR), draft=null, runMode=false, qbNext=false, override=null;
 let view='home', undoStack=[], sheet=null, toastT=null, confirmDel=null, rendering=false;
-const an={side:'H',down:0,rec:null,form:null,kind:'pass',mode:'marks',annul:false,area:'field',half:0,dist:0};
+const an={side:'H',down:0,rec:null,form:null,kind:'pass',mode:'rings',annul:false,area:'field',half:0,dist:0};
 const storeOf=G=>G.store==='cloud'?cloudStore:G.store==='demo'?demo:local;
 const S=()=>storeOf(g);
 
@@ -866,19 +874,6 @@ function applyFoul(dec){
 
 /* ---------- render ---------- */
 const isGL=z=>!!z&&z[0]==='g';
-function markOf(e){return markHTML(e).replace('<span class="mk','<span data-e="'+e.id+'" class="mk')}
-function markHTML(e){
-  const d=e._down;
-  if(e.t==='conv'){
-    if(e.res==='G')return `<span class="mk">+${e.pts}</span>`;
-    if(e.res==='INT')return `<span class="mk int">INT+${e.pts}</span>`;
-    return `<span class="mk x">x+${e.pts}</span>`;
-  }
-  if(e.res==='TD')return `<span class="mk td">TD${d}</span>`;
-  if(e.res==='INT')return e.pick6?`<span class="mk td">P6·${d}</span>`:`<span class="mk int">INT${d}</span>`;
-  if(e.kind==='run')return `<span class="mk">R${d}</span>`;
-  return e.res==='C'?`<span class="mk">C${d}</span>`:`<span class="mk x">x${d}</span>`;
-}
 function sideName(s){return s==='H'?'Hammers':esc(g.opp)}
 
 function render(){
@@ -1007,9 +1002,11 @@ function hintText(){
 /* the 12-zone grid: field (4 depths incl. behind the line) or goal line (end zone back/front, 0-5, 5-10) */
 function gridHTML(gl,plays,live){
   const ROWS=gl?t('glRows'):t('rows'), COLS=t('cols'), Y=gl?['','','0-5','5-10']:['15+','5-15','0-5',''];
-  let h='';
+  /* each zone shows the summary of the plays of the team on offense: tint by volume, count, success %, top target and a result bar */
+  let h='';const zs=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zs.push((gl?'g':'')+r+c);
+  const max=Math.max(1,...zs.map(z=>plays.filter(e=>e.zone===z).length)), tot=plays.filter(e=>e.zone).length;
   for(let r=0;r<4;r++)for(let c=0;c<3;c++){
-    const z=(gl?'g':'')+r+c, here=plays.filter(e=>e.zone===z).slice(-6);
+    const z=(gl?'g':'')+r+c, here=plays.filter(e=>e.zone===z), a=here.length/max, last=here[here.length-1];
     let d='';
     if(live&&draft&&draft.zone===z){
       const cls={C:'',X:'x',TD:'td',INT:'int',R:'r',G:'',NG:'x'}[draft.res]||'';
@@ -1018,8 +1015,9 @@ function gridHTML(gl,plays,live){
     }
     const ez=gl&&r<2?' ez':'', behind=!gl&&r===3?' behind':'';
     const tag=live?'button':'div';
-    h+=`<${tag} class="zone r${r}${ez}${behind}" ${live?`data-act="zone" data-z="${z}"`:''} aria-label="${ROWS[r]} ${COLS[c]}">
-      <span class="zl">${ROWS[r]} ${COLS[c]}</span>${c===2&&Y[r]?`<span class="zy">${Y[r]}</span>`:''}${here.map(markOf).join('')}${d}</${tag}>`;
+    const tint=here.length?` style="background:rgba(255,214,10,${(a*.6).toFixed(2)});color:${a>.6?'#1a1205':'#fff'}"`:'';
+    h+=`<${tag} class="zone r${r}${ez}${behind}${here.length?' has':''}" ${live?`data-act="zone" data-z="${z}"`:''}${last?` data-e="${last.id}"`:''}${tint} aria-label="${ROWS[r]} ${COLS[c]}: ${here.length}">
+      <span class="zl">${ROWS[r]} ${COLS[c]}</span>${c===2&&Y[r]?`<span class="zy">${Y[r]}</span>`:''}${zoneInner(here,'sum',max,tot)}${d}</${tag}>`;
   }
   return h;
 }
@@ -1206,18 +1204,7 @@ function anaView(){
   // yards come from the tape review
   const Y=P.filter(e=>e.t==='play'&&e.yds!=null), hasY=!conv&&Y.length>0, sum=(l,k)=>l.reduce((a,e)=>a+(e[k]||0),0), avg=l=>l.length?(sum(l,'yds')/l.length).toFixed(1):'-';
   if(hasY){const TY=t('tilesY');tiles.push([sum(Y,'yds'),TY[0]],[avg(Y),TY[1]],[Y.filter(e=>e.yds>=15).length,TY[2]])}
-  const zl=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zl.push((gl?'g':'')+r+c);
-  const max=Math.max(1,...zl.map(z=>P.filter(e=>e.zone===z).length));
-  let zones='';
-  zl.forEach(z=>{
-    const r=+z[gl?1:0], c=+z[gl?2:1], h=P.filter(e=>e.zone===z), ez=gl&&r<2?' ez':'', bh=!gl&&r===3?' behind':'';
-    if(an.mode==='marks') zones+=`<div class="az r${r}${ez}${bh}"><span class="zl">${ROWS[r]} ${COLS[c]}</span>${h.map(markOf).join('')}</div>`;
-    else{
-      const a=h.length/max, pc=h.filter(isPassLike), ink=a>.55?'#1a1205':'#fff';
-      zones+=`<div class="az heat r${r}${ez}${bh}" style="background:rgba(255,214,10,${(a*.8).toFixed(2)})"><span class="zl">${ROWS[r]} ${COLS[c]}</span>
-        <b class="num" style="color:${ink}">${h.length}</b><span style="color:${ink}">${pc.length?pct(pc.filter(isComp).length,pc.length)+' '+t('comp'):h.length?t('runsLow'):''}</span></div>`;
-    }
-  });
+  zoneSrc={};
   const by={};all.filter(e=>e.kind!=='sack').forEach(e=>{const k=e.rec==null?'?':e.rec;(by[k]=by[k]||[]).push(e)});
   const rows=Object.entries(by).map(([k,l])=>{const p=l.filter(isPassLike);return{k,t:p.length,c:p.filter(isComp).length,td:l.filter(e=>e.res==='TD').length,int:p.filter(e=>e.res==='INT').length,r:l.filter(e=>e.kind==='run').length,
       y:sum(l.filter(e=>e.res!=='INT'),'yds'),yac:sum(l,'yac'),hy:l.some(e=>e.yds!=null)}})
@@ -1268,9 +1255,9 @@ function anaView(){
       return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half))}</section>`})()}
     <div class="ana"><div class="sc-tables">
       <section class="panel">
-        <div class="toolbar"><h3>${t('distribution')}${an.rec!=null?' · #'+an.rec:''}</h3>${seg('mode',[['marks',t('marks')],['heat',t('heatmap')]])}</div>
-        <div class="amap${gl?' glmap':''}">${zones}</div>
-        ${an.mode==='marks'?`<p class="note">${conv?t('marksConv'):t('marksNote')}</p>`:`<div class="legend"><span>${t('fewer')}</span><i></i><span>${t('more')}</span></div>`}
+        <div class="toolbar"><h3>${t('distribution')}${an.rec!=null?' · #'+an.rec:''}</h3>${zoneModes('an',an.mode)}</div>
+        ${zoneMap(P,gl,an.mode,'an')}
+        ${zoneLegend(an.mode)}
         ${an.rec!=null?`<button class="btn" data-act="anrec" data-r="${an.rec}">${t('showAll')}</button>`:''}
       </section>
       ${conv?'':chartsHTML(P,base,all)}</div>
@@ -1293,6 +1280,32 @@ function anaView(){
       </div>
     </div>`;
 }
+/* ---------- the 12 zones, three ways: rings (count and completion), summary (heat, count, bar, top target) and dots (one per play, with its down) ----------
+   Zones in the analysis and the report open the list of their plays (zoneSrc keeps them for the sheet). */
+let zoneSrc={};
+const okPlay=e=>isComp(e)||e.res==='R';
+const dotCls=e=>({C:'c',G:'c',R:'r',TD:'td',X:'x',NG:'x',INT:'int',SACK:'x'})[e.res]||'x';
+function zoneInner(h,mode,max,tot){
+  if(!h.length)return '';
+  const n=h.length, ok=h.filter(okPlay).length, td=h.filter(e=>e.res==='TD').length, bad=n-ok;
+  if(mode==='dots'){const l=h.slice(-12);return `<span class="zdots">${l.map(e=>`<i class="zdot ${dotCls(e)}">${e.t==='conv'?e.pts:e._down||''}</i>`).join('')}${n>12?`<i class="zmore">+${n-12}</i>`:''}</span>`}
+  if(mode==='sum'){const r=scTop(h.filter(isPassLike),e=>e.rec);
+    return `<span class="zsum"><b class="num">${n}</b><small>${pct(ok,n)}${r?' · #'+r[0]:''}</small><span class="cbar"><i class="c" style="flex:${ok-td}"></i><i class="td" style="flex:${td}"></i><i class="x" style="flex:${bad}"></i></span></span>`}
+  const sz=30+n/max*38;
+  return `<span class="zring" style="--p:${Math.round(ok/n*100)};--s:${sz.toFixed(0)}px"><span class="num">${n}</span></span><small class="zshare">${pct(n,tot)}</small>`;
+}
+function zoneMap(P,gl,mode,id){
+  const ROWS=gl?t('glRows'):t('rows'), COLS=t('cols'), zl=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zl.push((gl?'g':'')+r+c);
+  const max=Math.max(1,...zl.map(z=>P.filter(e=>e.zone===z).length)), tot=P.filter(e=>e.zone).length;
+  return `<div class="amap zm-${mode}${gl?' glmap':''}">${zl.map(z=>{const r=+z[gl?1:0], c=+z[gl?2:1], h=P.filter(e=>e.zone===z), a=h.length/max;
+    if(h.length)zoneSrc[id+'|'+z]=h;
+    const tint=mode==='sum'&&h.length?` style="background:rgba(255,214,10,${(a*.75).toFixed(2)});color:${a>.55?'#1a1205':'#fff'}"`:'';
+    return `<button class="az r${r}${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}${mode==='sum'?' heat':''}" data-act="zdet" data-z="${id}|${z}"${h.length?'':' disabled'}${tint} aria-label="${ROWS[r]} ${COLS[c]}: ${h.length}">
+      <span class="zl">${ROWS[r]} ${COLS[c]}</span>${zoneInner(h,mode,max,tot)}</button>`}).join('')}</div>`;
+}
+const zoneModes=(key,cur)=>`<div class="seg">${[['rings',t('zmRings')],['sum',t('zmSum')],['dots',t('zmDots')]].map(([v,l])=>`<button data-act="${key}" data-k="mode" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')}</div>`;
+const zoneLegend=mode=>mode==='dots'?`<div class="zleg"><i class="zdot c">1</i>${t('tagC')}<i class="zdot x">1</i>${t('tagX')}<i class="zdot td">1</i>TD<i class="zdot int">1</i>INT<i class="zdot r">1</i>${t('tagR')}<span>· ${t('zmDotsN')}</span></div>`
+  :mode==='sum'?`<p class="note">${t('zmSumN')}</p>`:`<p class="note">${t('zmRingsN')}</p>`;
 /* ---------- written summary and charts, shared by the game analysis and the opponent report ----------
    The summary is plain rules over the counts (no AI): the same data always gives the same text. */
 const colOf=z=>z==null?null:+z[isGL(z)?2:1];
@@ -1381,7 +1394,7 @@ function chartsHTML(P,downL,recL){
   return h?`<section class="panel"><h3>${t('chQuick')}</h3><div class="charts">${h}</div></section>`:'';
 }
 /* ---------- opponent report: one team's tendencies across every game tracked against it (or our own, to self-scout) ---------- */
-const sc={key:null,off:{},area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null};
+const sc={mode:'rings',key:null,off:{},area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null};
 const scReset=()=>Object.assign(sc,{area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null});
 let scFresh={}, demoX=null;
 const normOpp=x=>String(x||'').trim().toLowerCase();
@@ -1409,19 +1422,13 @@ function scoutFetch(G){
     .then(()=>{if(view==='scout'||view==='reg')render()});
 }
 const scoutReady=G=>G.store!=='cloud'||G.id===cloud.subGid||!!(scoutEv[G.id]&&scoutEv[G.id].m);
-function scoutGame(G){const X={...G,events:sortEv(G.store==='cloud'?cloudEvents(G.id):clone(G.events||[]))};X.st=replay(X);return X}
+function scoutGame(G){const X={...G,events:sortEv(G.store==='cloud'?cloudEvents(G.id):clone(G.events||[]))};X.st=replay(X);
+  const lbl=(G.date||'')+' · vs '+(G.opp||'');X.events.forEach(e=>{e._g=lbl});return X}
 const scTop=(arr,f)=>{const m={};arr.forEach(e=>{const k=f(e);if(k!=null)m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])[0]||null};
 /* field position: 1 = own half, 2 = beyond midfield (goal to go), 0 = unknown */
 const posOf=e=>e._goal?2:e._spot!=null?1:0;
-function scHeat(P,gl){
-  const ROWS=gl?t('glRows'):t('rows'), COLS=t('cols'), zl=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zl.push((gl?'g':'')+r+c);
-  const tot=P.filter(e=>e.zone).length, max=Math.max(1,...zl.map(z=>P.filter(e=>e.zone===z).length));
-  return zl.map(z=>{
-    const r=+z[gl?1:0], c=+z[gl?2:1], h=P.filter(e=>e.zone===z), a=h.length/max, pc=h.filter(isPassLike), ink=a>.55?'#1a1205':'#fff';
-    return `<div class="az heat r${r}${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}" style="background:rgba(255,214,10,${(a*.8).toFixed(2)})"><span class="zl">${ROWS[r]} ${COLS[c]}</span>
-      ${h.length?`<b class="num" style="color:${ink}">${pct(h.length,tot)}</b><span style="color:${ink}">${h.length} · ${pc.length?pct(pc.filter(isComp).length,pc.length)+' '+t('comp'):t('runsLow')}</span>`:''}</div>`}).join('');
-}
 function scoutView(){
+  zoneSrc={};
   const T=scoutTeams();
   if(!T.find(x=>x.key===sc.key)){const k=g&&scKeyOf(g,'A');sc.key=((T.find(x=>x.key===k)||T[0])||{}).key||null}
   const team=T.find(x=>x.key===sc.key);
@@ -1495,9 +1502,9 @@ function scoutView(){
       ${filtered?`<button class="btn noprint" data-act="scclear">${t('scClear')}</button>`:''}
     </div>`;
   const pP=P.filter(isPassLike);
-  const mapHTML=`<section class="panel"><div class="toolbar"><h3>${t('scMapT')}${sc.rec!=null?' · #'+sc.rec:''}</h3>
-      <span class="note">${t('scPlaysN',P.length)} · ${pct(pP.filter(isComp).length,pP.length)} ${t('comp')}</span></div>
-      <div class="amap${gl?' glmap':''}">${scHeat(P,gl)}</div><p class="note">${t('scMapNote')}</p></section>`;
+  const mapHTML=`<section class="panel"><div class="toolbar"><h3>${t('scMapT')}${sc.rec!=null?' · #'+sc.rec:''}</h3>${zoneModes('scm',sc.mode)}</div>
+      <span class="note">${t('scPlaysN',P.length)} · ${pct(pP.filter(isComp).length,pP.length)} ${t('comp')}</span>
+      ${zoneMap(P,gl,sc.mode,'sc')}${zoneLegend(sc.mode)}<p class="note">${t('scMapNote')}</p></section>`;
   // tables
   const cellsOf=l=>{const np=l.filter(e=>e.kind!=='sack'), p=l.filter(isPassLike), z=scTop(p.filter(e=>e.zone),e=>e.zone), r=scTop(p,e=>e.rec);
     return [l.length,pct(p.length,np.length),pct(p.filter(isComp).length,p.length),z?zoneName(z[0]):'-',r?'#'+r[0]:'-']};
@@ -1533,7 +1540,7 @@ function scoutView(){
   const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
   const defHTML=dfp.length||drows||DD.length?`<section class="sc-sec"><h2>${t('scDefence',us)}</h2><div class="ana">
       ${dfp.length?`<section class="panel"><div class="toolbar"><h3>${t('scDefMap',us)}</h3><span class="note">${t('scPlaysN',dfp.length)} · ${pct(dfp.filter(isComp).length,dfp.length)} ${t('comp')}</span></div>
-        <div class="amap">${scHeat(dfp,false)}</div><p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
+        ${zoneMap(dfp,false,sc.mode,'scd')}<p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
       <div class="sc-tables">${drivePanel(DD,t('drvAg'))}${tbl(t('scDefPl'),t('thScDef'),drows)}</div></div></section>`:'';
   const resOf=x=>x.st.score[S]>x.st.score[O]?0:x.st.score[S]<x.st.score[O]?2:1;
   const gamesHTML=`<section class="sc-sec"><h2>${t('scGamesT')}</h2><p class="note noprint">${t('scGamesNote')}</p><div class="sc-games">${list.map(G=>{
@@ -1916,6 +1923,12 @@ function renderSheet(){
       ${g.mode==='both'?`<button class="big" data-act="flipposs">${t('changePoss')}<small>${t('nowOff')}${sideName(other(st.poss))}</small></button>`:''}
       ${st.half===1&&!readOnly()?`<button class="big" data-act="half">${t('halfT')}<small>${t('halfS',sideName(g.mode&&g.mode!=='both'?g.mode:other(g.start)))}</small></button>`:''}
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='zone'){
+    const L=sheet.L.slice().reverse(), ok=L.filter(okPlay).length, R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:t('convRes').G,NG:t('convRes').NG};
+    h=`<h2>${zoneName(sheet.z)}</h2><p>${t('scPlaysN',L.length)} · ${pct(ok,L.length)} ${t('zOk')}</p>
+      <div class="zlist">${L.map(e=>`<div class="zrow"><i class="zdot ${dotCls(e)}">${e.t==='conv'?e.pts:e._down||''}</i>
+        <span><b>${R[e.res]||e.res}${e.rec!=null?' · #'+e.rec:''}</b><small>${[e.t==='conv'?t('conv')+' '+e.pts+' pt':e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),e.form?esc(e.form):'',e.call?esc(e.call):'',e.yds!=null?e.yds+' '+t('yardsShort'):'',e._g||''].filter(Boolean).join(' · ')}</small></span></div>`).join('')}</div>
+      <button class="ghost" data-act="close">${t('close')}</button>`;
   }else if(sheet.kind==='other'){
     h=`<h2>${t('otherT')}</h2><p>${t('offense')}: <b>${sideName(st.poss)}</b> · ${ord(st.down)} ${t('down')}</p>
       <div class="grid2"><button class="big" data-act="safety">${t('safety')}<small>${t('safetyS',sideName(other(st.poss)))}</small></button>
@@ -2181,6 +2194,8 @@ document.addEventListener('click',ev=>{
     case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=v===''?null:+v;if((k==='form'||k==='call')&&v==='')v=null;
       if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'||k==='call'?null:0;
       sc[k]=v;if(k==='area'&&v==='conv'){sc.down=0;sc.dist=0;sc.pos=0;sc.form=null}render();break}
+    case 'scm':sc.mode=b.dataset.v;render();break;
+    case 'zdet':{const L=zoneSrc[b.dataset.z];if(L)openSheet('zone',{z:b.dataset.z.split('|')[1],L});break}
     case 'scclear':{const k=sc.key,o=sc.off;scReset();sc.key=k;sc.off=o;render();break}
     case 'scgame':sc.off[b.dataset.id]=!sc.off[b.dataset.id];render();break;
     case 'scprint':window.print();break;
