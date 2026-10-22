@@ -15,7 +15,8 @@ html = (root / 'index.html').read_text()
 splash = re.search(r'<div class="app" id="app">(.*?)</div>\n<div id="layer">', html, re.S).group(1)
 version = re.search(r"APP_VERSION='([^']+)'", js).group(1)
 
-page = f'''<title>Hammers Game Ops Preview</title>
+page = f'''<meta charset="utf-8">
+<title>Hammers Game Ops Preview</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
