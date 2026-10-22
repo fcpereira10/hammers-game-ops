@@ -683,7 +683,7 @@ function render(){
   if(view==='home'){app.innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
   app.innerHTML=`${topHTML(st)}
   <nav class="tabs" role="tablist">
-    ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape'):t('tabs')[k]}</button>`).join('')}
+    ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape')+'<span class="beta">BETA</span>':t('tabs')[k]}</button>`).join('')}
   </nav>
   ${view==='reg'?regView(st):view==='tape'?tapeView():view==='ana'?anaView():logView()}`;
   if(view==='tape')mountPlayer();
@@ -743,7 +743,7 @@ function homeView(st){
   const lock=x=>x.visibility==='private'?`<span class="sync local">🔒 ${t('visMe')}</span>`:'';
   const card=x=>`<div class="gcard">
       <div class="gtxt"><b>${esc(x.team)} vs ${esc(x.opp)}</b><small>${esc(x.comp)} · ${x.date}${x.owner?' · '+t('byOwner',esc(personName(x.owner))):''}</small>${lock(x)}</div>
-      <div class="gbtns"><button class="btn" data-act="openg" data-id="${x.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="tape">${t('tabsTape')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="ana">${t('viewAna')}</button></div></div>`;
+      <div class="gbtns"><button class="btn" data-act="openg" data-id="${x.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${x.id}" data-v="ana">${t('viewAna')}</button></div></div>`;
   const tile=(act,icon,l,d,cls='')=>`<button class="htile ${cls}" data-act="${act}"><span class="hi" aria-hidden="true">${icon}</span><b>${l}</b><small>${d}</small></button>`;
   const recent=list.filter(x=>!cur||x.id!==cur.id).slice(0,5);
   return `<header class="top home-top">
@@ -755,7 +755,7 @@ function homeView(st){
       <span class="lbl2">${t('continueG')}</span>
       <div class="hero-row"><div class="gtxt"><b>${esc(cur.team)} vs ${esc(cur.opp)}</b><small>${esc(cur.comp)} · ${cur.date}${cur.owner?' · '+t('byOwner',esc(personName(cur.owner))):''}</small>${lock(cur)}</div>
         <div class="hscore num"><span>${st.score.H}</span><small>:</small><span>${st.score.A}</span><em>${ord(st.down)} ${t('down')} · ${st.half===2?t('h2'):t('h1')}</em></div></div>
-      <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="tape">${t('tabsTape')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
+      <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
     </section>`:''}
     <section class="htiles">
       ${tile('newgame','+',t('newGameT'),t('newGameS'),'accent')}
@@ -767,7 +767,7 @@ function homeView(st){
       <span class="lbl2">${t('recent')}</span>
       ${recent.length?recent.map(card).join(''):`<p class="note">${list.length?'':t('noGames')}</p>`}
       ${demoG?`<div class="gcard demo"><div class="gtxt"><b>${esc(demoG.team)} vs ${esc(demoG.opp)}</b><small>${t('demoS')}</small></div>
-        <div class="gbtns"><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="tape">${t('tabsTape')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="ana">${t('viewAna')}</button></div></div>`:''}
+        <div class="gbtns"><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="ana">${t('viewAna')}</button></div></div>`:''}
     </section>
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
