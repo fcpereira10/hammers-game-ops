@@ -110,7 +110,7 @@ pt:{
   vNoneT:'Sem vídeo', vNoneP:'Cola o link do YouTube do jogo (não listado) ou abre o ficheiro do vídeo neste aparelho.', vAddLink:'Colar link do YouTube', vFile:'Abrir ficheiro',
   vLead:'Um vídeo por jogo é o ideal. Se o jogo estiver em vários vídeos, acrescenta uma parte para cada um.', vPart:n=>`Parte ${n}`, vPaste:'Link do YouTube', vSaveLink:'Guardar link', vUse:'Ver esta',
   vLocal:n=>`ficheiro neste aparelho: ${n}`, vNoneS:'sem vídeo', vAdd:'+ Acrescentar parte', vBadLink:'Esse link não parece do YouTube.', vSaved:'Vídeo guardado',
-  vNote:'O ficheiro aberto só toca neste aparelho e não é enviado. O link do YouTube fica guardado no jogo para toda a equipa.', vYtFail:'Não foi possível carregar o YouTube. Confirma a rede.',
+  vNote:'O ficheiro aberto só toca neste aparelho e não é enviado. O link do YouTube fica guardado no jogo para toda a equipa.',
   vPopBlocked:'O browser bloqueou a janela. Autoriza pop-ups para este site e tenta outra vez.', vWin:'Vídeo',
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
@@ -215,7 +215,7 @@ en:{
   vNoneT:'No video', vNoneP:"Paste the game's YouTube link (unlisted) or open the video file on this device.", vAddLink:'Paste YouTube link', vFile:'Open file',
   vLead:'One video per game is best. If the game is in several videos, add one part for each.', vPart:n=>`Part ${n}`, vPaste:'YouTube link', vSaveLink:'Save link', vUse:'Watch this',
   vLocal:n=>`file on this device: ${n}`, vNoneS:'no video', vAdd:'+ Add part', vBadLink:"That link doesn't look like YouTube.", vSaved:'Video saved',
-  vNote:'An opened file only plays on this device and is not uploaded. The YouTube link is saved in the game for the whole team.', vYtFail:'Could not load YouTube. Check the network.',
+  vNote:'An opened file only plays on this device and is not uploaded. The YouTube link is saved in the game for the whole team.',
   vPopBlocked:'The browser blocked the window. Allow pop-ups for this site and try again.', vWin:'Video',
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
@@ -1118,13 +1118,37 @@ function vSrc(){
   if(v&&v.yt)return {k:'yt',key:`${g.id}:yt:${v.yt}`,id:v.yt};
   return null;
 }
-function loadYT(w,cb){
+function loadYT(w,cb,fail){
   if(w.YT&&w.YT.Player)return cb();
-  (w.HGO_ytq=w.HGO_ytq||[]).push(cb);if(w.HGO_ytl)return;w.HGO_ytl=true;
-  w.onYouTubeIframeAPIReady=()=>{(w.HGO_ytq||[]).splice(0).forEach(f=>{try{f()}catch(e){}})};
+  if(w.HGO_ytfail)return fail();
+  (w.HGO_ytq=w.HGO_ytq||[]).push([cb,fail]);if(w.HGO_ytl)return;w.HGO_ytl=true;
+  w.onYouTubeIframeAPIReady=()=>{(w.HGO_ytq||[]).splice(0).forEach(([f])=>{try{f()}catch(e){}})};
   const sc=w.document.createElement('script');sc.src='https://www.youtube.com/iframe_api';
-  sc.onerror=()=>{w.HGO_ytl=false;w.HGO_ytq=[];const h=vHost();if(h&&h.win===w)h.box.innerHTML=`<div class="vempty"><p>${t('vYtFail')}</p></div>`};
+  sc.onerror=()=>{w.HGO_ytl=false;w.HGO_ytfail=true;(w.HGO_ytq||[]).splice(0).forEach(([,f])=>{try{f()}catch(e){}})};
   w.document.head.appendChild(sc);
+}
+/* without the YouTube script (blocked, e.g. in the preview page): plain embed driven by the same messages the script uses */
+function ytFrame(h,key,id){
+  const w=h.win, f=w.document.createElement('iframe'), org=w.location.origin;
+  f.src=`https://www.youtube.com/embed/${id}?enablejsapi=1&playsinline=1&rel=0${org&&org!=='null'?'&origin='+encodeURIComponent(org):''}`;
+  f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
+  h.box.appendChild(f);
+  const st={t:null,s:-1,at:0,ready:false};
+  const post=o=>{try{f.contentWindow.postMessage(JSON.stringify({...o,id:1,channel:'widget'}),'*')}catch(e){}};
+  const send=(func,args)=>post({event:'command',func,args:args||[]});
+  w.addEventListener('message',ev=>{
+    if(w.HGO_src!==key||ev.source!==f.contentWindow)return;
+    let d;try{d=typeof ev.data==='string'?JSON.parse(ev.data):ev.data}catch(e){return}
+    const i=d&&d.info;
+    if(i&&typeof i==='object'){if(typeof i.currentTime==='number'){st.t=i.currentTime;st.at=Date.now()}if(typeof i.playerState==='number')st.s=i.playerState}
+    if(!st.ready&&d&&(d.event==='onReady'||d.event==='initialDelivery'||d.event==='infoDelivery')){st.ready=true;send('setPlaybackRate',[vid.rate]);
+      if(vid.seek!=null){send('seekTo',[vid.seek,true]);send('pauseVideo');st.t=vid.seek;st.at=Date.now();vid.seek=null}}
+  });
+  const hello=()=>post({event:'listening'});
+  f.addEventListener('load',()=>{hello();let n=0;const iv=setInterval(()=>{if(st.ready||++n>20||w.HGO_src!==key)clearInterval(iv);else hello()},250)});
+  w.HGO_yt={getCurrentTime:()=>st.t==null?0:st.t+(st.s===1?(Date.now()-st.at)/1000*vid.rate:0),
+    seekTo:s=>{send('seekTo',[s,true]);st.t=s;st.at=Date.now()},getPlayerState:()=>st.s,
+    playVideo:()=>send('playVideo'),pauseVideo:()=>send('pauseVideo'),setPlaybackRate:r=>send('setPlaybackRate',[r])};
 }
 function mountPlayer(){
   if(vidAway()){const l=vid.win.document.getElementById('vlabel'),c=tapeCur().e;
@@ -1145,7 +1169,8 @@ function mountPlayer(){
   const d=h.win.document.createElement('div');h.box.appendChild(d);
   loadYT(h.win,()=>{if(h.win.HGO_src!==key)return;
     const y=new h.win.YT.Player(d,{videoId:src.id,width:'100%',height:'100%',playerVars:{playsinline:1,rel:0,modestbranding:1},
-      events:{onReady:()=>{h.win.HGO_yt=y;try{y.setPlaybackRate(vid.rate)}catch(e){}if(vid.seek!=null){y.seekTo(vid.seek,true);y.pauseVideo();vid.seek=null}}}})});
+      events:{onReady:()=>{h.win.HGO_yt=y;try{y.setPlaybackRate(vid.rate)}catch(e){}if(vid.seek!=null){y.seekTo(vid.seek,true);y.pauseVideo();vid.seek=null}}}})},
+    ()=>{if(h.win.HGO_src!==key)return;h.box.innerHTML='';ytFrame(h,key,src.id)});
 }
 /* one small controller for whichever player is open */
 function vp(){
