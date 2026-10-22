@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.3.0';
+const APP_VERSION='1.4.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -52,7 +52,7 @@ pt:{
   games:'Jogos', playsAbbr:'jog.', newGame:'+ Novo jogo', delGameC:'Confirmar: apagar este jogo', delGame:'Apagar este jogo', close:'Fechar',
   newGameT:'Novo jogo', team:'Equipa', competition:'Competição', teamName:'Nome da equipa', starts:'Começa a atacar',
   device:'Este aparelho regista', both:'Os dois lados', onlyH:'Só Hammers', onlyA:'Só adversário', start:'Começar jogo',
-  csvHead:'data,equipa,competicao,adversario,parte,lado,down,tipo,mapa,zona,recetor,resultado,defensor,primeiro_down,formacao,dois_qb,pick6,retorno_conv,anulada',
+  csvHead:'data,equipa,competicao,adversario,parte,lado,down,tipo,mapa,zona,recetor,resultado,defensor,primeiro_down,formacao,dois_qb,pick6,retorno_conv,anulada,jardas,yac,qb,jogada,flag,pbu,video,revista,nota',
   typeNum:'Escreve um número', typeForm:'Escreve o nome da formação', deleted:'Apagada', possChanged:'Posse mudada',
   gameCreated:'Jogo criado', csvCopied:'CSV copiado', selectCopy:'Seleciona e copia.', kind:{pass:'passe',run:'corrida',sack:'sack',conv:'conversão'},
   loginLead:'Entra com o email e a password que um admin da Game Ops te deu.', sendLink:'Enviar link', linkSent:e=>`Enviámos um link para <b>${e}</b>. Abre o email neste aparelho e toca no link. Se não aparecer, vê a pasta de spam.`,
@@ -97,7 +97,24 @@ pt:{
   defOverride:'Registar eu esta posse', changeRole:'Mudar de equipa', lastPlays:'Últimas jogadas',
   roTitle:'Só para ver', readOnly:'Podes ver este jogo, mas não registar. Pede ao dono da app para te dar acesso de editor.',
   allGames:'Todos os jogos', loadingShared:'A carregar os jogos partilhados...',
-  willShare:'O jogo fica partilhado com a equipa e aparece em todos os aparelhos.', willLocal:'O jogo fica guardado só neste aparelho.'
+  willShare:'O jogo fica partilhado com a equipa e aparece em todos os aparelhos.', willLocal:'O jogo fica guardado só neste aparelho.',
+  tabsTape:'Tape', tEmptyT:'Ainda sem jogadas', tEmpty:'A tape review completa as jogadas registadas no live. Regista primeiro o jogo, ou insere jogadas aqui.', tInsFirst:'+ Inserir jogada',
+  tDone:(a,b)=>`${a} / ${b} revistas`, tShowList:'Ver lista', tHideList:'Esconder lista', tPlay:(i,n)=>`Jogada ${i} / ${n}`, tReviewed:'revista',
+  tStart:'Início', tMark:'Marcar agora', tMarked:'Tempo marcado', tNoVideo:'Sem vídeo aberto', tVideos:'Vídeos', vPop:'Vídeo noutra janela', vBack:'Trazer vídeo',
+  vAway:'O vídeo está noutra janela', vAwayS:'Arrasta essa janela para o outro ecrã. Os botões e as teclas daqui continuam a comandar o vídeo.',
+  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
+  tAllDone:'Chegaste à última jogada', tPass:'Passe', tRun:'Corrida', tPlaySec:'Jogada', tFix:'corrige se for preciso', tZone:'Zona', tRunner:'Corredor',
+  tYds:'Jardas', tYdsS:'totais, a partir da linha de scrimmage', tYac:'YAC', tYacS:'jardas depois da receção', yardsShort:'jd', tKpYds:'Jardas', tKpYac:'YAC',
+  tQb:'QB', tQbOpp:'QB do adversário', tSticky:'fica até mudares', tCall:'Nome da jogada', tCallS:'opcional, do playbook da equipa', tNewCall:'Nova jogada', tCallPh:'ex.: Smash', tTypeCall:'Escreve o nome da jogada',
+  tFormOpp:'Formação do adversário', tFlag:'Quem tirou a flag', tPbu:'PBU', tPbuS:'quem desviou a bola', tOurs:'Hammers, defesa', tNote:'Nota', tNotePh:'opcional', tKeys:'Teclas: ← → muda de jogada · espaço play/pausa · Enter próxima',
+  vNoneT:'Sem vídeo', vNoneP:'Cola o link do YouTube do jogo (não listado) ou abre o ficheiro do vídeo neste aparelho.', vAddLink:'Colar link do YouTube', vFile:'Abrir ficheiro',
+  vLead:'Um vídeo por jogo é o ideal. Se o jogo estiver em vários vídeos, acrescenta uma parte para cada um.', vPart:n=>`Parte ${n}`, vPaste:'Link do YouTube', vSaveLink:'Guardar link', vUse:'Ver esta',
+  vLocal:n=>`ficheiro neste aparelho: ${n}`, vNoneS:'sem vídeo', vAdd:'+ Acrescentar parte', vBadLink:'Esse link não parece do YouTube.', vSaved:'Vídeo guardado',
+  vNote:'O ficheiro aberto só toca neste aparelho e não é enviado. O link do YouTube fica guardado no jogo para toda a equipa.',
+  vPopBlocked:'O browser bloqueou a janela. Autoriza pop-ups para este site e tenta outra vez.', vWin:'Vídeo',
+  thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
+  tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
+  insTag:'inserida na review',
 },
 en:{
   rows:['Deep','Mid','Short','Behind the line'], glRows:['EZ back','EZ front','0-5','5-10'], cols:['Left','Middle','Right'], colsLong:['Left','Middle','Right'],
@@ -140,7 +157,7 @@ en:{
   games:'Games', playsAbbr:'plays', newGame:'+ New game', delGameC:'Confirm: delete this game', delGame:'Delete this game', close:'Close',
   newGameT:'New game', team:'Team', competition:'Competition', teamName:'Team name', starts:'Starts on offense',
   device:'This device tracks', both:'Both sides', onlyH:'Hammers only', onlyA:'Opponent only', start:'Start game',
-  csvHead:'date,team,competition,opponent,half,side,down,type,map,zone,receiver,result,defender,first_down,formation,double_qb,pick6,conv_return,nullified',
+  csvHead:'date,team,competition,opponent,half,side,down,type,map,zone,receiver,result,defender,first_down,formation,double_qb,pick6,conv_return,nullified,yards,yac,qb,play,flag,pbu,video,reviewed,note',
   typeNum:'Type a number', typeForm:'Type the formation name', deleted:'Deleted', possChanged:'Possession changed',
   gameCreated:'Game created', csvCopied:'CSV copied', selectCopy:'Select and copy.', kind:{pass:'pass',run:'run',sack:'sack',conv:'conversion'},
   loginLead:'Sign in with the email and password a Game Ops admin gave you.', sendLink:'Send link', linkSent:e=>`We sent a link to <b>${e}</b>. Open the email on this device and tap the link. If you can't find it, check spam.`,
@@ -185,7 +202,24 @@ en:{
   defOverride:'I will track this drive', changeRole:'Change team', lastPlays:'Latest plays',
   roTitle:'View only', readOnly:'You can view this game but not track it. Ask the app owner for editor access.',
   allGames:'All games', loadingShared:'Loading shared games...',
-  willShare:'The game is shared with the team and shows on every device.', willLocal:'The game is saved on this device only.'
+  willShare:'The game is shared with the team and shows on every device.', willLocal:'The game is saved on this device only.',
+  tabsTape:'Tape', tEmptyT:'No plays yet', tEmpty:'Tape review completes the plays tracked live. Track the game first, or insert plays here.', tInsFirst:'+ Insert play',
+  tDone:(a,b)=>`${a} / ${b} reviewed`, tShowList:'Show list', tHideList:'Hide list', tPlay:(i,n)=>`Play ${i} / ${n}`, tReviewed:'reviewed',
+  tStart:'Start', tMark:'Mark now', tMarked:'Time marked', tNoVideo:'No video open', tVideos:'Videos', vPop:'Video in another window', vBack:'Bring video back',
+  vAway:'The video is in another window', vAwayS:'Drag that window to the other screen. The buttons and keys here still control the video.',
+  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', tDel:'Delete play', tDelC:'Confirm: delete',
+  tAllDone:'You reached the last play', tPass:'Pass', tRun:'Run', tPlaySec:'Play', tFix:'fix it if needed', tZone:'Zone', tRunner:'Runner',
+  tYds:'Yards', tYdsS:'total, from the line of scrimmage', tYac:'YAC', tYacS:'yards after the catch', yardsShort:'yds', tKpYds:'Yards', tKpYac:'YAC',
+  tQb:'QB', tQbOpp:'Opponent QB', tSticky:'stays until you change it', tCall:'Play name', tCallS:"optional, from the team's playbook", tNewCall:'New play', tCallPh:'e.g. Smash', tTypeCall:'Type the play name',
+  tFormOpp:'Opponent formation', tFlag:'Who pulled the flag', tPbu:'PBU', tPbuS:'who broke up the pass', tOurs:'Hammers, defense', tNote:'Note', tNotePh:'optional', tKeys:'Keys: ← → change play · space play/pause · Enter next',
+  vNoneT:'No video', vNoneP:"Paste the game's YouTube link (unlisted) or open the video file on this device.", vAddLink:'Paste YouTube link', vFile:'Open file',
+  vLead:'One video per game is best. If the game is in several videos, add one part for each.', vPart:n=>`Part ${n}`, vPaste:'YouTube link', vSaveLink:'Save link', vUse:'Watch this',
+  vLocal:n=>`file on this device: ${n}`, vNoneS:'no video', vAdd:'+ Add part', vBadLink:"That link doesn't look like YouTube.", vSaved:'Video saved',
+  vNote:'An opened file only plays on this device and is not uploaded. The YouTube link is saved in the game for the whole team.',
+  vPopBlocked:'The browser blocked the window. Allow pop-ups for this site and try again.', vWin:'Video',
+  thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
+  tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
+  insTag:'inserted in review',
 }};
 function t(k,...a){const v=L[lang][k]!==undefined?L[lang][k]:L.en[k];return typeof v==='function'?v(...a):v}
 const ord=d=>t('ord',d);
@@ -257,6 +291,17 @@ function helpData(){
       <li>Todas as jogadas do jogo, a mais recente primeiro.</li>
       <li><b>Anular</b> tira a jogada das stats mas guarda-a. <b>Apagar</b> remove-a (pede confirmação).</li>
       <li><b>Copiar CSV</b> copia tudo para colar numa folha de Excel ou Google Sheets.</li></ul>`},
+    {id:'tape',t:'Tape review',b:`<p>Depois do jogo, abre o separador <b>Tape</b>. Aparece uma jogada de cada vez, com o que foi registado no live, ao lado do vídeo.</p>
+      <ol><li>Em <b>Vídeos</b>, cola o link do YouTube do jogo (não listado). Se o jogo estiver em vários vídeos, acrescenta uma parte para cada um. Também podes abrir um ficheiro de vídeo do aparelho: só toca nesse aparelho.</li>
+      <li>Vê o clip da jogada e completa: <b>jardas</b>, <b>YAC</b> nos completos, <b>QB</b>, <b>formação</b> e <b>nome da jogada</b> (opcional) quando atacamos. Quando defendemos: QB e formação do adversário, <b>quem tirou a flag</b> e <b>PBU</b>.</li>
+      <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou.</li>
+      <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte.</li></ol>
+      <ul><li>QB e formação vêm preenchidos com os da jogada anterior (tracejado). Só tocas se mudarem.</li>
+      <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início.</li>
+      <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
+      <li><b>Vídeo noutra janela</b> abre o vídeo numa janela à parte, para pôr noutro ecrã. Os botões e as teclas continuam a comandá-lo.</li>
+      <li>No computador: <b>← →</b> muda de jogada, <b>espaço</b> faz play/pausa, <b>Enter</b> é Próxima.</li></ul>
+      <p>As jardas, o YAC, os QB, os nomes das jogadas, as flags e os PBU aparecem na <b>Análise</b>.</p>`},
     {id:'team',t:'Duas pessoas no mesmo jogo',b:`<ol>
       <li>Uma pessoa cria o jogo. Ele aparece logo em ${btn('',t('game'))} → <b>Jogos</b> para toda a equipa.</li>
       <li>A outra pessoa abre o mesmo link e escolhe esse jogo na lista.</li>
@@ -317,6 +362,17 @@ function helpData(){
       <li>Every play of the game, most recent first.</li>
       <li><b>Nullify</b> removes the play from stats but keeps it. <b>Delete</b> removes it (asks to confirm).</li>
       <li><b>Copy CSV</b> copies everything to paste into Excel or Google Sheets.</li></ul>`},
+    {id:'tape',t:'Tape review',b:`<p>After the game, open the <b>Tape</b> tab. It shows one play at a time, with what was tracked live, next to the video.</p>
+      <ol><li>In <b>Videos</b>, paste the game's YouTube link (unlisted). If the game is in several videos, add one part for each. You can also open a video file from the device: it only plays on that device.</li>
+      <li>Watch the play's clip and fill in: <b>yards</b>, <b>YAC</b> on completions, <b>QB</b>, <b>formation</b> and <b>play name</b> (optional) when we are on offense. On defense: opponent QB and formation, <b>who pulled the flag</b> and <b>PBU</b>.</li>
+      <li>Fix the type, result, zone or receiver if the live tracking got it wrong.</li>
+      <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play.</li></ol>
+      <ul><li>QB and formation come filled in from the previous play (dashed). Only tap if they change.</li>
+      <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start.</li>
+      <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
+      <li><b>Video in another window</b> opens the video in a separate window, to put on another screen. The buttons and keys still control it.</li>
+      <li>On a computer: <b>← →</b> change play, <b>space</b> play/pause, <b>Enter</b> is Next.</li></ul>
+      <p>Yards, YAC, QBs, play names, flags and PBUs show in <b>Analysis</b>.</p>`},
     {id:'team',t:'Two people, one game',b:`<ol>
       <li>One person creates the game. It shows up right away in ${btn('',t('game'))} → <b>Games</b> for the whole team.</li>
       <li>The other person opens the same link and picks that game from the list.</li>
@@ -448,6 +504,7 @@ function role(){if(!g||g.store==='demo')return 'both';const r=getRole(g.id);if(r
 const readOnly=()=>g.store==='cloud'&&!cloud.canWrite;
 function selectGame(id){
   curId=id;lsSet(LS_CUR,id);undoStack=[];draft=null;runMode=false;qbNext=false;override=null;an.rec=null;an.form=null;
+  tp.id=null;tp.gl=null;tp.del=null;vid.files={};vid.slot=0;vid.seek=null;vid.resume=null;
   refresh();
   if(g.store!=='demo'&&!getRole(g.id)&&!readOnly())openSheet('role');
 }
@@ -617,16 +674,30 @@ function sideName(s){return s==='H'?'Hammers':esc(g.opp)}
 
 function render(){
   document.documentElement.lang=lang==='pt'?'pt-PT':'en';
-  const st=replay();
-  if(view==='home'){document.getElementById('app').innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
+  const st=replay(), app=document.getElementById('app');
+  /* tape review: the video pane stays in place (re-creating it would restart the video), only the header and the panel are redrawn */
+  if(view==='tape'&&app.dataset.tape===g.id&&document.getElementById('tpanel')){
+    app.querySelector('.top').outerHTML=topHTML(st);tapeUpdate();animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
+  if(document.getElementById('vbox')&&!vidAway()){const tt=vTime();if(tt!=null)vid.resume=tt}
+  app.dataset.tape=view==='tape'?g.id:'';
+  if(view==='home'){app.innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
+  app.innerHTML=`${topHTML(st)}
+  <nav class="tabs" role="tablist">
+    ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape')+'<span class="beta">BETA</span>':t('tabs')[k]}</button>`).join('')}
+  </nav>
+  ${view==='reg'?regView(st):view==='tape'?tapeView():view==='ana'?anaView():logView()}`;
+  if(view==='tape')mountPlayer();
+  animateRender(st);
+  if(pendingReload)setTimeout(reloadIfIdle,300);
+}
+function topHTML(st){
   const showPoss=g.mode==='both'&&!readOnly();
   const r=role(), roleTxt=r==='both'?t('roleB'):r==='H'?'Hammers':t('roleA');
   const pend=cloud.outbox.length;
   const sync=g.store==='demo'?`<span class="sample">${t('sample')}</span>`
     :g.store==='local'?`<span class="sync local">${t('localOnly')}</span>`
     :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
-  document.getElementById('app').innerHTML=`
-  <header class="top">
+  return `<header class="top">
     <button class="hlogo-btn" data-act="home" aria-label="${t('home')}"><img class="hlogo" src="icons/logo.png" alt="" width="52" height="50"></button>
     <button class="chip game" data-act="opts" aria-label="${t('options')}"><span class="gm"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
       <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></span></button>
@@ -635,13 +706,7 @@ function render(){
     <div class="chip score num"><small>${t('ham')}</small><span class="s">${st.score.H}</span><small>:</small><span class="s">${st.score.A}</span><small>${t('opp')}</small></div>
     <button class="chip undo" data-act="undo">↶ ${t('undo')}</button>
     <button class="chip opts" data-act="opts" aria-label="${t('options')}"><span class="dots" aria-hidden="true">⋮</span>${t('options')}</button>
-  </header>
-  <nav class="tabs" role="tablist">
-    ${['reg','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${t('tabs')[k]}</button>`).join('')}
-  </nav>
-  ${view==='reg'?regView(st):view==='ana'?anaView():logView()}`;
-  animateRender(st);
-  if(pendingReload)setTimeout(reloadIfIdle,300);
+  </header>`;
 }
 /* ---------- motion ---------- */
 let lastAdded=null, prevRender=null, loginAnimated=false, pendingReload=false;
@@ -678,7 +743,7 @@ function homeView(st){
   const lock=x=>x.visibility==='private'?`<span class="sync local">🔒 ${t('visMe')}</span>`:'';
   const card=x=>`<div class="gcard">
       <div class="gtxt"><b>${esc(x.team)} vs ${esc(x.opp)}</b><small>${esc(x.comp)} · ${x.date}${x.owner?' · '+t('byOwner',esc(personName(x.owner))):''}</small>${lock(x)}</div>
-      <div class="gbtns"><button class="btn" data-act="openg" data-id="${x.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="ana">${t('viewAna')}</button></div></div>`;
+      <div class="gbtns"><button class="btn" data-act="openg" data-id="${x.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${x.id}" data-v="ana">${t('viewAna')}</button></div></div>`;
   const tile=(act,icon,l,d,cls='')=>`<button class="htile ${cls}" data-act="${act}"><span class="hi" aria-hidden="true">${icon}</span><b>${l}</b><small>${d}</small></button>`;
   const recent=list.filter(x=>!cur||x.id!==cur.id).slice(0,5);
   return `<header class="top home-top">
@@ -690,7 +755,7 @@ function homeView(st){
       <span class="lbl2">${t('continueG')}</span>
       <div class="hero-row"><div class="gtxt"><b>${esc(cur.team)} vs ${esc(cur.opp)}</b><small>${esc(cur.comp)} · ${cur.date}${cur.owner?' · '+t('byOwner',esc(personName(cur.owner))):''}</small>${lock(cur)}</div>
         <div class="hscore num"><span>${st.score.H}</span><small>:</small><span>${st.score.A}</span><em>${ord(st.down)} ${t('down')} · ${st.half===2?t('h2'):t('h1')}</em></div></div>
-      <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
+      <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
     </section>`:''}
     <section class="htiles">
       ${tile('newgame','+',t('newGameT'),t('newGameS'),'accent')}
@@ -702,7 +767,7 @@ function homeView(st){
       <span class="lbl2">${t('recent')}</span>
       ${recent.length?recent.map(card).join(''):`<p class="note">${list.length?'':t('noGames')}</p>`}
       ${demoG?`<div class="gcard demo"><div class="gtxt"><b>${esc(demoG.team)} vs ${esc(demoG.opp)}</b><small>${t('demoS')}</small></div>
-        <div class="gbtns"><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="ana">${t('viewAna')}</button></div></div>`:''}
+        <div class="gbtns"><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="ana">${t('viewAna')}</button></div></div>`:''}
     </section>
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
@@ -846,6 +911,9 @@ function anaView(){
       [passes.filter(e=>e.res==='G'&&e.pts===1).length+'/'+passes.filter(e=>e.pts===1).length,'1 pt'],[passes.filter(e=>e.res==='G'&&e.pts===2).length+'/'+passes.filter(e=>e.pts===2).length,'2 pts']]
     :[[passes.length,TL[0]],[pct(comp,passes.length),TL[1]],[P.filter(e=>e.res==='TD').length,TL[2]],
       [passes.filter(e=>e.res==='INT').length,TL[3]],[runs.length,TL[4]],[base.filter(e=>e.kind==='sack').length,t('sacks')],[P.filter(e=>e.fd).length,TL[5]],[P.filter(e=>e.qb2).length,TL[6]]];
+  // yards come from the tape review
+  const Y=P.filter(e=>e.t==='play'&&e.yds!=null), hasY=!conv&&Y.length>0, sum=(l,k)=>l.reduce((a,e)=>a+(e[k]||0),0), avg=l=>l.length?(sum(l,'yds')/l.length).toFixed(1):'-';
+  if(hasY){const TY=t('tilesY');tiles.push([sum(Y,'yds'),TY[0]],[avg(Y),TY[1]],[Y.filter(e=>e.yds>=15).length,TY[2]])}
   const zl=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zl.push((gl?'g':'')+r+c);
   const max=Math.max(1,...zl.map(z=>P.filter(e=>e.zone===z).length));
   let zones='';
@@ -859,20 +927,35 @@ function anaView(){
     }
   });
   const by={};all.filter(e=>e.kind!=='sack').forEach(e=>{const k=e.rec==null?'?':e.rec;(by[k]=by[k]||[]).push(e)});
-  const rows=Object.entries(by).map(([k,l])=>{const p=l.filter(isPassLike);return{k,t:p.length,c:p.filter(isComp).length,td:l.filter(e=>e.res==='TD').length,int:p.filter(e=>e.res==='INT').length,r:l.filter(e=>e.kind==='run').length}})
+  const rows=Object.entries(by).map(([k,l])=>{const p=l.filter(isPassLike);return{k,t:p.length,c:p.filter(isComp).length,td:l.filter(e=>e.res==='TD').length,int:p.filter(e=>e.res==='INT').length,r:l.filter(e=>e.kind==='run').length,
+      y:sum(l.filter(e=>e.res!=='INT'),'yds'),yac:sum(l,'yac'),hy:l.some(e=>e.yds!=null)}})
     .sort((a,b)=>b.t-a.t||b.r-a.r);
-  const tbody=rows.map(r=>`<tr data-act="anrec" data-r="${r.k}" aria-selected="${String(an.rec)===r.k}"><td class="jn">${r.k==='?'?t('noNum'):'#'+r.k}</td><td>${r.t}</td><td>${r.c}</td><td>${pct(r.c,r.t)}</td><td>${r.td}</td><td>${r.int}</td><td>${r.r}</td></tr>`).join('');
+  const tbody=rows.map(r=>`<tr data-act="anrec" data-r="${r.k}" aria-selected="${String(an.rec)===r.k}"><td class="jn">${r.k==='?'?t('noNum'):'#'+r.k}</td><td>${r.t}</td><td>${r.c}</td><td>${pct(r.c,r.t)}</td>${hasY?`<td>${r.hy?r.y:'-'}</td><td>${r.hy?r.yac:'-'}</td>`:''}<td>${r.td}</td><td>${r.int}</td><td>${r.r}</td></tr>`).join('');
+  const thP2=hasY?[...t('thP').slice(0,4),lang==='pt'?'Jd':'Yds','YAC',...t('thP').slice(4)]:t('thP');
+  // by QB and by play name (tape review fields)
+  const qbs={};all.filter(e=>e.qb!=null&&isPassLike(e)).forEach(e=>{(qbs[e.qb]=qbs[e.qb]||[]).push(e)});
+  const qrows=Object.entries(qbs).map(([k,l])=>{const c=l.filter(isComp);return `<tr><td class="jn">#${k}</td><td>${l.length}</td><td>${c.length}</td><td>${pct(c.length,l.length)}</td>
+      <td>${sum(l.filter(e=>e.res!=='INT'),'yds')}</td><td>${c.filter(e=>e.yds!=null).reduce((a,e)=>a+e.yds-(e.yac||0),0)}</td><td>${l.filter(e=>e.res==='TD').length}</td><td>${l.filter(e=>e.res==='INT').length}</td></tr>`}).join('');
+  const calls={};all.filter(e=>e.call).forEach(e=>{(calls[e.call]=calls[e.call]||[]).push(e)});
+  const crows=Object.entries(calls).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike),y=l.filter(e=>e.yds!=null);
+      return `<tr><td>${esc(k)}</td><td>${l.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${sum(y,'yds')}</td><td>${avg(y)}</td><td>${l.filter(e=>e.res==='TD').length}</td></tr>`}).join('');
   const top=(arr,f)=>{const m={};arr.forEach(e=>{const k=f(e);if(k!=null)m[k]=(m[k]||0)+1});const s=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];return s||null};
   const dn=conv?'':[1,2,3,4].map(d=>{
     const l=base.filter(e=>e._down===d&&(an.rec==null||e.rec===an.rec));
     const p=l.filter(e=>e.kind==='pass');
     const tz=top(p,e=>e.zone), tr=top(p,e=>e.rec), tf=top(l,e=>e.form);
-    return `<tr data-act="andown" data-d="${d}" aria-selected="${an.down===d}"><td class="jn">${ord(d)}</td><td>${p.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${tz?zoneName(tz[0])+' ('+tz[1]+')':'-'}</td><td>${tr?'#'+tr[0]+' ('+tr[1]+')':'-'}</td><td>${tf?esc(tf[0]):'-'}</td><td>${l.filter(e=>e.kind==='run').length}</td></tr>`;
+    return `<tr data-act="andown" data-d="${d}" aria-selected="${an.down===d}"><td class="jn">${ord(d)}</td><td>${p.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${tz?zoneName(tz[0])+' ('+tz[1]+')':'-'}</td><td>${tr?'#'+tr[0]+' ('+tr[1]+')':'-'}</td><td>${tf?esc(tf[0]):'-'}</td><td>${l.filter(e=>e.kind==='run').length}</td>${hasY?`<td>${avg(l.filter(e=>e.yds!=null))}</td>`:''}</tr>`;
   }).join('');
   // defensive plays made against this offense: interceptions and sacks by number
-  const dv={};g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===an.side&&!e.annul&&(e.res==='INT'||e.res==='SACK')&&(!an.half||e._half===an.half))
-    .forEach(e=>{const k=e.dby==null?'?':e.dby;dv[k]=dv[k]||{i:0,s:0,p6:0};if(e.res==='SACK')dv[k].s++;else{dv[k].i++;if(e.pick6)dv[k].p6++}});
-  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s)-(a[1].i+a[1].s)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
+  // flags and PBU from the tape review
+  const dv={}, dk=k=>dv[k]=dv[k]||{i:0,s:0,p6:0,f:0,b:0};
+  g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===an.side&&!e.annul&&(!an.half||e._half===an.half)).forEach(e=>{
+    if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
+    if(e.fby!=null)dk(e.fby).f++;
+    if(e.pbu!=null)dk(e.pbu).b++;
+  });
+  const hasDT=Object.values(dv).some(v=>v.f||v.b);
+  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td>${hasDT?`<td>${v.f}</td><td>${v.b}</td>`:''}<td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
   const forms=[...new Set(g.events.filter(e=>e.t==='play'&&e._side===an.side&&e.form).map(e=>e.form))];
   const seg=(key,opts,cls='')=>`<div class="seg ${cls}">${opts.map(([v,l,c])=>`<button class="${c||''}" data-act="an" data-k="${key}" data-v="${v}" aria-pressed="${String(an[key])===String(v)}">${l}</button>`).join('')}</div>`;
   const D=t('downs'), thP=t('thP'), thD=t('thD');
@@ -896,14 +979,18 @@ function anaView(){
       </section>
       <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
         <section class="panel"><h3>${t('byPlayer')}</h3>
-          <div class="tablewrap"><table><thead><tr>${thP.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${tbody||`<tr><td colspan="7">${t('noMatch')}</td></tr>`}</tbody></table></div>
+          <div class="tablewrap"><table><thead><tr>${thP2.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${tbody||`<tr><td colspan="9">${t('noMatch')}</td></tr>`}</tbody></table></div>
           <p class="note">${t('tapPlayer')}</p>
         </section>
+        ${qrows?`<section class="panel"><h3>${t('byQb')}</h3>
+          <div class="tablewrap"><table><thead><tr>${t('thQb').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${qrows}</tbody></table></div></section>`:''}
+        ${crows?`<section class="panel"><h3>${t('byCall')}</h3>
+          <div class="tablewrap"><table class="nosel"><thead><tr>${t('thCall').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${crows}</tbody></table></div></section>`:''}
         ${conv?'':`<section class="panel"><h3>${t('byDown')}</h3>
-          <div class="tablewrap"><table><thead><tr>${thD.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${dn}</tbody></table></div>
+          <div class="tablewrap"><table><thead><tr>${[...thD,...(hasY?[t('jdPlay')]:[])].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${dn}</tbody></table></div>
         </section>`}
-        <section class="panel"><h3>${t('defTable',sideName(other(an.side)))}</h3>
-          <div class="tablewrap"><table><thead><tr>${t('thDef').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${drows||`<tr><td colspan="4">${t('noMatch')}</td></tr>`}</tbody></table></div>
+        <section class="panel"><h3>${hasDT?t('defTable2',sideName(other(an.side))):t('defTable',sideName(other(an.side)))}</h3>
+          <div class="tablewrap"><table><thead><tr>${(hasDT?t('thDef2'):t('thDef')).map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${drows||`<tr><td colspan="6">${t('noMatch')}</td></tr>`}</tbody></table></div>
         </section>
       </div>
     </div>`;
@@ -935,6 +1022,261 @@ function logView(){
     <div class="log">${items||`<p class="note">${t('logEmpty')}</p>`}</div>`;
 }
 
+
+/* ---------- tape review: one play at a time, next to the video ----------
+   Adds to each play event: yds, yac, qb, call (play name), fby (flag pulled by), pbu, note, vt/vi (video time and part), rv (reviewed). */
+const tp={id:null,list:false,gl:null,del:null};
+const tapeEvs=()=>g.events.filter(e=>e.t==='play'||e.t==='conv');
+function tapeCur(){
+  const L=tapeEvs();let i=L.findIndex(e=>e.id===tp.id);
+  if(i<0){i=L.findIndex(e=>!e.rv);if(i<0)i=0;tp.id=L[i]?L[i].id:null}
+  return {L,i,e:L[i]||null};
+}
+/* sticky fields (QB, formation): the value of the previous play of the same team */
+function tSugg(e,k){const L=tapeEvs();for(let j=L.indexOf(e)-1;j>=0;j--){const x=L[j];if(x._side===e._side&&x[k]!=null&&x[k]!=='')return x[k]}return null}
+const fmtT=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s/60)%60,ss=String(s%60).padStart(2,'0');return h?`${h}:${String(m).padStart(2,'0')}:${ss}`:`${m}:${ss}`};
+const partName=i=>t('vPart',(i||0)+1);
+function playbook(){const s=new Set(g.playbook||[]);games.forEach(x=>{if(x.team===g.team&&x.id!==g.id)(x.playbook||[]).forEach(c=>s.add(c))});return [...s]}
+const ytId=v=>{v=(v||'').trim();const m=v.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:/^[A-Za-z0-9_-]{11}$/.test(v)?v:null};
+
+function tapeView(){return `<div class="tape"><section class="vpane" id="vpane">${vpaneHTML()}</section><section class="tpanel" id="tpanel">${tapePanel()}</section></div>`}
+function tapeUpdate(){
+  const P=document.getElementById('tpanel'), a=document.activeElement, keep=a&&a.id==='t-note'?{v:a.value,s:a.selectionStart,id:tp.id}:null;
+  P.innerHTML=tapePanel();
+  if(keep&&keep.id===tp.id){const n=document.getElementById('t-note');if(n){n.value=keep.v;n.focus();try{n.setSelectionRange(keep.s,keep.s)}catch(e){}}}
+  mountPlayer();
+}
+function tapePanel(){
+  const {L,i,e}=tapeCur();
+  if(!e)return `<div class="defcard"><h3>${t('tEmptyT')}</h3><p>${t('tEmpty')}</p>${readOnly()?'':`<button class="btn" data-act="tins">${t('tInsFirst')}</button>`}</div>`;
+  const done=L.filter(x=>x.rv).length, s=e._side, conv=e.t==='conv', ours=s==='H', vs=g.videos||[], away=vidAway();
+  const blk=(l,sub,body)=>`<div class="tblk"><div class="lbl"><span>${l}</span><span>${sub||''}</span></div>${body}</div>`;
+  const chips=(k,opts,val,sug)=>`<div class="forms">${opts.map(([v,l])=>`<button class="f" data-act="tset" data-k="${k}" data-s="${esc(v)}" aria-pressed="${val===v}"${sug&&val===v?' data-sug':''}>${esc(l)}</button>`).join('')}`;
+  const nums=(k,side,val,sug)=>{const R=[...new Set([...g.roster[side],...(val!=null?[val]:[])])].sort((a,b)=>a-b);
+    return `<div class="tnums">${R.map(n=>`<button class="tn num" data-act="tset" data-k="${k}" data-n="${n}" aria-pressed="${val===n}"${sug&&val===n?' data-sug':''}>${n}</button>`).join('')}<button class="tn add" data-act="taddnum" data-k="${k}" data-side="${side}" aria-label="${t('newNum')}">+</button></div>`};
+  const yds=(k,val)=>`<div class="tyds"><div class="tyv"><button class="tn" data-act="tadj" data-k="${k}" data-d="-1" aria-label="-1">−</button><b class="num">${val==null?'—':val}<span>${t('yardsShort')}</span></b>
+      <button class="tn" data-act="tadj" data-k="${k}" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tkp" data-k="${k}">123</button></div>
+    <div class="tq">${[-5,0,3,5,10,15,20,30].map(n=>`<button class="tn num" data-act="tset" data-k="${k}" data-n="${n}" aria-pressed="${val===n}">${n>0?'+'+n:n}</button>`).join('')}</div></div>`;
+  // the play itself, as tracked live (fix it if needed)
+  const resOpts=conv?[['G',t('convRes').G],['NG',t('convRes').NG],['INT','INT']]:e.kind==='run'?[['R',t('tagR')],['TD','TD']]:e.kind==='sack'?[]:[['C',t('tagC')],['X',t('tagX')],['TD','TD'],['INT','INT']];
+  const gl=tp.gl!=null?tp.gl:(conv||isGL(e.zone));
+  let zones='';const ROWS=gl?t('glRows'):t('rows'),COLS=t('cols');
+  for(let r=0;r<4;r++)for(let c=0;c<3;c++){const z=(gl?'g':'')+r+c;
+    zones+=`<button class="tz${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}" data-act="tset" data-k="zone" data-s="${z}" aria-pressed="${e.zone===z}">${ROWS[r]} ${COLS[c]}</button>`}
+  const play=`${conv||e.kind==='sack'?'':`<div class="seg"><button data-act="tset" data-k="kind" data-s="pass" aria-pressed="${e.kind==='pass'}">${t('tPass')}</button><button data-act="tset" data-k="kind" data-s="run" aria-pressed="${e.kind==='run'}">${t('tRun')}</button></div>`}
+    ${resOpts.length?`<div class="resrow">${resOpts.map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${!conv&&(e.res==='C'||e.res==='R')?`<button class="rb" data-act="tfd" aria-pressed="${!!e.fd}">${t('fd')}</button>`:''}</div>`:`<span class="tag SACK tsack">${t('sack')}</span>`}
+    ${e.kind==='sack'?'':`<div class="tzhead"><span class="lbl2">${t('tZone')}</span><div class="seg"><button data-act="tgl" data-v="0" aria-pressed="${!gl}">${t('mapField')}</button><button data-act="tgl" data-v="1" aria-pressed="${gl}">GL</button></div></div>
+    <div class="tzones">${zones}</div>
+    <span class="lbl2">${e.kind==='run'?t('tRunner'):t('receiver')}</span>${nums('rec',s,e.rec??null)}`}
+    ${e.res==='INT'||e.res==='SACK'?`<span class="lbl2">${e.res==='SACK'?t('whoSack'):t('whoInt')} · ${sideName(other(s))}</span>${nums('dby',other(s),e.dby??null)}`:''}`;
+  const qbV=e.qb!=null?e.qb:tSugg(e,'qb'), fmV=e.form||(conv?null:tSugg(e,'form'));
+  const forms=g.formations[s].map(f=>[f,f]);
+  const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
+  const vt=e.vt!=null?`${fmtT(e.vt)}${vs.length>1?' · '+partName(e.vi):''}`:'—';
+  const L2=L.map((x,j)=>`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
+      <span>${x.t==='conv'?'+'+x.pts:ord(x._down)}</span><span class="trx">${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}</span>
+      <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('');
+  return `<div class="tprog"><div class="tbar"><i style="width:${L.length?Math.round(done/L.length*100):0}%"></i></div><span class="num">${t('tDone',done,L.length)}</span><button class="linkbtn" data-act="tlist">${tp.list?t('tHideList'):t('tShowList')}</button></div>
+    ${tp.list?`<div class="tlist">${L2}</div>`:''}
+    <div class="tnav side-${s}"><button class="btn" data-act="tnav" data-d="-1" ${i?'':'disabled'} aria-label="${t('tPrev')}">‹</button>
+      <div class="tttl"><b>${t('tPlay',i+1,L.length)}</b><small>${conv?t('conv')+' '+e.pts+' pt':ord(e._down)+' '+t('down')} · <span class="pside ${s}">${sideName(s)}</span> · ${e._half===2?t('h2'):t('h1')}${e.annul?' · '+t('annulTag'):''}${e.ins?' · '+t('insTag'):''}${e.rv?' · ✓ '+t('tReviewed'):''}</small></div>
+      <button class="btn" data-act="tnav" data-d="1" ${i<L.length-1?'':'disabled'} aria-label="${t('tNext')}">›</button></div>
+    <div class="vctl">
+      ${vs.length>1?`<div class="seg">${vs.map((v,j)=>`<button data-act="vuse" data-n="${j}" aria-pressed="${vid.slot===j}">${partName(j)}</button>`).join('')}</div>`:''}
+      <button class="btn" data-act="tplay" aria-label="${t('tPlayCtl')}">▶ ❚❚</button><button class="btn" data-act="tback">${t('tBack5')}</button>
+      <button class="btn" data-act="trate" aria-pressed="${vid.rate!==1}">${t('tSlow')}</button>
+      <span class="vt">${t('tStart')}: <b class="num">${vt}</b></span><button class="btn" data-act="tmark">${t('tMark')}</button>
+      <span class="vsp"></span><button class="btn" data-act="videos">${t('tVideos')}</button><button class="btn" data-act="${away?'vback':'vpop'}">${away?t('vBack'):t('vPop')}</button>
+    </div>
+    ${blk(t('tPlaySec'),t('tFix'),play)}
+    ${conv?'':blk(t('tYds'),t('tYdsS'),yds('yds',e.yds??null))}
+    ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
+    ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
+    ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
+    ${ours?blk(t('tCall'),t('tCallS'),chips('call',playbook().map(c=>[c,c]),e.call||null,false)+`<button class="f" data-act="tcall">${t('newForm')}</button></div>`):''}
+    ${!ours&&!conv&&(e.res==='C'||e.res==='R')?blk(t('tFlag'),t('tOurs'),nums('fby','H',e.fby??null)):''}
+    ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}
+    ${blk(t('tNote'),'',`<input class="field-in" id="t-note" maxlength="140" placeholder="${t('tNotePh')}" value="${esc(e.note||'')}" autocomplete="off">`)}
+    <div class="tfoot">
+      <button class="primary" data-act="tnext">${t('tNext')} ›</button>
+      <div class="row"><button class="btn" data-act="tins">${t('tIns')}</button><button class="btn" data-act="tdel" style="color:var(--bad)">${tp.del===e.id?t('tDelC'):t('tDel')}</button></div>
+      <p class="note tkeys">${t('tKeys')}</p>
+    </div>`;
+}
+
+/* ---------- video: YouTube (unlisted link saved in the game) or a file opened on this device; here or in a separate window ---------- */
+const vid={slot:0,files:{},win:null,rate:1,seek:null,resume:null};
+const vidAway=()=>!!(vid.win&&!vid.win.closed);
+function vpaneHTML(){return vidAway()?`<div class="vaway"><b>${t('vAway')}</b><p>${t('vAwayS')}</p><button class="btn" data-act="vback">${t('vBack')}</button></div>`:`<div class="vbox" id="vbox"></div>`}
+function vHost(){
+  if(vidAway()){const b=vid.win.document.getElementById('vbox');return b?{win:vid.win,box:b}:null}
+  const b=document.getElementById('vbox');return b?{win:window,box:b}:null;
+}
+function vSrc(){
+  const v=(g.videos||[])[vid.slot], f=vid.files[vid.slot];
+  if(f)return {k:'file',key:`${g.id}:f${vid.slot}:${f.name}:${f.size}`,file:f};
+  if(v&&v.yt)return {k:'yt',key:`${g.id}:yt:${v.yt}`,id:v.yt};
+  return null;
+}
+function loadYT(w,cb,fail){
+  if(w.YT&&w.YT.Player)return cb();
+  if(w.HGO_ytfail)return fail();
+  (w.HGO_ytq=w.HGO_ytq||[]).push([cb,fail]);if(w.HGO_ytl)return;w.HGO_ytl=true;
+  w.onYouTubeIframeAPIReady=()=>{(w.HGO_ytq||[]).splice(0).forEach(([f])=>{try{f()}catch(e){}})};
+  const sc=w.document.createElement('script');sc.src='https://www.youtube.com/iframe_api';
+  sc.onerror=()=>{w.HGO_ytl=false;w.HGO_ytfail=true;(w.HGO_ytq||[]).splice(0).forEach(([,f])=>{try{f()}catch(e){}})};
+  w.document.head.appendChild(sc);
+}
+/* without the YouTube script (blocked, e.g. in the preview page): plain embed driven by the same messages the script uses */
+function ytFrame(h,key,id){
+  const w=h.win, f=w.document.createElement('iframe'), org=w.location.origin;
+  f.src=`https://www.youtube.com/embed/${id}?enablejsapi=1&playsinline=1&rel=0${org&&org!=='null'?'&origin='+encodeURIComponent(org):''}`;
+  f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
+  h.box.appendChild(f);
+  const st={t:null,s:-1,at:0,ready:false};
+  const post=o=>{try{f.contentWindow.postMessage(JSON.stringify({...o,id:1,channel:'widget'}),'*')}catch(e){}};
+  const send=(func,args)=>post({event:'command',func,args:args||[]});
+  w.addEventListener('message',ev=>{
+    if(w.HGO_src!==key||ev.source!==f.contentWindow)return;
+    let d;try{d=typeof ev.data==='string'?JSON.parse(ev.data):ev.data}catch(e){return}
+    const i=d&&d.info;
+    if(i&&typeof i==='object'){if(typeof i.currentTime==='number'){st.t=i.currentTime;st.at=Date.now()}if(typeof i.playerState==='number')st.s=i.playerState}
+    if(!st.ready&&d&&(d.event==='onReady'||d.event==='initialDelivery'||d.event==='infoDelivery')){st.ready=true;send('setPlaybackRate',[vid.rate]);
+      if(vid.seek!=null){send('seekTo',[vid.seek,true]);send('pauseVideo');st.t=vid.seek;st.at=Date.now();vid.seek=null}}
+  });
+  const hello=()=>post({event:'listening'});
+  f.addEventListener('load',()=>{hello();let n=0;const iv=setInterval(()=>{if(st.ready||++n>20||w.HGO_src!==key)clearInterval(iv);else hello()},250)});
+  w.HGO_yt={getCurrentTime:()=>st.t==null?0:st.t+(st.s===1?(Date.now()-st.at)/1000*vid.rate:0),
+    seekTo:s=>{send('seekTo',[s,true]);st.t=s;st.at=Date.now()},getPlayerState:()=>st.s,
+    playVideo:()=>send('playVideo'),pauseVideo:()=>send('pauseVideo'),setPlaybackRate:r=>send('setPlaybackRate',[r])};
+}
+function mountPlayer(){
+  if(vidAway()){const l=vid.win.document.getElementById('vlabel'),c=tapeCur().e;
+    if(l)l.textContent=c?`${g.team} vs ${g.opp} · ${t('tPlay',tapeEvs().indexOf(c)+1,tapeEvs().length)} · ${c.t==='conv'?t('conv'):ord(c._down)+' '+t('down')} · ${c._side==='H'?'Hammers':g.opp}`:''}
+  const h=vHost();if(!h)return;
+  const src=vSrc(), key=src?src.key:'none:'+lang+':'+(h.win===window);
+  if(h.win.HGO_src===key&&h.box.firstChild)return;
+  h.win.HGO_src=key;h.win.HGO_yt=null;h.box.innerHTML='';
+  if(vid.seek==null&&vid.resume!=null)vid.seek=vid.resume;vid.resume=null;
+  if(!src){h.box.innerHTML=h.win===window?`<div class="vempty"><b>${t('vNoneT')}</b><p>${t('vNoneP')}</p>
+    <div class="row">${readOnly()?'':`<button class="primary" data-act="videos">${t('vAddLink')}</button>`}<button class="btn" data-act="vfile">${t('vFile')}</button></div></div>`:`<div class="vempty"><p>${t('vNoneT')}</p></div>`;return}
+  if(src.k==='file'){
+    const v=h.win.document.createElement('video');v.controls=true;v.playsInline=true;v.preload='auto';
+    v.src=h.win.URL.createObjectURL(src.file);
+    v.addEventListener('loadedmetadata',()=>{v.playbackRate=vid.rate;if(vid.seek!=null){v.currentTime=vid.seek;vid.seek=null}});
+    h.box.appendChild(v);return;
+  }
+  const d=h.win.document.createElement('div');h.box.appendChild(d);
+  loadYT(h.win,()=>{if(h.win.HGO_src!==key)return;
+    const y=new h.win.YT.Player(d,{videoId:src.id,width:'100%',height:'100%',playerVars:{playsinline:1,rel:0,modestbranding:1},
+      events:{onReady:()=>{h.win.HGO_yt=y;try{y.setPlaybackRate(vid.rate)}catch(e){}if(vid.seek!=null){y.seekTo(vid.seek,true);y.pauseVideo();vid.seek=null}}}})},
+    ()=>{if(h.win.HGO_src!==key)return;h.box.innerHTML='';ytFrame(h,key,src.id)});
+}
+/* one small controller for whichever player is open */
+function vp(){
+  const h=vHost();if(!h)return null;
+  const v=h.box.querySelector('video');
+  if(v)return {time:()=>v.currentTime,seek:s=>{v.currentTime=s},toggle:()=>{v.paused?v.play():v.pause()},rate:r=>{v.playbackRate=r}};
+  const y=h.win.HGO_yt;
+  if(y&&y.getCurrentTime)return {time:()=>y.getCurrentTime(),seek:s=>y.seekTo(s,true),toggle:()=>{y.getPlayerState()===1?y.pauseVideo():y.playVideo()},rate:r=>{try{y.setPlaybackRate(r)}catch(e){}}};
+  return null;
+}
+function vTime(){const p=vp();if(!p)return null;const x=p.time();return typeof x==='number'&&isFinite(x)?Math.round(x*10)/10:null}
+function seekPlay(e){
+  if(!e||e.vt==null)return;
+  const slot=e.vi||0;
+  if(slot!==vid.slot){vid.slot=slot;vid.seek=e.vt;mountPlayer();return}
+  const p=vp();if(p)p.seek(e.vt);else vid.seek=e.vt;
+}
+function attachFile(file,n){
+  const vs=g.videos||[];
+  if(n>=vs.length){const arr=clone(vs);while(arr.length<=n)arr.push({yt:null});updGame({videos:arr})}
+  vid.files[n]=file;vid.slot=n;mountPlayer();
+}
+function pickFile(n){
+  const inp=document.createElement('input');inp.type='file';inp.accept='video/*';
+  inp.addEventListener('change',()=>{const f=inp.files&&inp.files[0];if(f){attachFile(f,n);if(sheet&&sheet.kind==='videos')renderSheet()}});
+  inp.click();
+}
+const VDOC=`<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hammers Game Ops</title>
+<style>html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+#vbox{position:absolute;left:0;right:0;top:0;bottom:36px}#vbox iframe,#vbox video{width:100%;height:100%;border:0;display:block;background:#000}
+#vlabel{position:absolute;left:0;right:0;bottom:0;height:36px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:600;background:#141414;border-top:3px solid #FF3300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vempty{display:grid;place-items:center;height:100%;color:#aaa;text-align:center;padding:20px}</style></head>
+<body><div id="vbox"></div><div id="vlabel"></div>
+<script>
+document.addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT')return;if(['ArrowLeft','ArrowRight',' ','Enter'].indexOf(e.key)>=0){try{if(opener&&opener.HGO_key){e.preventDefault();opener.HGO_key(e.key)}}catch(x){}}});
+setInterval(function(){try{if(opener&&!opener.closed&&opener.HGO_reattach)opener.HGO_reattach(window)}catch(x){}},1500);
+<\/script></body></html>`;
+function openVideoWindow(){
+  const at=vTime();
+  const w=window.open('','hgo-video','popup,width=1100,height=680');
+  if(!w){toast(t('vPopBlocked'));return}
+  if(!w.document.getElementById('vbox')){w.document.open();w.document.write(VDOC);w.document.close()}
+  w.document.title=`${t('vWin')} · ${g.team} vs ${g.opp}`;
+  vid.win=w;if(at!=null)vid.seek=at;w.HGO_src=null;
+  const pane=document.getElementById('vpane');if(pane)pane.innerHTML=vpaneHTML();
+  mountPlayer();tapeUpdate();try{w.focus()}catch(e){}
+}
+function bringVideoBack(){
+  const at=vTime(), w=vid.win;vid.win=null;
+  try{if(w&&!w.closed)w.close()}catch(e){}
+  if(at!=null)vid.seek=at;
+  const pane=document.getElementById('vpane');if(pane){pane.innerHTML=vpaneHTML();mountPlayer()}
+  if(document.getElementById('tpanel'))tapeUpdate();
+}
+/* the video window survives a reload of the app (for example after an update) and reconnects by itself */
+window.HGO_reattach=w=>{if(vid.win===w||!g)return;vid.win=w;if(view==='tape'&&document.getElementById('vpane')){document.getElementById('vpane').innerHTML=vpaneHTML();tapeUpdate()}};
+window.HGO_key=k=>{tapeKey(k)};
+setInterval(()=>{if(vid.win&&vid.win.closed){vid.win=null;if(view==='tape'&&document.getElementById('vpane')){document.getElementById('vpane').innerHTML=vpaneHTML();mountPlayer();tapeUpdate()}}},1000);
+
+/* ---------- tape actions ---------- */
+function tapeGo(id,seek){tp.id=id;tp.gl=null;tp.del=null;if(seek)seekPlay(tapeEvs().find(x=>x.id===id));render()}
+function tapeNav(d){const {L,i}=tapeCur();const x=L[i+d];if(x)tapeGo(x.id,true)}
+function tapeNext(){
+  const {L,i,e}=tapeCur();if(!e)return;
+  const nx=L[i+1], now=vTime();
+  if(!readOnly())act(grp=>{
+    const p={rv:true};
+    if(e.qb==null){const v=tSugg(e,'qb');if(v!=null)p.qb=v}
+    if(e.t==='play'&&!e.form){const v=tSugg(e,'form');if(v)p.form=v}
+    if(i===0&&e.vt==null&&now!=null){p.vt=0;p.vi=vid.slot}
+    const n=document.getElementById('t-note');if(n&&n.value.trim()!==(e.note||''))p.note=n.value.trim();
+    chEv(e,p,grp);
+    if(nx&&nx.vt==null&&now!=null)chEv(nx,{vt:now,vi:vid.slot},grp);
+  });
+  if(!nx){toast(t('tAllDone'));return}
+  tp.id=nx.id;tp.gl=null;tp.del=null;
+  if(nx.vt!=null&&now!=null&&(Math.abs(now-nx.vt)>4||(nx.vi||0)!==vid.slot))seekPlay(nx);
+  render();
+}
+function tapeKey(k){
+  if(view!=='tape'||sheet)return false;
+  if(k==='ArrowLeft')tapeNav(-1);
+  else if(k==='ArrowRight')tapeNav(1);
+  else if(k===' '){const p=vp();if(p)p.toggle()}
+  else if(k==='Enter')tapeNext();
+  else return false;
+  return true;
+}
+function tapeSet(k,v){
+  const e=tapeCur().e;if(!e||readOnly())return;
+  if(e[k]===v&&k!=='res'&&k!=='kind')v=null;
+  const patch={[k]:v};
+  if(k==='kind'){if(e.res!=='TD')patch.res=v==='run'?'R':'C'}
+  if(k==='res'&&v!=='C'&&v!=='R')patch.fd=false;
+  if(k==='res'&&v!=='INT'&&e.res==='INT'){patch.dby=null;patch.pick6=null}
+  act(grp=>chEv(e,patch,grp));
+}
+function tapeInsert(){
+  if(readOnly())return;
+  const e=tapeCur().e, idx=e?g.events.indexOf(e):g.events.length, prev=g.events[idx-1];
+  const ts=e?(prev?(prev.ts+e.ts)/2:e.ts-1):Date.now(), now=vTime();
+  const ne={t:'play',kind:'pass',zone:null,rec:null,res:'C',fd:false,form:null,qb2:false,annul:false,ins:true,
+    id:Date.now().toString(36)+uid(),ts,by:DEV,...(now!=null?{vt:now,vi:vid.slot}:{})};
+  act(grp=>{S().put(g.id,ne);grp.push({k:'add',id:ne.id})});
+  tp.id=ne.id;tp.gl=null;render();
+}
 
 /* ---------- sheets ---------- */
 function openSheet(kind,data){sheet={kind,...(data||{})};renderSheet()}
@@ -968,7 +1310,7 @@ function renderSheet(){
       <p>${draft?t('numAddDraft'):t('numAdd')}</p>
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='addform'){
-    const s=st.poss, have=g.formations[s];
+    const s=sheet.side||st.poss, have=g.formations[s];
     h=`<h2>${t('newFormT')} · ${sideName(s)}</h2>
       <div class="row">${FORM_SUGG.filter(f=>!have.includes(f)).map(f=>`<button class="f" data-act="formadd" data-f="${f}">${f}</button>`).join('')}</div>
       <label class="lbl2" for="form-name">${t('orType')}</label>
@@ -1065,12 +1407,35 @@ function renderSheet(){
       <div class="toc">${H.S.map(x=>`<button data-act="helpgo" data-sec="${x.id}">${x.t}</button>`).join('')}</div>
       ${H.S.map(x=>`<section class="hsec" id="help-${x.id}"><h3>${x.t}</h3>${x.b}</section>`).join('')}
       <button class="primary" data-act="close">${t('close')}</button>`;
+  }else if(sheet.kind==='tkp'){
+    const yd=!sheet.add, side=sheet.side;
+    h=`<h2>${yd?(sheet.k==='yac'?t('tKpYac'):t('tKpYds')):`${t('newNumT')} · ${sideName(side)}`}</h2><div class="kp-out num">${(sheet.neg?'−':'')+(sheet.v||'')||'&nbsp;'}</div>
+      <div class="keypad">${[1,2,3,4,5,6,7,8,9].map(k=>`<button class="big num" data-act="tk" data-k="${k}">${k}</button>`).join('')}
+      ${yd?`<button class="big" data-act="tk" data-k="neg" aria-pressed="${!!sheet.neg}">±</button>`:'<span></span>'}<button class="big num" data-act="tk" data-k="0">0</button>
+      <button class="big" data-act="tk" data-k="back" aria-label="Backspace">⌫</button></div>
+      <button class="primary" data-act="tkok">OK</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='tcall'){
+    h=`<h2>${t('tNewCall')}</h2>
+      <label class="lbl2" for="call-name">${t('tCall')}</label>
+      <input class="field-in" id="call-name" maxlength="30" placeholder="${t('tCallPh')}" autocomplete="off">
+      <button class="primary" data-act="tcalladd">${t('add')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='videos'){
+    const vs=(g.videos&&g.videos.length)?g.videos:[{yt:null}], ro=readOnly();
+    h=`<div class="help-head"><h2>${t('tVideos')}</h2><button class="ghost" data-act="close" aria-label="${t('close')}" style="font-size:22px">✕</button></div><p>${t('vLead')}</p>
+      ${vs.map((v,i)=>`<div class="vrow${vid.slot===i?' cur':''}"><div class="vrh"><b>${partName(i)}</b><small>${[v.yt?'YouTube ✓':'',vid.files[i]?t('vLocal',esc(vid.files[i].name)):''].filter(Boolean).join(' · ')||t('vNoneS')}</small></div>
+        ${ro?'':`<input class="field-in" id="vurl-${i}" placeholder="${t('vPaste')}" value="${v.yt?'https://youtu.be/'+v.yt:''}" autocomplete="off" inputmode="url">`}
+        <div class="row">${ro?'':`<button class="btn" data-act="vsave" data-n="${i}">${t('vSaveLink')}</button>`}<button class="btn" data-act="vfile" data-n="${i}">${t('vFile')}</button>
+          ${vs.length>1||v.yt||vid.files[i]?`<button class="btn" data-act="vuse" data-n="${i}">${t('vUse')}</button>`:''}
+          ${!ro&&g.videos&&g.videos.length>1?`<button class="btn" data-act="vdel" data-n="${i}" style="color:var(--bad)">${sheet.vdel===i?t('confirm'):t('remove')}</button>`:''}</div></div>`).join('')}
+      ${ro?'':`<button class="btn" data-act="vadd">${t('vAdd')}</button>`}
+      <p class="note">${t('vNote')}</p>
+      <button class="primary" data-act="close">${t('close')}</button>`;
   }else if(sheet.kind==='csv'){
     h=`<h2>CSV</h2><p>${t('selectCopy')}</p><textarea id="csv-out" class="field-in" style="min-height:240px;padding:10px;font-family:monospace;font-size:12px">${esc(sheet.text)}</textarea><button class="ghost" data-act="close">${t('close')}</button>`;
   }
   const fresh=!Lr.querySelector('.scrim')||Lr.querySelector('.scrim.leave');
   Lr.innerHTML=`<div class="scrim${fresh&&motionOK()?' enter':''}" data-act="scrim"><div class="sheet ${cls}" role="dialog" aria-modal="true">${h}</div></div>`;
-  const f=Lr.querySelector('#form-name');if(f)f.focus();
+  const f=Lr.querySelector('#form-name')||Lr.querySelector('#call-name');if(f)f.focus();
   const ta=Lr.querySelector('#csv-out');if(ta){ta.focus();ta.select()}
   if(sheet.kind==='help'&&sheet.sec)setTimeout(()=>goHelp(sheet.sec),30);
 }
@@ -1088,7 +1453,7 @@ function csv(){
   replay();
   const lines=g.events.filter(e=>e.t==='play'||e.t==='conv').map(e=>[g.date,g.team,g.comp,g.opp,e._half,e._side==='H'?'Hammers':g.opp,e.t==='conv'?'':e._down,
     e.t==='conv'?t('kind').conv+' '+e.pts:t('kind')[e.kind],e.t==='conv'?t('kind').conv:isGL(e.zone)?'GL':t('mapField'),e.zone?zoneName(e.zone):'',e.rec??'',e.res,e.dby??'',
-    e.fd?1:0,e.form||'',e.qb2?1:0,e.pick6?1:0,e.ret??'',e.annul?1:0]
+    e.fd?1:0,e.form||'',e.qb2?1:0,e.pick6?1:0,e.ret??'',e.annul?1:0,e.yds??'',e.yac??'',e.qb??'',e.call||'',e.fby??'',e.pbu??'',e.vt!=null?fmtT(e.vt):'',e.rv?1:0,e.note||'']
     .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
   return [t('csvHead'),...lines].join('\n');
 }
@@ -1115,10 +1480,11 @@ document.addEventListener('click',ev=>{
       if(!g.roster[s].includes(n))updGame({roster:{[s]:[...g.roster[s],n]}});
       if(draft)tapNum(n);else render();break}
     case 'form':{const s=st.poss,f=b.dataset.f;updGame({curForm:{[s]:g.curForm[s]===f?null:f}});break}
-    case 'addform':openSheet('addform');break;
-    case 'formadd':case 'formaddin':{const s=st.poss;const name=(a==='formadd'?b.dataset.f:(document.getElementById('form-name').value||'').trim());
+    case 'addform':openSheet('addform',{side:b.dataset.side||null});break;
+    case 'formadd':case 'formaddin':{const s=sheet.side||st.poss;const name=(a==='formadd'?b.dataset.f:(document.getElementById('form-name').value||'').trim());
       if(!name){toast(t('typeForm'));break}
-      updGame({formations:{[s]:g.formations[s].includes(name)?g.formations[s]:[...g.formations[s],name]},curForm:{[s]:name}});closeSheet();break}
+      const fl={[s]:g.formations[s].includes(name)?g.formations[s]:[...g.formations[s],name]};
+      if(view==='tape'){updGame({formations:fl});closeSheet();tapeSet('form',name)}else{updGame({formations:fl,curForm:{[s]:name}});closeSheet()}break}
     case 'qb':qbNext=!qbNext;render();break;
     case 'fd':markFD();break;
     case 'res':tapRes(b.dataset.r);break;
@@ -1192,11 +1558,60 @@ document.addEventListener('click',ev=>{
       fb.updatePassword(fb.auth.currentUser,p1).then(()=>{closeSheet();toast(t('pwSaved'))})
         .catch(e=>{const c=e&&e.code||'';sheet.err=c==='auth/requires-recent-login'?t('pwRecent'):c==='auth/weak-password'?t('pwShort'):t('pwFail');renderSheet()});break}
     case 'helpgo':goHelp(b.dataset.sec);break;
+    /* tape review */
+    case 'tset':tapeSet(b.dataset.k,b.dataset.n!=null?+b.dataset.n:b.dataset.s);break;
+    case 'tfd':{const e=tapeCur().e;if(e)tapeSet('fd',!e.fd);break}
+    case 'tgl':tp.gl=b.dataset.v==='1';render();break;
+    case 'tadj':{const e=tapeCur().e;if(e)tapeSet(b.dataset.k,(e[b.dataset.k]??0)+(+b.dataset.d));break}
+    case 'tkp':openSheet('tkp',{k:b.dataset.k,v:'',neg:false});break;
+    case 'taddnum':openSheet('tkp',{k:b.dataset.k,side:b.dataset.side,add:true,v:''});break;
+    case 'tk':{const k=b.dataset.k;if(k==='neg')sheet.neg=!sheet.neg;else if(k==='back')sheet.v=sheet.v.slice(0,-1);else sheet.v=(sheet.v+k).slice(0,2);renderSheet();break}
+    case 'tkok':{let n=parseInt(sheet.v,10);if(isNaN(n)){toast(t('typeNum'));break}if(sheet.neg)n=-n;
+      const {k,side,add}=sheet;sheet=null;document.getElementById('layer').innerHTML='';
+      if(add&&!g.roster[side].includes(n))updGame({roster:{[side]:[...g.roster[side],n]}});
+      const e=tapeCur().e;if(e&&e[k]===n)render();else tapeSet(k,n);break}
+    case 'tcall':openSheet('tcall');break;
+    case 'tcalladd':{const nm=(document.getElementById('call-name').value||'').trim();if(!nm){toast(t('tTypeCall'));break}
+      const pb=g.playbook||[];if(!pb.includes(nm))updGame({playbook:[...pb,nm]});closeSheet();tapeSet('call',nm);break}
+    case 'tlist':tp.list=!tp.list;render();break;
+    case 'tgo':tapeGo(b.dataset.id,true);break;
+    case 'tnav':tapeNav(+b.dataset.d);break;
+    case 'tnext':tapeNext();break;
+    case 'tins':tapeInsert();break;
+    case 'tdel':{const {L,i,e}=tapeCur();if(!e||readOnly())break;if(tp.del!==e.id){tp.del=e.id;render();break}
+      const nx=L[i+1]||L[i-1];tp.del=null;tp.id=nx?nx.id:null;act(grp=>rmEv(e,grp));toast(t('deleted'));break}
+    case 'tplay':{const p=vp();if(p)p.toggle();else toast(t('tNoVideo'));break}
+    case 'tback':{const p=vp();if(p)p.seek(Math.max(0,p.time()-5));else toast(t('tNoVideo'));break}
+    case 'trate':{vid.rate=vid.rate===1?.5:1;const p=vp();if(p)p.rate(vid.rate);render();break}
+    case 'tmark':{const e=tapeCur().e,now=vTime();if(!e||readOnly())break;if(now==null){toast(t('tNoVideo'));break}
+      act(grp=>chEv(e,{vt:now,vi:vid.slot},grp));toast(`${t('tMarked')} · ${fmtT(now)}`);break}
+    case 'videos':openSheet('videos');break;
+    case 'vpop':openVideoWindow();break;
+    case 'vback':bringVideoBack();break;
+    case 'vuse':{const n=+b.dataset.n;if(n!==vid.slot){vid.slot=n;mountPlayer()}if(sheet&&sheet.kind==='videos')closeSheet();else render();break}
+    case 'vfile':pickFile(b.dataset.n!=null?+b.dataset.n:vid.slot);break;
+    case 'vsave':{const n=+b.dataset.n,inp=document.getElementById('vurl-'+n),raw=(inp&&inp.value||'').trim(),id=ytId(raw);
+      if(raw&&!id){toast(t('vBadLink'));break}
+      const arr=clone(g.videos||[]);while(arr.length<=n)arr.push({yt:null});arr[n]={...arr[n],yt:id||null};
+      updGame({videos:arr});vid.slot=n;toast(t('vSaved'));renderSheet();break}
+    case 'vadd':{const arr=clone(g.videos||[]);if(!arr.length)arr.push({yt:null});arr.push({yt:null});updGame({videos:arr});renderSheet();break}
+    case 'vdel':{const n=+b.dataset.n;if(sheet.vdel!==n){sheet.vdel=n;renderSheet();break}
+      const arr=clone(g.videos||[]);arr.splice(n,1);const f={};Object.keys(vid.files).forEach(k=>{k=+k;if(k<n)f[k]=vid.files[k];else if(k>n)f[k-1]=vid.files[k]});
+      vid.files=f;if(vid.slot>=n&&vid.slot>0)vid.slot--;sheet.vdel=null;updGame({videos:arr});renderSheet();break}
   }
+});
+document.addEventListener('change',ev=>{
+  if(!authed||!ev.target||ev.target.id!=='t-note')return;
+  const e=tapeCur().e,v=ev.target.value.trim();
+  if(e&&!readOnly()&&v!==(e.note||''))act(grp=>chEv(e,{note:v},grp));
 });
 document.addEventListener('keydown',e=>{
   if(!authed&&e.key==='Enter'&&e.target&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){e.preventDefault();if(e.target.id==='lg-email'){const p=document.getElementById('lg-pw');if(p)p.focus()}else{const b=document.querySelector('[data-act="lgpw"]');if(b)b.click()}return}
   if(e.key==='Escape'&&sheet)closeSheet();
+  if(e.key==='Enter'&&sheet&&sheet.kind==='tcall'){e.preventDefault();document.querySelector('[data-act="tcalladd"]').click();return}
+  if(e.key==='Enter'&&e.target&&e.target.id==='t-note'){e.preventDefault();e.target.blur();return}
+  const tag=e.target&&e.target.tagName;
+  if(authed&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&tag!=='INPUT'&&tag!=='TEXTAREA'&&tag!=='VIDEO'&&tapeKey(e.key))e.preventDefault();
   if(e.key==='Enter'&&sheet&&sheet.kind==='addform'){e.preventDefault();document.querySelector('[data-act="formaddin"]').click()}
 });
 
