@@ -517,3 +517,8 @@ body.preview{padding-bottom:30px}
 .rb small{font-family:var(--f-body);font-size:10px;font-weight:600;text-transform:none;opacity:.85}
 .tspotseg{align-self:center}
 .tspotseg button{min-height:42px;padding:0 18px;font-size:15px}
+.pf{text-align:left;padding:8px 12px;font-size:17px;line-height:1.15}
+.pf small{margin-top:3px}
+.penball{font-weight:600;color:var(--ink)!important}
+.tpens{gap:6px;background:var(--surface-2)}
+.tpenl{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;font-size:14px}
