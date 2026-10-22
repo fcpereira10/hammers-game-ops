@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.8.0';
+const APP_VERSION='1.9.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -119,6 +119,13 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  lsT:n=>`Habitual em ${n===1?'1 jogo':n+' jogos'} · toca para o relatório`, lsDown:(d,p,z,r)=>`${d} down: ${p} passe${z?' · '+z:''}${r?' · alvo #'+r:''}`, lsNoDown:d=>`${d} down: sem jogadas anteriores`, lsGl:z=>`perto da end zone: ${z}`,
+  alRun:(a,b)=>`Hoje correm ${a} das vezes (costumam ${b})`, alRec:(n,a,b)=>`#${n} com ${a} dos alvos hoje (costuma ter ${b})`, alSide:(i,a,b)=>`Hoje ${a} dos passes ${['para a esquerda','para o meio','para a direita'][i]} (costuma ser ${b})`, alForm:f=>`Formação nova hoje: ${f}`,
+  scByCall:'Por jogada do playbook', thScCall:['Jogada','Vezes','% passe','Comp %','Jd/jog','TD','Downs'], scCallF:c=>`Jogada: ${c}`,
+  drvT:'Drives', drvAg:'Drives dos adversários', drvN:'drives', drvPts:'pontos por drive', drvTd:'acabam em TD', drvLost:'perdem a bola', drvPl:'jogadas por drive', drvOut:'Como acabam',
+  drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'Fim de parte ou em curso'}, drvFirst:(p,z)=>`1ª jogada da drive: ${p} passe${z?`, sobretudo para ${z}`:''}.`,
+  sumDrv:(n,pp,td,l)=>`Em ${n} drives: ${pp} pontos por drive, ${td} acabam em TD e ${l} perdem a bola (INT, downs ou safety).`,
+  autoFd:'AUTO 1º DOWN', otherBtn:'Outro ⋯', otherT:'Outros resultados', safety:'Safety', safetyS:s=>`+2 para ${s}, que fica com a bola`, badSnap:'Bad snap', badSnapS:'a bola tocou no chão no snap · conta como down',
   driveN:n=>`Drive ${n}`, lastPlay1:'Última jogada', noPlaysYet:'ainda sem jogadas', lastRec:'último recetor',
   sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números.', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
   sumGames:g=>g>1?`Em ${g} jogos: `:'', sumPass:(pp,np,nr,cp)=>`${pp} das jogadas são passes (${np} passes e ${nr} corridas), com ${cp} de completos.`,
@@ -257,6 +264,13 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  lsT:n=>`Usual in ${n===1?'1 game':n+' games'} · tap for the report`, lsDown:(d,p,z,r)=>`${d} down: ${p} pass${z?' · '+z:''}${r?' · target #'+r:''}`, lsNoDown:d=>`${d} down: no earlier plays`, lsGl:z=>`near the end zone: ${z}`,
+  alRun:(a,b)=>`Running ${a} of the time today (usually ${b})`, alRec:(n,a,b)=>`#${n} has ${a} of targets today (usually ${b})`, alSide:(i,a,b)=>`${a} of passes ${['to the left','to the middle','to the right'][i]} today (usually ${b})`, alForm:f=>`New formation today: ${f}`,
+  scByCall:'By playbook call', thScCall:['Play','Times','% pass','Comp %','Yds/play','TD','Downs'], scCallF:c=>`Play: ${c}`,
+  drvT:'Drives', drvAg:'Opponent drives', drvN:'drives', drvPts:'points per drive', drvTd:'end in a TD', drvLost:'lose the ball', drvPl:'plays per drive', drvOut:'How they end',
+  drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'End of half or ongoing'}, drvFirst:(p,z)=>`1st play of the drive: ${p} pass${z?`, mostly to ${z}`:''}.`,
+  sumDrv:(n,pp,td,l)=>`Over ${n} drives: ${pp} points per drive, ${td} end in a TD and ${l} lose the ball (INT, downs or safety).`,
+  autoFd:'AUTO 1ST DOWN', otherBtn:'Other ⋯', otherT:'Other outcomes', safety:'Safety', safetyS:s=>`+2 for ${s}, who get the ball`, badSnap:'Bad snap', badSnapS:'the snap hit the ground · counts as a down',
   driveN:n=>`Drive ${n}`, lastPlay1:'Last play', noPlaysYet:'no plays yet', lastRec:'last receiver',
   sumT:'Summary', sumNote:'Written automatically from the numbers.', sumFew:'Too few plays for a summary yet (it needs at least 5).',
   sumGames:g=>g>1?`Over ${g} games: `:'', sumPass:(pp,np,nr,cp)=>`${pp} of plays are passes (${np} passes and ${nr} runs), with ${cp} completed.`,
@@ -324,7 +338,8 @@ function helpData(){
       <dt>${btn('','+')}</dt><dd>Acrescenta um número novo ao plantel deste jogo.</dd></dl>
       <p>Antes do número podes mudar de ideias: toca noutra zona ou noutro resultado. Tocar outra vez na mesma zona apaga a marca.</p>
       <p>Por cima do campo, os quadros <b>Zona</b>, <b>Resultado</b> e <b>Recetor</b> mostram o que já escolheste, e o contorno laranja diz o passo seguinte. O ponto laranja num número marca o último recetor. Por baixo dos botões fica a <b>drive</b> em curso, com a última jogada e o botão Desfazer ao lado, e as drives anteriores numa linha cada.</p>
-      <p>No marcador, a bola mostra quem ataca. Toca na outra equipa para lhe dar a bola, ou no down ao centro para o corrigir.</p>`},
+      <p>No marcador, a bola mostra quem ataca. Toca na outra equipa para lhe dar a bola, ou no down ao centro para o corrigir.</p>
+      <p><b>Scouting ao vivo</b>: quando o adversário ataca e já há jogos registados contra ele, uma faixa por cima do campo mostra o que costuma fazer nesse down (passe ou corrida, zona e alvo preferidos) e, perto da end zone, a zona favorita. Por baixo aparecem avisos quando hoje está a fazer diferente: corre mais ou menos, procura outro alvo, ataca outro lado ou usa uma formação nova. Toca na faixa para abrir o relatório.</p>`},
     {id:'zones',t:'O campo',b:`<p>O ataque vai sempre para cima. São 12 zonas: 3 colunas e 4 faixas a partir da linha de scrimmage.</p>
       <ul><li><b>Fundo</b>: mais de 15 jardas</li><li><b>Médio</b>: 5 a 15 jardas</li><li><b>Curto</b>: 0 a 5 jardas</li><li><b>Atrás da linha</b>: passes atrás da linha de scrimmage (screens, laterais), completos ou incompletos</li></ul>
       <p>Cada zona mostra as jogadas anteriores de quem está a atacar: C1 = completo no 1º down, x3 = incompleto no 3º down.</p>`},
@@ -342,12 +357,13 @@ function helpData(){
       <dt>${btn('','GL')}</dt><dd>Troca o campo pelo mapa de goal line.</dd>
       <dt>${btn('','Double')}</dt><dd>Formação. Fica selecionada até mudares. Toca outra vez para tirar.</dd>
       <dt>${btn('','2 QB')}</dt><dd>Marca a próxima jogada como Double QB.</dd>
+      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 para a defesa, que fica com a bola) ou <b>bad snap</b> (a bola tocou no chão no snap; conta como down).</dd>
       <dt>${btn('','↶ '+t('undo'))}</dt><dd>Apaga o último toque ou a última jogada.</dd></dl>`},
     {id:'downs',t:'Down e posse automáticos',b:`<ul>
       <li>Cada jogada avança 1 down.</li>
       <li>${btn('',t('fd'))} volta ao 1º down.</li>
       <li>TD, INT ou falhar o 4º down mudam a posse e voltam ao 1º down.</li>
-      <li>Se a app se enganar, toca no <b>down</b> no topo para o corrigir ou para mudar a posse. Também podes tocar na caixa <b>ataca</b>.</li>
+      <li>Se a app se enganar, toca no <b>down</b> ao centro do marcador para o corrigir ou para mudar a posse. Também podes tocar na equipa que não tem a bola para lha dar.</li>
       <li>No <b>intervalo</b>, toca no down e depois em <b>Intervalo</b>: a 2ª parte começa no 1º down, a atacar quem não começou o jogo.</li></ul>`},
     {id:'analysis',t:'Análise',b:`<ul>
       <li><b>Filtros</b>: Hammers ou adversário, passes ou corridas, down, formação e se as jogadas anuladas contam.</li>
@@ -356,12 +372,15 @@ function helpData(){
       <li><b>Alvos por jogador</b>: alvos, completos, %, TD, INT e corridas. Toca num jogador para ver só as bolas dele no mapa.</li>
       <li><b>Por down</b>: zona, alvo e formação mais usados em cada down. Toca num down para filtrar.</li>
       <li><b>Resumo</b>: frases escritas automaticamente a partir dos números, com as tendências principais de quem ataca e da defesa.</li>
-      <li><b>Visão rápida</b>: gráficos da direção e da profundidade dos passes, passe e corrida por down, e alvos com completos.</li></ul>`},
+      <li><b>Visão rápida</b>: gráficos da direção e da profundidade dos passes, passe e corrida por down, e alvos com completos.</li>
+      <li><b>Drives</b>: quantas drives, pontos por drive, % que acabam em TD ou perdem a bola, como acabam e o que fazem na 1ª jogada.</li></ul>`},
     {id:'scout',t:'Relatório de adversário',b:`<p>Junta todos os jogos registados contra uma equipa e mostra o que ela costuma fazer. Abre em <b>Início</b> → <b>Relatório de adversário</b>, em ${btn('',t('game'))} ou no botão da <b>Análise</b> de um jogo.</p>
       <ul><li><b>Equipa</b>: escolhe o adversário (separado por Elite, Academy e Girls) ou <b>Hammers</b>, para vermos se nós próprios estamos a ser previsíveis.</li>
       <li><b>Resumo</b>: frases escritas automaticamente a partir dos números.</li>
       <li><b>Tendências principais</b>: passe ou corrida, zona favorita, bolas fundas, alvo principal, 3º e 4º down, formação, perto da end zone, conversões e a defesa deles. Com poucas jogadas, a app avisa.</li>
       <li><b>Para onde vai a bola</b>: % das bolas em cada zona e % de completos. Filtra por down, distância, zona do campo e formação. Toca numa linha das tabelas para filtrar.</li>
+      <li><b>Drives</b>: pontos por drive e como acabam, a atacar e a defender.</li>
+      <li><b>Por jogada do playbook</b> (só nos Hammers): quantas vezes chamamos cada jogada, em que downs e como corre. Toca numa jogada para filtrar o mapa. Os nomes vêm da tape review.</li>
       <li><b>Como defendem</b>: para onde se lhes atira e quem faz as jogadas (flags, PBU, INT, sacks).</li>
       <li><b>Jogos incluídos</b>: toca num jogo para o tirar do relatório.</li></ul>
       <p>A distância e a zona do campo precisam das jardas da tape review. <b>Imprimir</b> dá uma folha para levar para o jogo.</p>`},
@@ -409,7 +428,8 @@ function helpData(){
       <dt>${btn('','+')}</dt><dd>Adds a new number to this game's roster.</dd></dl>
       <p>Before the number you can change your mind: tap another zone or another result. Tapping the same zone again clears the mark.</p>
       <p>Above the field, the <b>Zone</b>, <b>Result</b> and <b>Receiver</b> boxes show what you picked, and the orange outline shows the next step. The orange dot on a number marks the last receiver. Below the buttons is the current <b>drive</b>, with the last play and an Undo button next to it, and earlier drives one line each.</p>
-      <p>On the scoreboard, the ball shows who is on offense. Tap the other team to give it the ball, or the down in the middle to fix it.</p>`},
+      <p>On the scoreboard, the ball shows who is on offense. Tap the other team to give it the ball, or the down in the middle to fix it.</p>
+      <p><b>Live scouting</b>: when the opponent has the ball and there are earlier games against it, a strip above the field shows what it usually does on this down (pass or run, favorite zone and target) and, near the end zone, its favorite zone. Warnings show when today is different: more or fewer runs, another target, another side or a new formation. Tap the strip to open the report.</p>`},
     {id:'zones',t:'The field',b:`<p>Offense always goes up. There are 12 zones: 3 columns and 4 bands from the line of scrimmage.</p>
       <ul><li><b>Deep</b>: more than 15 yards</li><li><b>Mid</b>: 5 to 15 yards</li><li><b>Short</b>: 0 to 5 yards</li><li><b>Behind the line</b>: passes behind the line of scrimmage (screens, laterals), complete or incomplete</li></ul>
       <p>Each zone shows earlier plays by the team on offense: C1 = complete on 1st down, x3 = incomplete on 3rd down.</p>`},
@@ -427,12 +447,13 @@ function helpData(){
       <dt>${btn('','GL')}</dt><dd>Switches the field to the goal line map.</dd>
       <dt>${btn('','Double')}</dt><dd>Formation. Stays selected until you change it. Tap again to clear.</dd>
       <dt>${btn('','2 QB')}</dt><dd>Marks the next play as Double QB.</dd>
+      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 for the defense, who get the ball) or <b>bad snap</b> (the snap hit the ground; counts as a down).</dd>
       <dt>${btn('','↶ '+t('undo'))}</dt><dd>Removes the last tap or the last play.</dd></dl>`},
     {id:'downs',t:'Automatic down and possession',b:`<ul>
       <li>Each play moves the down forward by 1.</li>
       <li>${btn('',t('fd'))} goes back to 1st down.</li>
       <li>TD, INT or failing on 4th down change possession and reset to 1st down.</li>
-      <li>If the app gets it wrong, tap the <b>down</b> at the top to fix it or to change possession. You can also tap the <b>offense</b> box.</li>
+      <li>If the app gets it wrong, tap the <b>down</b> in the middle of the scoreboard to fix it or to change possession. You can also tap the team without the ball to give it the ball.</li>
       <li>At <b>halftime</b>, tap the down and then <b>Halftime</b>: the 2nd half starts on 1st down, with the team that did not start on offense.</li></ul>`},
     {id:'analysis',t:'Analysis',b:`<ul>
       <li><b>Filters</b>: Hammers or opponent, passes or runs, down, formation and whether nullified plays count.</li>
@@ -441,12 +462,15 @@ function helpData(){
       <li><b>Targets by player</b>: targets, completions, %, TD, INT and runs. Tap a player to show only their balls on the map.</li>
       <li><b>By down</b>: most used zone, target and formation on each down. Tap a down to filter.</li>
       <li><b>Summary</b>: sentences written automatically from the numbers, with the main tendencies of the offense and of the defense.</li>
-      <li><b>At a glance</b>: charts of pass direction and depth, pass and run by down, and targets with completions.</li></ul>`},
+      <li><b>At a glance</b>: charts of pass direction and depth, pass and run by down, and targets with completions.</li>
+      <li><b>Drives</b>: how many drives, points per drive, % that end in a TD or lose the ball, how they end and what the 1st play is.</li></ul>`},
     {id:'scout',t:'Opponent report',b:`<p>Adds up every game tracked against one team and shows what it tends to do. Open it from <b>Home</b> → <b>Opponent report</b>, from ${btn('',t('game'))} or with the button in a game's <b>Analysis</b>.</p>
       <ul><li><b>Team</b>: pick the opponent (kept apart by Elite, Academy and Girls) or <b>Hammers</b>, to check whether we are predictable ourselves.</li>
       <li><b>Summary</b>: sentences written automatically from the numbers.</li>
       <li><b>Key tendencies</b>: pass or run, favorite zone, deep balls, main target, 3rd and 4th down, formation, near the end zone, conversions and their defense. With few plays, the app warns you.</li>
       <li><b>Where the ball goes</b>: % of balls in each zone and completion %. Filter by down, distance, field position and formation. Tap a table row to filter.</li>
+      <li><b>Drives</b>: points per drive and how drives end, on offense and on defense.</li>
+      <li><b>By playbook call</b> (Hammers only): how often we call each play, on which downs and how it goes. Tap a play to filter the map. Play names come from the tape review.</li>
       <li><b>How they defend</b>: where teams throw on them and who makes the plays (flags, PBU, INT, sacks).</li>
       <li><b>Games included</b>: tap a game to leave it out of the report.</li></ul>
       <p>Distance and field position need the yards from the tape review. <b>Print</b> gives a sheet to take to the game.</p>`},
@@ -640,6 +664,7 @@ function replay(G){
       if(e.annul) continue;
       const gain=e.yds!=null?e.yds:(e.res==='X'?0:null), next=los!=null&&gain!=null?Math.max(0,Math.min(FIELD,los+gain)):null;
       if(e.res==='TD'){score[poss]+=6+(e.pat||0);flip()}
+      else if(e.res==='SF'){score[other(poss)]+=2;flip()}
       else if(e.res==='INT'){flip();spot=null;if(e.pick6){score[poss]+=6+(e.pat||0);flip()}}
       else if(e.fd){down=1;goal=true;spot=next}
       else if(!e._goal&&next!=null&&next>=MID){crossed={e,down:down+1};down=1;goal=true;spot=next;e._autoFd=true}
@@ -694,6 +719,7 @@ function makeSample(seed0=7,id='demo',ago=0){
   const zW={H:[['21',4],['20',3],['11',3],['22',3],['12',2],['10',2],['01',1],['02',1],['30',1],['32',1]],
             A:[['22',6],['12',5],['02',3],['21',3],['20',1],['11',2],['01',1],['32',2]]};
   const fW={H:[['Double',3],['Trips',2],['Bunch',1]],A:[['Double',3],['Double QB',2],['Trips',1]]};
+  const callW=[['Smash',4],['Mesh',3],['Flood',2],['Slant',3],['Screen',2]], runW=[['Sweep',2],['Draw',1]];
   /* yards by depth band (deep, mid, short, behind the line): first downs and goal to go come from the ball spot */
   const ydsW=[[16,10],[8,7],[2,4],[-1,5]], ydsOf=z=>{const b=ydsW[+z[0]];return b[0]+Math.floor(rnd()*b[1])};
   let ts=1;const push=e=>{e.id=id[0]+id.slice(4)+'-'+ts;e.ts=ts++;G.events.push(e)};
@@ -708,7 +734,7 @@ function makeSample(seed0=7,id='demo',ago=0){
     }
     const fby=rnd()<.6?{fby:pick(defW[s])}:{};
     if(rnd()<.06){push({t:'play',kind:'sack',zone:null,rec:null,res:'SACK',dby:pick(defW[s]),fd:false,form:pick(fW[s]),qb2:false,annul:false,yds:-2,...spot});continue}
-    if(rnd()<.1){push({t:'play',kind:'run',zone:pick([['21',1],['20',1],['22',1]]),rec:pick(recW[s]),res:'R',fd:false,form:pick(fW[s]),qb2:false,annul:false,yds:1+Math.floor(rnd()*8),...fby,...spot});continue}
+    if(rnd()<.1){push({t:'play',kind:'run',zone:pick([['21',1],['20',1],['22',1]]),rec:pick(recW[s]),res:'R',fd:false,form:pick(fW[s]),qb2:false,annul:false,yds:1+Math.floor(rnd()*8),...fby,...spot,...(s==='H'?{call:pick(runW)}:{})});continue}
     const zone=pick(zW[s]);let res=rnd()<.64?'C':'X';
     if(res==='C'&&zone[0]==='0'&&rnd()<.45)res='TD';
     if(res==='X'&&rnd()<.08)res='INT';
@@ -719,7 +745,7 @@ function makeSample(seed0=7,id='demo',ago=0){
     const form=pick(fW[s]);
     push({t:'play',kind:'pass',zone,rec:pick(recW[s]),res,fd:false,form,qb:pick(qbW[s]),
       qb2:form==='Double QB'||(s==='A'&&rnd()<.08),annul:false,...(yds!=null?{yds}:{}),...(res==='C'?fby:{}),...spot,
-      ...(res==='INT'?{dby:pick(defW[s]),pick6:false}:{})});
+      ...(res==='INT'?{dby:pick(defW[s]),pick6:false}:{}),...(s==='H'?{call:pick(callW)}:{})});
     if(i===17){const p=G.events[G.events.length-1];p.annul=true;push({t:'pen',eff:'rep',annulId:p.id})}
     replay(G);
   }
@@ -1007,6 +1033,32 @@ function bannerHTML(r){
     return `<div class="banner">${t('convIntQ')}<button data-act="convret" data-p="0">${t('pick6No')}</button><button data-act="convret" data-p="${lp.pts}">${t('retYes',lp.pts)}</button></div>`;
   return '';
 }
+/* live scouting: while the opponent has the ball, what it did on this down in the earlier games against it, and what is different today */
+function liveScoutHTML(st,s){
+  if(s!=='A')return '';
+  const key=scKeyOf(g,'A'), team=scoutTeams().find(x=>x.key===key);if(!team)return '';
+  const others=team.games.filter(G=>G.id!==g.id);others.forEach(scoutFetch);
+  const ready=others.filter(scoutReady), plays=x=>x.filter(e=>e.t==='play'&&e._side==='A'&&!e.annul&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
+  const H=plays(ready.map(scoutGame).flatMap(x=>x.events));if(H.length<8)return '';
+  const hd=H.filter(e=>e._down===st.down), hp=hd.filter(e=>e.kind==='pass'), z=scTop(hp.filter(e=>e.zone),e=>e.zone), r=scTop(hp,e=>e.rec);
+  let line=hd.length?t('lsDown',ord(st.down),pct(hp.length,hd.length),z?zoneName(z[0]):'',r?r[0]:''):t('lsNoDown',ord(st.down));
+  const hg=H.filter(e=>isGL(e.zone)), gz=scTop(hg,e=>e.zone);
+  if(st.goal&&gz&&hg.length>=3)line+=' · '+t('lsGl',zoneName(gz[0]));
+  // what is different today (only once there are enough plays to compare)
+  const T=plays(g.events), al=[];
+  if(T.length>=6){
+    const rr=l=>l.filter(e=>e.kind==='run').length/l.length, rh=rr(H), rt=rr(T);
+    if(Math.abs(rt-rh)>=.2)al.push(t('alRun',pct(Math.round(rt*100),100),pct(Math.round(rh*100),100)));
+    const tp=T.filter(e=>e.kind==='pass'), hpa=H.filter(e=>e.kind==='pass'), tr=scTop(tp,e=>e.rec);
+    if(tr&&tr[1]>=3&&tp.length){const sh=tr[1]/tp.length, hh=hpa.filter(e=>String(e.rec)===tr[0]).length/Math.max(1,hpa.length);if(sh-hh>=.2)al.push(t('alRec',tr[0],pct(tr[1],tp.length),pct(Math.round(hh*100),100)))}
+    const tf=tp.filter(e=>e.zone&&!isGL(e.zone)), hf=hpa.filter(e=>e.zone&&!isGL(e.zone));
+    if(tf.length>=5&&hf.length)for(const i of [0,1,2]){const a=tf.filter(e=>colOf(e.zone)===i).length/tf.length, b=hf.filter(e=>colOf(e.zone)===i).length/hf.length;
+      if(a-b>=.25){al.push(t('alSide',i,pct(Math.round(a*100),100),pct(Math.round(b*100),100)));break}}
+    const hforms=new Set(H.map(e=>e.form).filter(Boolean)), fm={};T.forEach(e=>{if(e.form&&!hforms.has(e.form))fm[e.form]=(fm[e.form]||0)+1});
+    Object.entries(fm).filter(([,n])=>n>=3).forEach(([f])=>al.push(t('alForm',esc(f))));
+  }
+  return `<button class="scoutbar" data-act="scout" data-key="${esc(key)}"><span class="lbl2">${t('lsT',ready.length)}</span><b>${line}</b>${al.map(a=>`<span class="alert">⚠ ${a}</span>`).join('')}</button>`;
+}
 /* the play being tracked, as slots: zone, result and number (the active one is outlined) */
 function slotsHTML(s){
   const d=draft, slot=(lbl,val,on,cls='')=>`<div class="slot${on?' on':''}${val?' set':''} ${cls}"><small>${lbl}</small><b>${val||'—'}</b></div>`;
@@ -1019,10 +1071,11 @@ function slotsHTML(s){
 }
 /* one line per play for the drive card */
 function evLine(e){
-  const R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack')};
+  const R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),SF:t('safety'),BS:t('badSnap')};
   if(e.t==='pen')return {cls:'pen',h:e.foul?t('fouls')[e.foul]:t('penalty'),s:(e.team?sideName(e.team)+' · ':'')+(e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]||'')};
   if(e.t==='conv')return {cls:e.res==='G'?'C':'X',h:`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]||e.res}`,s:[e.rec!=null?'#'+e.rec:'',e.zone?zoneName(e.zone):''].filter(Boolean).join(' · '),tag:e.res==='G'?'+'+e.pts:''};
   const h=e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
+  if(e.res==='SF'||e.res==='BS')return {cls:e.res==='SF'?'SACK':'X',h,s:e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),tag:e.res==='SF'?'+2 '+sideName(other(e._side)):'',annul:e.annul};
   const dd=e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down');
   const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):''].filter(Boolean);
   return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?'#'+e.rec:'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
@@ -1061,6 +1114,7 @@ function regView(st){
         <button class="btn" data-act="opts">${t('changeRole')}</button></div>`;
     return `<div class="reg side-${s}">
       <section class="fieldwrap">
+        ${liveScoutHTML(st,s)}
         <div class="hint">${readOnly()?t('roTitle'):t('defHint',sideName(s))} ${qh('team')}</div>
         ${banner}
         <div class="field watch">${gridHTML(gl,plays,false)}</div>
@@ -1092,6 +1146,7 @@ function regView(st){
     +`<button class="f qb" data-act="qb" aria-pressed="${qbNext}">2 QB</button>`;
   return `<div class="reg side-${s}">
     <section class="fieldwrap">
+      ${conv?'':liveScoutHTML(st,s)}
       ${slotsHTML(s)}
       <div class="hint">${hintText()} ${qh('track')}</div>
       ${banner}
@@ -1113,6 +1168,7 @@ function regView(st){
         <button class="a pen" data-act="pen">${t('penalty')}</button>
         <button class="a run" data-act="run" aria-pressed="${runMode||(draft&&draft.kind==='run')}">${t('run')}</button>
         <button class="a sack" data-act="sack" aria-pressed="${!!(draft&&draft.kind==='sack')}">${t('sack')}</button>
+        <button class="a other" data-act="other">${t('otherBtn')}</button>
       </div>
       ${driveHTML(st)}
     </section>
@@ -1209,7 +1265,7 @@ function anaView(){
     </div>
     <div class="tiles">${tiles.map(([v,l])=>`<div class="tile"><b class="num">${v}</b><span>${l}</span></div>`).join('')}</div>
     ${(()=>{const ev=x=>g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x&&!e.annul&&(!an.half||e._half===an.half));
-      return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H')}</section>`})()}
+      return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half))}</section>`})()}
     <div class="ana"><div class="sc-tables">
       <section class="panel">
         <div class="toolbar"><h3>${t('distribution')}${an.rec!=null?' · #'+an.rec:''}</h3>${seg('mode',[['marks',t('marks')],['heat',t('heatmap')]])}</div>
@@ -1219,6 +1275,7 @@ function anaView(){
       </section>
       ${conv?'':chartsHTML(P,base,all)}</div>
       <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        ${conv?'':drivePanel(drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half))}
         <section class="panel"><h3>${t('byPlayer')}</h3>
           <div class="tablewrap"><table><thead><tr>${thP2.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${tbody||`<tr><td colspan="9">${t('noMatch')}</td></tr>`}</tbody></table></div>
           <p class="note">${t('tapPlayer')}</p>
@@ -1239,7 +1296,7 @@ function anaView(){
 /* ---------- written summary and charts, shared by the game analysis and the opponent report ----------
    The summary is plain rules over the counts (no AI): the same data always gives the same text. */
 const colOf=z=>z==null?null:+z[isGL(z)?2:1];
-function sumHTML(off,def,nG,us){
+function sumHTML(off,def,nG,us,D){
   const pl=off.filter(e=>e.t==='play'), pas=pl.filter(e=>e.kind==='pass'), runs=pl.filter(e=>e.kind==='run'), n=pas.length+runs.length;
   if(n<5)return `<p class="note">${t('sumFew')}</p>`;
   const L=[], fp=pas.filter(e=>e.zone&&!isGL(e.zone));
@@ -1266,6 +1323,8 @@ function sumHTML(off,def,nG,us){
   const cv=off.filter(e=>e.t==='conv');
   if(cv.length>=2){const one=cv.filter(e=>e.pts===1), two=cv.filter(e=>e.pts===2), gd=l=>l.filter(e=>e.res==='G').length;
     L.push(t('sumConv',[[1,one],[2,two]].filter(([,l])=>l.length).map(([p,l])=>[p,l.length,gd(l)])))}
+  if(D&&D.length>=3){const lost=D.filter(d=>['INT','P6','DN','SF'].includes(d.res)).length;
+    L.push(t('sumDrv',D.length,(D.reduce((a,d)=>a+d.pts,0)/D.length).toFixed(1),pct(D.filter(d=>d.res==='TD').length,D.length),pct(lost,D.length)))}
   const Y=pl.filter(e=>e.yds!=null);
   if(Y.length>=5&&Y.some(e=>e.yds>=15))L.push(t('sumBig',Y.filter(e=>e.yds>=15).length,pct(Y.filter(e=>e.yds>=15).length,Y.length)));
   const dp=def.filter(e=>e.t==='play'&&e.kind==='pass');
@@ -1279,6 +1338,24 @@ function sumHTML(off,def,nG,us){
     if(top){const v=top[1];x+=t('sumDefPl',top[0],[v.f?v.f+(v.f>1?' flags':' flag'):'',v.s?v.s+(v.s>1?' sacks':' sack'):'',v.i?v.i+' INT':'',v.b?v.b+' PBU':''].filter(Boolean).join(', '))}
     L.push(x)}
   return `<ul class="sum">${L.map(x=>`<li>${x}</li>`).join('')}</ul><p class="note">${t('sumNote')}</p>`;
+}
+/* drives of one side in one game (events already replayed): plays, how it ended, points and yards */
+function drivesOf(events,side){
+  const m={};events.forEach(e=>{if((e.t==='play'||e.t==='conv')&&!e.annul&&e._drive!=null)(m[e._drive]=m[e._drive]||[]).push(e)});
+  return Object.values(m).map(l=>{const p=l.filter(e=>e.t==='play');if(!p.length||p[0]._side!==side)return null;
+    const end=p[p.length-1], cv=l.filter(e=>e.t==='conv'&&e.side===side&&e.res==='G').reduce((a,e)=>a+(e.pts||0),0);
+    const res=end.res==='TD'?'TD':end.res==='INT'?(end.pick6?'P6':'INT'):end.res==='SF'?'SF':end._tod?'DN':'END', y=p.filter(e=>e.yds!=null);
+    return {n:p.length,res,pts:res==='TD'?6+cv:0,yds:y.length?y.reduce((a,e)=>a+e.yds,0):null,first:p[0],half:p[0]._half}}).filter(Boolean);
+}
+function drivePanel(D,title){
+  if(!D.length)return '';
+  const n=D.length, pts=D.reduce((a,d)=>a+d.pts,0), lost=D.filter(d=>['INT','P6','DN','SF'].includes(d.res)).length, E=t('drvEnd');
+  const fp=D.map(d=>d.first).filter(e=>e.kind==='pass'||e.kind==='run'), fpp=fp.filter(e=>e.kind==='pass'), fz=scTop(fpp.filter(e=>e.zone),e=>e.zone);
+  const tl=[[n,t('drvN')],[(pts/n).toFixed(1),t('drvPts')],[pct(D.filter(d=>d.res==='TD').length,n),t('drvTd')],[pct(lost,n),t('drvLost')],[(D.reduce((a,d)=>a+d.n,0)/n).toFixed(1),t('drvPl')]];
+  return `<section class="panel"><h3>${title||t('drvT')}</h3>
+    <div class="tiles">${tl.map(([v,l])=>`<div class="tile"><b class="num">${v}</b><span>${l}</span></div>`).join('')}</div>
+    <div class="charts">${stackBar(t('drvOut'),['TD','INT','P6','DN','SF','END'].map(k=>({l:E[k],v:D.filter(d=>d.res===k).length,c:'ch-o'+k})))}</div>
+    ${fp.length?`<p class="note">${t('drvFirst',pct(fpp.length,fp.length),fz?zoneName(fz[0]):'')}</p>`:''}</section>`;
 }
 /* a 100% bar split in parts, with its legend */
 function stackBar(title,parts){
@@ -1304,8 +1381,8 @@ function chartsHTML(P,downL,recL){
   return h?`<section class="panel"><h3>${t('chQuick')}</h3><div class="charts">${h}</div></section>`:'';
 }
 /* ---------- opponent report: one team's tendencies across every game tracked against it (or our own, to self-scout) ---------- */
-const sc={key:null,off:{},area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null};
-const scReset=()=>Object.assign(sc,{area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null});
+const sc={key:null,off:{},area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null};
+const scReset=()=>Object.assign(sc,{area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null});
 let scFresh={}, demoX=null;
 const normOpp=x=>String(x||'').trim().toLowerCase();
 /* the sample opponent gets two more sample games, so the report has games to add up in the demo and the preview */
@@ -1329,7 +1406,7 @@ function scoutFetch(G){
   cloud.db.collection(`games/${G.id}/events`).orderBy('ts').limit(1000).get()
     .then(r=>{const m={};r.docs.forEach(d=>{m[d.id]=d.data()});scoutEv[G.id]={m}})
     .catch(()=>{scoutEv[G.id]={m:(c&&c.m)||null,err:true}})
-    .then(()=>{if(view==='scout')render()});
+    .then(()=>{if(view==='scout'||view==='reg')render()});
 }
 const scoutReady=G=>G.store!=='cloud'||G.id===cloud.subGid||!!(scoutEv[G.id]&&scoutEv[G.id].m);
 function scoutGame(G){const X={...G,events:sortEv(G.store==='cloud'?cloudEvents(G.id):clone(G.events||[]))};X.st=replay(X);return X}
@@ -1372,7 +1449,7 @@ function scoutView(){
       </div></section>`;
   const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select></div>`;
   const evs=side=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===side&&!e.annul));
-  const off=evs(S), def=evs(O);
+  const off=evs(S), def=evs(O), DO=X.flatMap(x=>drivesOf(x.events,S)), DD=X.flatMap(x=>drivesOf(x.events,O));
   // key tendencies: plain numbers a coach can read before the game
   const plays=off.filter(e=>e.t==='play'), pas=plays.filter(e=>e.kind==='pass'), runs=plays.filter(e=>e.kind==='run');
   const fp=pas.filter(e=>e.zone&&!isGL(e.zone)), ins=[];
@@ -1402,12 +1479,13 @@ function scoutView(){
   const inA=e=>conv?e.t==='conv':e.t==='play'&&(e.kind==='sack'?sc.area==='field':(sc.area==='gl')===isGL(e.zone));
   const fil=(l,skip)=>l.filter(e=>inA(e)&&(e.t==='conv'||skip||sc.kind==='all'||(sc.kind==='run'?e.kind==='run':e.kind==='pass'))
     &&(e.t==='conv'||skip==='down'||!sc.down||e._down===sc.down)&&(e.t==='conv'||skip==='dist'||!sc.dist||distB(e._dist)===sc.dist)
-    &&(e.t==='conv'||skip==='pos'||!sc.pos||posOf(e)===sc.pos)&&(skip==='form'||!sc.form||e.form===sc.form)&&(skip==='rec'||sc.rec==null||e.rec===sc.rec));
+    &&(e.t==='conv'||skip==='pos'||!sc.pos||posOf(e)===sc.pos)&&(skip==='form'||!sc.form||e.form===sc.form)&&(skip==='rec'||sc.rec==null||e.rec===sc.rec)&&(skip==='call'||!sc.call||e.call===sc.call));
   const P=fil(off), hasDist=plays.some(e=>e._dist!=null&&(e.yds!=null||e.spot!=null)), hasPos=plays.some(e=>posOf(e)===2);
   const seg=(key,o)=>`<div class="seg">${o.map(([v,l])=>`<button data-act="sc" data-k="${key}" data-v="${esc(v)}" aria-pressed="${String(sc[key]==null?'':sc[key])===String(v)}">${l}</button>`).join('')}</div>`;
   const D=t('downs'), forms=[...new Set(plays.map(e=>e.form).filter(Boolean))];
-  const filtered=sc.down||sc.dist||sc.pos||sc.form||sc.rec!=null||sc.kind!=='pass'||sc.area!=='field';
+  const filtered=sc.down||sc.dist||sc.pos||sc.form||sc.call||sc.rec!=null||sc.kind!=='pass'||sc.area!=='field';
   const filters=`<div class="filters">
+      ${sc.call?`<button class="btn" data-act="sc" data-k="call" data-v="">${t('scCallF',esc(sc.call))} ✕</button>`:''}
       ${seg('area',[['field',t('mapField')],['gl','GL'],['conv',t('convs')]])}
       ${conv?'':seg('kind',[['pass',t('passes')],['run',t('runs')],['all',t('all')]])}
       ${conv?'':seg('down',[[0,t('allM')],[1,D[0]],[2,D[1]],[3,D[2]],[4,D[3]]])}
@@ -1435,6 +1513,11 @@ function scoutView(){
     const FL=fil(off,'form').filter(e=>e.t==='play'), fm={};FL.forEach(e=>{(fm[e.form||'']=fm[e.form||'']||[]).push(e)});
     tables+=tbl(t('scByForm'),t('thScForm'),Object.entries(fm).sort((a,b)=>b[1].length-a[1].length).map(([f,l])=>tr('form',f,(sc.form||'')===f&&!!f,[f?esc(f):t('scNoForm'),...cellsOf(l)])).join(''));
   }
+  // our playbook: how often each play is called, on which downs, and how it goes (play names come from the tape review)
+  const CL=fil(off,'call').filter(e=>e.call), cm={};CL.forEach(e=>{(cm[e.call]=cm[e.call]||[]).push(e)});
+  tables+=tbl(t('scByCall'),t('thScCall'),Object.entries(cm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike), y=l.filter(e=>e.yds!=null);
+    return tr('call',k,sc.call===k,[esc(k),l.length,pct(p.length,l.filter(e=>e.kind!=='sack').length),pct(p.filter(isComp).length,p.length),y.length?(y.reduce((a,e)=>a+e.yds,0)/y.length).toFixed(1):'-',l.filter(e=>e.res==='TD').length,
+      [1,2,3,4].map(d=>{const n=l.filter(e=>e._down===d).length;return n?ord(d)+' '+n:''}).filter(Boolean).join(' · ')])}).join(''));
   const RL=fil(off,'rec').filter(e=>e.kind!=='sack'), rm={};RL.forEach(e=>{const k=e.rec==null?'?':e.rec;(rm[k]=rm[k]||[]).push(e)});
   const nT=RL.filter(isPassLike).length;
   tables+=tbl(t('scTargets'),t('thScRec'),Object.entries(rm).map(([k,l])=>({k,l,p:l.filter(isPassLike)})).sort((a,b)=>b.p.length-a.p.length||b.l.length-a.l.length).map(({k,l,p})=>{
@@ -1448,10 +1531,10 @@ function scoutView(){
   def.forEach(e=>{if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
     if(e.fby!=null)dk(e.fby).f++;if(e.pbu!=null)dk(e.pbu).b++});
   const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
-  const defHTML=dfp.length||drows?`<section class="sc-sec"><h2>${t('scDefence',us)}</h2><div class="ana">
+  const defHTML=dfp.length||drows||DD.length?`<section class="sc-sec"><h2>${t('scDefence',us)}</h2><div class="ana">
       ${dfp.length?`<section class="panel"><div class="toolbar"><h3>${t('scDefMap',us)}</h3><span class="note">${t('scPlaysN',dfp.length)} · ${pct(dfp.filter(isComp).length,dfp.length)} ${t('comp')}</span></div>
         <div class="amap">${scHeat(dfp,false)}</div><p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
-      ${tbl(t('scDefPl'),t('thScDef'),drows)}</div></section>`:'';
+      <div class="sc-tables">${drivePanel(DD,t('drvAg'))}${tbl(t('scDefPl'),t('thScDef'),drows)}</div></div></section>`:'';
   const resOf=x=>x.st.score[S]>x.st.score[O]?0:x.st.score[S]<x.st.score[O]?2:1;
   const gamesHTML=`<section class="sc-sec"><h2>${t('scGamesT')}</h2><p class="note noprint">${t('scGamesNote')}</p><div class="sc-games">${list.map(G=>{
       const x=R[G.id], off_=!!sc.off[G.id], e=scoutEv[G.id], r=x?resOf(x):null;
@@ -1460,10 +1543,10 @@ function scoutView(){
           <span class="res r${r==null?'':r}">${r==null?'·':WDL[r]}</span>
           <span class="gtxt"><b>${us?'vs '+esc(G.opp):esc(G.date||'')}</b><small>${us?esc(G.date||'')+' · ':''}${esc(G.comp)} · ${st}</small></span></button>
         ${G.extra?'':`<button class="btn noprint" data-act="openg" data-id="${G.id}" data-v="ana">${t('scOpenA')}</button>`}</div>`}).join('')}</div></section>`;
-  const sumSec=`<section class="sc-sec"><h2>${t('sumT')}</h2><div class="panel">${sumHTML(off,def,nG,us)}</div></section>`;
+  const sumSec=`<section class="sc-sec"><h2>${t('sumT')}</h2><div class="panel">${sumHTML(off,def,nG,us,DO)}</div></section>`;
   const body=X.length&&off.length?`${sumSec}${insHTML}
     <section class="sc-sec"><h2>${t('scAttack',us)}</h2>${filters}
-      <div class="ana"><div class="sc-tables">${mapHTML}${chartsHTML(P,fil(off,'down'),fil(off,'rec'))}</div><div class="sc-tables">${tables}</div></div></section>
+      <div class="ana"><div class="sc-tables">${mapHTML}${chartsHTML(P,fil(off,'down'),fil(off,'rec'))}</div><div class="sc-tables">${drivePanel(DO)}${tables}</div></div></section>
     ${defHTML}`:`<p class="note">${waiting?'':t('scNoPlays')}</p>`;
   return `${head}${pickRow}${hero}${waiting?`<p class="note">${t('scLoading',waiting)}</p>`:''}${body}${gamesHTML}
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
@@ -1482,9 +1565,9 @@ function logView(){
       return `<div class="ev">${sd(e)}<span class="dn">+${e.pts}</span><span class="tx"><b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>${rt}<span class="tag">${t('conv')}</span>${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}
         ${e.res==='INT'?`<span class="tag">${t('byTag',e.dby)}</span>${e.ret?`<span class="tag TD">${t('retTag',e.ret)}</span>`:''}`:''}</span><span class="ops">${delB(e)}</span></div>`;
     }
-    const resTag={C:`<span class="tag C">${t('tagC')}</span>`,X:`<span class="tag X">${t('tagX')}</span>`,R:`<span class="tag">${t('tagR')}</span>`,TD:'<span class="tag TD">TD</span>',INT:'<span class="tag INT">INT</span>',SACK:`<span class="tag INT">${t('sack')}</span>`}[e.res];
+    const resTag={C:`<span class="tag C">${t('tagC')}</span>`,X:`<span class="tag X">${t('tagX')}</span>`,R:`<span class="tag">${t('tagR')}</span>`,TD:'<span class="tag TD">TD</span>',INT:'<span class="tag INT">INT</span>',SACK:`<span class="tag INT">${t('sack')}</span>`,SF:`<span class="tag INT">${t('safety')}</span>`,BS:`<span class="tag X">${t('badSnap')}</span>`}[e.res];
     return `<div class="ev ${e.annul?'annul':''}">${sd(e)}<span class="dn">${ord(e._down)}</span>
-      <span class="tx">${e.kind==='sack'?'':`<b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>`}${resTag}${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}${e.kind==='run'&&e.res==='TD'?`<span class="tag">${t('runLow')}</span>`:''}
+      <span class="tx">${e.kind==='sack'||e.kind==='safety'||e.kind==='snap'?'':`<b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>`}${resTag}${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}${e.kind==='run'&&e.res==='TD'?`<span class="tag">${t('runLow')}</span>`:''}
       ${(e.res==='INT'||e.res==='SACK')?`<span class="tag">${t('byTag',e.dby)}</span>`:''}
       ${e.fd?`<span class="tag">${t('fdLow')}</span>`:''}${e.form?`<span class="tag">${esc(e.form)}</span>`:''}${e.qb2?'<span class="tag">2 QB</span>':''}
       ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}</span>
@@ -1809,7 +1892,7 @@ function renderSheet(){
     }else if(!sheet.foul){
       const byOf=f=>sheet.team===(f.when==='pre'?P.offPre:P.offPlay)?'O':'D';
       const ok=FOULS.filter(f=>f.who==='B'||f.who===byOf(f));
-      const fb=f=>{const by=byOf(f),eff=by==='O'?f.effO:f.effD;return `<button class="big pf" data-act="penfoul" data-k="${f.k}">${t('fouls')[f.k]}<small>${f.yds?(by==='O'?'−':'+')+t('penYds',f.yds):t('penYds',0)} · ${t('penEff')[eff]}</small></button>`};
+      const fb=f=>{const by=byOf(f),eff=by==='O'?f.effO:f.effD;return `<button class="big pf" data-act="penfoul" data-k="${f.k}">${t('fouls')[f.k]}<small>${f.yds?(by==='O'?'−':'+')+t('penYds',f.yds):t('penYds',0)} · ${t('penEff')[eff]}</small>${eff==='fd'?`<em class="autofd">${t('autoFd')}</em>`:''}</button>`};
       h=`<div class="help-head"><h2>${t('penTitle')} · ${sideName(sheet.team)}</h2><button class="ghost" data-act="penteam" data-v="">‹</button></div>${ctxLine}
         ${[['play',t('penPlay')],['pre',t('penPre')],['dead',t('penDead')]].map(([w,l])=>{const l2=ok.filter(f=>f.when===w);return l2.length?`<span class="lbl2">${l}</span><div class="grid2">${l2.map(fb).join('')}</div>`:''}).join('')}
         <button class="big" data-act="penfoul" data-k="other">${t('penOther')}<small>${t('penOtherS')}</small></button>
@@ -1832,6 +1915,11 @@ function renderSheet(){
     h=`<h2>${t('fixDown')}</h2><div class="grid4">${[1,2,3,4].map(d=>`<button class="big num" data-act="setdown" data-d="${d}" aria-pressed="${st.down===d}">${ord(d)}</button>`).join('')}</div>
       ${g.mode==='both'?`<button class="big" data-act="flipposs">${t('changePoss')}<small>${t('nowOff')}${sideName(other(st.poss))}</small></button>`:''}
       ${st.half===1&&!readOnly()?`<button class="big" data-act="half">${t('halfT')}<small>${t('halfS',sideName(g.mode&&g.mode!=='both'?g.mode:other(g.start)))}</small></button>`:''}
+      <button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='other'){
+    h=`<h2>${t('otherT')}</h2><p>${t('offense')}: <b>${sideName(st.poss)}</b> · ${ord(st.down)} ${t('down')}</p>
+      <div class="grid2"><button class="big" data-act="safety">${t('safety')}<small>${t('safetyS',sideName(other(st.poss)))}</small></button>
+      <button class="big" data-act="badsnap">${t('badSnap')}<small>${t('badSnapS')}</small></button></div>
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='addnum'){
     const v=sheet.v||'';
@@ -2084,10 +2172,14 @@ document.addEventListener('click',ev=>{
     case 'lang':{lang=b.dataset.l;lsSet(LS_LANG,lang);render();if(sheet){if(sheet.kind==='help')sheet.sec=null;renderSheet()}break}
     case 'help':openSheet('help',{sec:b.dataset.sec||''});break;
     case 'members':openSheet('members');break;
+    case 'other':if(!readOnly()){draft=null;runMode=false;openSheet('other')}break;
+    case 'safety':case 'badsnap':{closeSheet();const sf=a==='safety';
+      act(grp=>addEv({t:'play',kind:sf?'safety':'snap',zone:null,rec:null,res:sf?'SF':'BS',fd:false,form:g.curForm[st.poss]||null,qb2:false,annul:false},grp));
+      toast(sf?`${t('safety')} · +2 ${sideName(other(st.poss))}`:`${t('badSnap')} · ${ord(st.down)} ${t('down')}`);if(sf)celebrate('SAFETY',other(st.poss),true);break}
     case 'scout':{sheet=null;document.getElementById('layer').innerHTML='';draft=null;runMode=false;
       if(b.dataset.key&&b.dataset.key!==sc.key){sc.key=b.dataset.key;sc.off={};scReset()}scFresh={};view='scout';render();scrollTo(0,0);break}
-    case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=v===''?null:+v;if(k==='form'&&v==='')v=null;
-      if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'?null:0;
+    case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=v===''?null:+v;if((k==='form'||k==='call')&&v==='')v=null;
+      if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'||k==='call'?null:0;
       sc[k]=v;if(k==='area'&&v==='conv'){sc.down=0;sc.dist=0;sc.pos=0;sc.form=null}render();break}
     case 'scclear':{const k=sc.key,o=sc.off;scReset();sc.key=k;sc.off=o;render();break}
     case 'scgame':sc.off[b.dataset.id]=!sc.off[b.dataset.id];render();break;
