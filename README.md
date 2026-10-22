@@ -51,6 +51,7 @@ members/{email}                 role: "member" | "admin", name
 games/{gameId}                  equipa, competição, adversário, plantéis, formações,
                                 owner (email de quem criou), visibility: "team" | "private"
 games/{gameId}/events/{eventId} cada jogada, falta, conversão, intervalo...
+teams/{teamId}                  ficha de cada equipa: nome, cor, nomes dos jogadores, outros nomes e plano de jogo
 ```
 
 O resultado, o down e a posse não são guardados: a app calcula-os a partir da lista de eventos, por isso ficam sempre iguais em todos os aparelhos.

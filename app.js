@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.9.0';
+const APP_VERSION='1.10.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -119,6 +119,12 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  tmEdit:'Ficha da equipa', tmT:'Ficha da equipa', tmColor:'Cor', tmPlayers:'Jogadores', tmPlayersN:'Nome de cada número de camisola. Aparece no registo, nas tabelas e no resumo.', tmNamePh:'nome',
+  tmNoNums:'Ainda não há números registados para esta equipa.', tmSame:'É a mesma equipa que', tmSameN:'Marca os nomes escritos de outra forma noutros jogos. Esses jogos passam a contar para esta equipa no relatório.',
+  tmSave:'Guardar ficha', tmSaved:'Ficha guardada', planT:'Plano de jogo', planPh:'ex.: cobrir o #13 em Curto Dir; blitz no 3º down; atacar Fundo Esq', planSaved:'Plano guardado',
+  planNote:'Partilhado com a equipa. Guarda-se quando sais da caixa. Aparece no registo durante o jogo e quando imprimes o relatório.',
+  vWatch:n=>`Ver no vídeo (${n===1?'1 jogada':n+' jogadas'})`, vNoClips:'Estas jogadas ainda não têm tempo de vídeo. Ganham-no na tape review.', vPlayOne:'Ver esta jogada no vídeo',
+  vAllT:'Jogadas filtradas', vFilt:n=>`Ver no vídeo as jogadas filtradas (${n})`, vOnlyPos:(i,n)=>`${i} de ${n} · Próxima salta para a seguinte da lista`, vOnlyX:'Ver todas as jogadas', vOnlyNo:'Sai da lista para inserir jogadas.',
   zmRings:'Anéis', zmSum:'Resumo', zmDots:'Pontos', zOk:'com sucesso',
   zmRingsN:'O número é o total de bolas na zona e o anel enche com a % de sucesso (completos e corridas). Por baixo, a % de todas as bolas. Toca numa zona para ver as jogadas.',
   zmSumN:'Quanto mais amarela, mais bolas. Número de bolas, % de sucesso, alvo mais usado e a barra de completos, TD e falhados. Toca numa zona para ver as jogadas.',
@@ -268,6 +274,12 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  tmEdit:'Team sheet', tmT:'Team sheet', tmColor:'Color', tmPlayers:'Players', tmPlayersN:'The name for each jersey number. It shows in tracking, in the tables and in the summary.', tmNamePh:'name',
+  tmNoNums:'No numbers tracked for this team yet.', tmSame:'Same team as', tmSameN:'Tick the names written another way in other games. Those games then count for this team in the report.',
+  tmSave:'Save sheet', tmSaved:'Sheet saved', planT:'Game plan', planPh:'e.g. cover #13 on Short Right; blitz on 3rd down; attack Deep Left', planSaved:'Plan saved',
+  planNote:'Shared with the team. Saved when you leave the box. Shows in tracking during the game and when you print the report.',
+  vWatch:n=>`Watch on video (${n===1?'1 play':n+' plays'})`, vNoClips:'These plays have no video time yet. They get one in the tape review.', vPlayOne:'Watch this play on video',
+  vAllT:'Filtered plays', vFilt:n=>`Watch the filtered plays on video (${n})`, vOnlyPos:(i,n)=>`${i} of ${n} · Next jumps to the next one in the list`, vOnlyX:'See all plays', vOnlyNo:'Leave the list to insert plays.',
   zmRings:'Rings', zmSum:'Summary', zmDots:'Dots', zOk:'successful',
   zmRingsN:'The number is the total of balls in the zone and the ring fills with the success % (completions and runs). Below, the % of all balls. Tap a zone to see its plays.',
   zmSumN:'The more yellow, the more balls. Number of balls, success %, most used target and the bar of completions, TDs and misses. Tap a zone to see its plays.',
@@ -376,7 +388,7 @@ function helpData(){
     {id:'analysis',t:'Análise',b:`<ul>
       <li><b>Filtros</b>: Hammers ou adversário, passes ou corridas, down, formação e se as jogadas anuladas contam.</li>
       <li><b>Mapa</b> em três vistas: <b>Anéis</b> (o número é o total de bolas na zona e o anel enche com a % de sucesso), <b>Resumo</b> (quanto mais amarela, mais bolas, com o alvo mais usado) e <b>Pontos</b> (cada jogada é um ponto com a cor do resultado e o down lá dentro).</li>
-      <li><b>Toca numa zona</b> para ver todas as jogadas que lá caíram: down e distância, resultado, recetor, formação, jogada e jardas.</li>
+      <li><b>Toca numa zona</b> para ver todas as jogadas que lá caíram: down e distância, resultado, recetor, formação, jogada e jardas. Com ▶ vês essas jogadas de seguida no vídeo da tape review.</li>
       <li><b>Alvos por jogador</b>: alvos, completos, %, TD, INT e corridas. Toca num jogador para ver só as bolas dele no mapa.</li>
       <li><b>Por down</b>: zona, alvo e formação mais usados em cada down. Toca num down para filtrar.</li>
       <li><b>Resumo</b>: frases escritas automaticamente a partir dos números, com as tendências principais de quem ataca e da defesa.</li>
@@ -390,7 +402,10 @@ function helpData(){
       <li><b>Drives</b>: pontos por drive e como acabam, a atacar e a defender.</li>
       <li><b>Por jogada do playbook</b> (só nos Hammers): quantas vezes chamamos cada jogada, em que downs e como corre. Toca numa jogada para filtrar o mapa. Os nomes vêm da tape review.</li>
       <li><b>Como defendem</b>: para onde se lhes atira e quem faz as jogadas (flags, PBU, INT, sacks).</li>
-      <li><b>Jogos incluídos</b>: toca num jogo para o tirar do relatório.</li></ul>
+      <li><b>Jogos incluídos</b>: toca num jogo para o tirar do relatório.</li>
+      <li><b>Ficha da equipa</b> (botão junto ao nome): cor, nome de cada jogador por número e "é a mesma equipa que", para juntar jogos onde o nome foi escrito de outra forma. Os nomes aparecem no registo, nas tabelas e no resumo, e a cor no marcador.</li>
+      <li><b>Plano de jogo</b>: notas dos treinadores para este adversário, partilhadas com a equipa. Aparecem no registo, numa caixa por cima do campo, e na impressão.</li>
+      <li><b>Ver no vídeo</b>: toca numa zona, ou no botão por baixo do mapa para as jogadas filtradas, e escolhe o jogo. A tape review abre só com essas jogadas e <b>Próxima</b> salta para a seguinte da lista. Só entram as jogadas que já têm tempo de vídeo.</li></ul>
       <p>A distância e a zona do campo precisam das jardas da tape review. <b>Imprimir</b> dá uma folha para levar para o jogo.</p>`},
     {id:'plays',t:'Lista de jogadas',b:`<ul>
       <li>Todas as jogadas do jogo, a mais recente primeiro.</li>
@@ -466,7 +481,7 @@ function helpData(){
     {id:'analysis',t:'Analysis',b:`<ul>
       <li><b>Filters</b>: Hammers or opponent, passes or runs, down, formation and whether nullified plays count.</li>
       <li><b>Map</b> in three views: <b>Rings</b> (the number is the total of balls in the zone and the ring fills with the success %), <b>Summary</b> (the more yellow, the more balls, with the most used target) and <b>Dots</b> (each play is a dot with the result's color and its down inside).</li>
-      <li><b>Tap a zone</b> to see every play in it: down and distance, result, receiver, formation, play and yards.</li>
+      <li><b>Tap a zone</b> to see every play in it: down and distance, result, receiver, formation, play and yards. With ▶ you watch those plays one after the other in the tape review video.</li>
       <li><b>Targets by player</b>: targets, completions, %, TD, INT and runs. Tap a player to show only their balls on the map.</li>
       <li><b>By down</b>: most used zone, target and formation on each down. Tap a down to filter.</li>
       <li><b>Summary</b>: sentences written automatically from the numbers, with the main tendencies of the offense and of the defense.</li>
@@ -480,7 +495,10 @@ function helpData(){
       <li><b>Drives</b>: points per drive and how drives end, on offense and on defense.</li>
       <li><b>By playbook call</b> (Hammers only): how often we call each play, on which downs and how it goes. Tap a play to filter the map. Play names come from the tape review.</li>
       <li><b>How they defend</b>: where teams throw on them and who makes the plays (flags, PBU, INT, sacks).</li>
-      <li><b>Games included</b>: tap a game to leave it out of the report.</li></ul>
+      <li><b>Games included</b>: tap a game to leave it out of the report.</li>
+      <li><b>Team sheet</b> (button next to the name): color, each player's name by number and "same team as", to join games where the name was written another way. Names show in tracking, the tables and the summary, and the color on the scoreboard.</li>
+      <li><b>Game plan</b>: coaches' notes for this opponent, shared with the team. They show in tracking, in a box above the field, and when printing.</li>
+      <li><b>Watch on video</b>: tap a zone, or the button under the map for the filtered plays, and pick the game. The tape review opens with just those plays and <b>Next</b> jumps to the next one in the list. Only plays that already have a video time are included.</li></ul>
       <p>Distance and field position need the yards from the tape review. <b>Print</b> gives a sheet to take to the game.</p>`},
     {id:'plays',t:'Play list',b:`<ul>
       <li>Every play of the game, most recent first.</li>
@@ -550,7 +568,7 @@ let demoList=null;
 const demo=makeMem(()=>{if(!demoList)demoList=[makeSample()];return demoList},l=>{demoList=l});
 
 /* ---------- store: shared with the team (artifact db) ---------- */
-const cloud={db:null,ready:false,canWrite:true,remoteGames:{},remoteEv:{},subGid:null,unsubEv:null,recent:[],
+const cloud={db:null,ready:false,canWrite:true,remoteGames:{},remoteTeams:{},remoteEv:{},subGid:null,unsubEv:null,recent:[],
   outbox:(()=>{try{return JSON.parse(localStorage.getItem('hgo.outbox')||'[]')||[]}catch(e){return []}})()};
 const saveOutbox=()=>lsSet('hgo.outbox',JSON.stringify(cloud.outbox));
 function queue(op){cloud.outbox.push(op);saveOutbox();refresh();flush()}
@@ -567,7 +585,7 @@ const cloudStore={
 function overlayOps(){const now=Date.now();cloud.recent=cloud.recent.filter(r=>now-r.at<6000);return [...cloud.recent.map(r=>r.op),...cloud.outbox]}
 function cloudGames(){
   const m={};for(const id in cloud.remoteGames)m[id]=cloud.remoteGames[id];
-  for(const op of overlayOps()){const p=op.path.split('/');if(p.length!==2)continue;const id=p[1];
+  for(const op of overlayOps()){const p=op.path.split('/');if(p.length!==2||p[0]!=='games')continue;const id=p[1];
     if(op.k==='set')m[id]=op.body;else if(op.k==='upd'&&m[id])m[id]=merge(m[id],op.patch);else if(op.k==='del')delete m[id]}
   return Object.entries(m).map(([id,b])=>({id,...clone(b)})).sort((a,b)=>(b.created||0)-(a.created||0));
 }
@@ -605,6 +623,32 @@ async function flush(){
 }
 addEventListener('online',()=>flush());
 
+
+/* ---------- team sheets (opponent library and our own teams): name, color, player names, other spellings, game plan ----------
+   teams/{id} in Firestore, shared with the team; in the preview (no Firebase) they stay in this browser */
+const LS_TEAMS='hgo.teams.v1';
+const tid=key=>String(key).replace(/[\/.#$\[\]]/g,'_');
+function teamsAll(){
+  if(!cloud.db){try{return JSON.parse(localStorage.getItem(LS_TEAMS)||'{}')||{}}catch(e){return {}}}
+  const m={};for(const id in cloud.remoteTeams)m[id]=cloud.remoteTeams[id];
+  for(const op of overlayOps()){const p=op.path.split('/');if(p.length!==2||p[0]!=='teams')continue;
+    if(op.k==='upd')m[p[1]]=merge(m[p[1]]||{},op.patch);else if(op.k==='del')delete m[p[1]]}
+  return m;
+}
+const teamDoc=key=>teamsAll()[tid(key)]||null;
+function saveTeam(key,patch){
+  patch={...patch,key,updated:Date.now()};
+  if(cloud.db){queue({k:'upd',path:'teams/'+tid(key),patch});return}
+  const m=teamsAll();m[tid(key)]=merge(m[tid(key)]||{},patch);lsSet(LS_TEAMS,JSON.stringify(m));refresh();
+}
+/* other spellings saved on a sheet point to that team */
+function aliasOf(base){
+  const all=teamsAll();for(const id in all){const d=all[id];if(d&&d.key&&d.key!==base&&(d.aliases||[]).some(a=>d.key.split('|').slice(0,2).join('|')+'|'+a===base))return d.key}
+  return base;
+}
+const pName=(key,n)=>{const d=key&&teamDoc(key);return d&&d.players&&n!=null?d.players[n]||'':''};
+const numTxt=(key,n)=>n==null?t('noNum'):'#'+n+(pName(key,n)?' '+esc(pName(key,n)):'');
+const teamColor=key=>{const d=key&&teamDoc(key);return d&&d.color||null};
 /* ---------- current game ---------- */
 let games=[], g=null, curId=lsGet(LS_CUR), draft=null, runMode=false, qbNext=false, override=null;
 let view='home', undoStack=[], sheet=null, toastT=null, confirmDel=null, rendering=false;
@@ -632,7 +676,7 @@ function role(){if(!g||g.store==='demo')return 'both';const r=getRole(g.id);if(r
 const readOnly=()=>g.store==='cloud'&&!cloud.canWrite;
 function selectGame(id){
   curId=id;lsSet(LS_CUR,id);undoStack=[];draft=null;runMode=false;qbNext=false;override=null;an.rec=null;an.form=null;
-  tp.id=null;tp.gl=null;tp.del=null;vid.files={};vid.slot=0;vid.seek=null;vid.resume=null;
+  tp.id=null;tp.gl=null;tp.del=null;tp.only=null;tp.seekId=null;vid.files={};vid.slot=0;vid.seek=null;vid.resume=null;
   refresh();
   if(g.store!=='demo'&&!getRole(g.id)&&!readOnly())openSheet('role');
 }
@@ -758,6 +802,7 @@ function makeSample(seed0=7,id='demo',ago=0){
     replay(G);
   }
   G.events.forEach(e=>{for(const k in e)if(k[0]==='_')delete e[k]});
+  if(id==='demo'){let vt=20;G.events.forEach(e=>{if(e.t==='play'||e.t==='conv'){e.vt=vt;e.vi=0;vt+=28+Math.floor(rnd()*20)}})}
   return G;
 }
 
@@ -885,7 +930,8 @@ function render(){
   if(document.getElementById('vbox')&&!vidAway()){const tt=vTime();if(tt!=null)vid.resume=tt}
   app.dataset.tape=view==='tape'?g.id:'';
   if(view==='home'){app.innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
-  if(view==='scout'){app.innerHTML=scoutView();prevRender=null;if(pendingReload)setTimeout(reloadIfIdle,300);return}
+  if(view==='scout'){const ae=document.activeElement, keep=ae&&ae.id==='sc-plan'?{v:ae.value,a:ae.selectionStart,b:ae.selectionEnd}:null;
+    app.innerHTML=scoutView();if(keep){const x=document.getElementById('sc-plan');if(x){x.value=keep.v;x.focus();x.setSelectionRange(keep.a,keep.b)}}prevRender=null;if(pendingReload)setTimeout(reloadIfIdle,300);return}
   app.innerHTML=`${topHTML(st)}
   <nav class="tabs" role="tablist">
     ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape')+'<span class="beta">BETA</span>':t('tabs')[k]}</button>`).join('')}
@@ -910,8 +956,8 @@ function topHTML(st){
   const sync=g.store==='demo'?`<span class="sample">${t('sample')}</span>`
     :g.store==='local'?`<span class="sync local">${t('localOnly')}</span>`
     :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
-  const team=s=>{const on=st.poss===s;
-    return `<button class="sb-team ${s}${on?' poss on':''}" data-act="poss" ${showPoss&&!on?'':'disabled'} aria-label="${sideName(s)}${on?', '+t('offense'):''}">
+  const team=s=>{const on=st.poss===s, tc=s==='A'&&teamColor(scKeyOf(g,'A'));
+    return `<button class="sb-team ${s}${on?' poss on':''}"${tc?` style="--tc:${esc(tc)}"`:''} data-act="poss" ${showPoss&&!on?'':'disabled'} aria-label="${sideName(s)}${on?', '+t('offense'):''}">
       <span class="sb-name">${on?BALL:''}<span>${sideName(s)}</span></span><span class="s num">${st.score[s]}</span></button>`};
   return `<header class="top sb">
     <div class="sb-bar">
@@ -1057,6 +1103,9 @@ function liveScoutHTML(st,s){
   }
   return `<button class="scoutbar" data-act="scout" data-key="${esc(key)}"><span class="lbl2">${t('lsT',ready.length)}</span><b>${line}</b>${al.map(a=>`<span class="alert">⚠ ${a}</span>`).join('')}</button>`;
 }
+/* the game plan for this opponent, folded, above the field */
+function planBox(){const d=teamDoc(scKeyOf(g,'A'));if(!d||!d.plan)return '';
+  return `<details class="planbox"><summary>${t('planT')} · ${esc(d.name||g.opp)}</summary><p>${esc(d.plan).replace(/\n/g,'<br>')}</p></details>`}
 /* the play being tracked, as slots: zone, result and number (the active one is outlined) */
 function slotsHTML(s){
   const d=draft, slot=(lbl,val,on,cls='')=>`<div class="slot${on?' on':''}${val?' set':''} ${cls}"><small>${lbl}</small><b>${val||'—'}</b></div>`;
@@ -1112,7 +1161,7 @@ function regView(st){
         <button class="btn" data-act="opts">${t('changeRole')}</button></div>`;
     return `<div class="reg side-${s}">
       <section class="fieldwrap">
-        ${liveScoutHTML(st,s)}
+        ${liveScoutHTML(st,s)}${planBox()}
         <div class="hint">${readOnly()?t('roTitle'):t('defHint',sideName(s))} ${qh('team')}</div>
         ${banner}
         <div class="field watch">${gridHTML(gl,plays,false)}</div>
@@ -1126,7 +1175,8 @@ function regView(st){
   const roster=[...g.roster[ns]].sort((a,b)=>byStep?a-b:((cnt[b]||0)-(cnt[a]||0)||a-b));
   const ready=!!draft;
   const lastRec=byStep?null:(()=>{for(let i=g.events.length-1;i>=0;i--){const e=g.events[i];if(e.t==='play'&&e._side===s&&e.rec!=null&&!e.annul)return e.rec}return null})();
-  const nums=roster.map(n=>`<button class="n num ${ready?'ready':''}${n===lastRec?' last':''}" data-act="num" data-n="${n}">#${n}${!byStep&&cnt[n]?`<small>${cnt[n]} ${t('targets')}</small>`:''}${n===lastRec?`<i class="lastdot" title="${t('lastRec')}"></i>`:''}</button>`).join('')
+  const nkey=scKeyOf(g,ns);
+  const nums=roster.map(n=>`<button class="n num ${ready?'ready':''}${n===lastRec?' last':''}" data-act="num" data-n="${n}">#${n}${pName(nkey,n)?`<span class="nm">${esc(pName(nkey,n))}</span>`:''}${!byStep&&cnt[n]?`<small>${cnt[n]} ${t('targets')}</small>`:''}${n===lastRec?`<i class="lastdot" title="${t('lastRec')}"></i>`:''}</button>`).join('')
     +`<button class="n none" data-act="nonum" ${ready?'':'disabled'} aria-label="${t('saveNoNum')}">?<small>${t('noNumShort')}</small></button>`
     +`<button class="n add" data-act="addnum" aria-label="${t('newNum')}">+</button>`;
   const numLbl=byStep?(draft.kind==='sack'?t('whoSack'):t('whoInt')):t('receiver');
@@ -1144,7 +1194,7 @@ function regView(st){
     +`<button class="f qb" data-act="qb" aria-pressed="${qbNext}">2 QB</button>`;
   return `<div class="reg side-${s}">
     <section class="fieldwrap">
-      ${conv?'':liveScoutHTML(st,s)}
+      ${conv?'':liveScoutHTML(st,s)}${planBox()}
       ${slotsHTML(s)}
       <div class="hint">${hintText()} ${qh('track')}</div>
       ${banner}
@@ -1252,12 +1302,12 @@ function anaView(){
     </div>
     <div class="tiles">${tiles.map(([v,l])=>`<div class="tile"><b class="num">${v}</b><span>${l}</span></div>`).join('')}</div>
     ${(()=>{const ev=x=>g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x&&!e.annul&&(!an.half||e._half===an.half));
-      return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half))}</section>`})()}
+      return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half),scKeyOf(g,an.side))}</section>`})()}
     <div class="ana"><div class="sc-tables">
       <section class="panel">
         <div class="toolbar"><h3>${t('distribution')}${an.rec!=null?' · #'+an.rec:''}</h3>${zoneModes('an',an.mode)}</div>
         ${zoneMap(P,gl,an.mode,'an')}
-        ${zoneLegend(an.mode)}
+        ${zoneLegend(an.mode)}${P.some(e=>e.vt!=null)?`<button class="btn" data-act="zdet" data-z="an|all">▶ ${t('vFilt',P.filter(e=>e.vt!=null).length)}</button>`:''}
         ${an.rec!=null?`<button class="btn" data-act="anrec" data-r="${an.rec}">${t('showAll')}</button>`:''}
       </section>
       ${conv?'':chartsHTML(P,base,all)}</div>
@@ -1295,6 +1345,7 @@ function zoneInner(h,mode,max,tot){
   return `<span class="zring" style="--p:${Math.round(ok/n*100)};--s:${sz.toFixed(0)}px"><span class="num">${n}</span></span><small class="zshare">${pct(n,tot)}</small>`;
 }
 function zoneMap(P,gl,mode,id){
+  if(P.length)zoneSrc[id+'|all']=P;
   const ROWS=gl?t('glRows'):t('rows'), COLS=t('cols'), zl=[];for(let r=0;r<4;r++)for(let c=0;c<3;c++)zl.push((gl?'g':'')+r+c);
   const max=Math.max(1,...zl.map(z=>P.filter(e=>e.zone===z).length)), tot=P.filter(e=>e.zone).length;
   return `<div class="amap zm-${mode}${gl?' glmap':''}">${zl.map(z=>{const r=+z[gl?1:0], c=+z[gl?2:1], h=P.filter(e=>e.zone===z), a=h.length/max;
@@ -1309,7 +1360,8 @@ const zoneLegend=mode=>mode==='dots'?`<div class="zleg"><i class="zdot c">1</i>$
 /* ---------- written summary and charts, shared by the game analysis and the opponent report ----------
    The summary is plain rules over the counts (no AI): the same data always gives the same text. */
 const colOf=z=>z==null?null:+z[isGL(z)?2:1];
-function sumHTML(off,def,nG,us,D){
+function sumHTML(off,def,nG,us,D,key){
+  const nn=n=>n+(pName(key,n)?' '+esc(pName(key,n)):'');
   const pl=off.filter(e=>e.t==='play'), pas=pl.filter(e=>e.kind==='pass'), runs=pl.filter(e=>e.kind==='run'), n=pas.length+runs.length;
   if(n<5)return `<p class="note">${t('sumFew')}</p>`;
   const L=[], fp=pas.filter(e=>e.zone&&!isGL(e.zone));
@@ -1321,11 +1373,11 @@ function sumHTML(off,def,nG,us,D){
   }
   const rc={};pas.forEach(e=>{if(e.rec!=null)(rc[e.rec]=rc[e.rec]||[]).push(e)});
   const rr=Object.entries(rc).sort((a,b)=>b[1].length-a[1].length);
-  if(rr.length&&rr[0][1].length>=2){let x=t('sumRec',rr[0][0],pct(rr[0][1].length,pas.length),pct(rr[0][1].filter(isComp).length,rr[0][1].length));
-    if(rr[1]&&rr[1][1].length>=2)x+=t('sumRec2',rr[1][0],pct(rr[1][1].length,pas.length),pct(rr[1][1].filter(isComp).length,rr[1][1].length));L.push(x)}
+  if(rr.length&&rr[0][1].length>=2){let x=t('sumRec',nn(rr[0][0]),pct(rr[0][1].length,pas.length),pct(rr[0][1].filter(isComp).length,rr[0][1].length));
+    if(rr[1]&&rr[1][1].length>=2)x+=t('sumRec2',nn(rr[1][0]),pct(rr[1][1].length,pas.length),pct(rr[1][1].filter(isComp).length,rr[1][1].length));L.push(x)}
   const late=pl.filter(e=>e._down>=3&&e.kind!=='sack'), lp=late.filter(e=>e.kind==='pass');
   if(late.length>=4){const z=scTop(lp.filter(e=>e.zone),e=>e.zone), r=scTop(lp,e=>e.rec), main=rr[0]&&rr[0][0];
-    L.push(t('sumLate',pct(lp.length,late.length),z?zoneName(z[0]):'',r?r[0]:'',r&&main&&r[0]!==main?main:''))}
+    L.push(t('sumLate',pct(lp.length,late.length),z?zoneName(z[0]):'',r?nn(r[0]):'',r&&main&&r[0]!==main?nn(main):''))}
   const fm={};pl.filter(e=>e.form&&e.kind!=='sack').forEach(e=>{(fm[e.form]=fm[e.form]||[]).push(e)});
   const fr=Object.entries(fm).sort((a,b)=>b[1].length-a[1].length);
   if(fr.length){const [f,l]=fr[0], allR=runs.length/n;let x=t('sumForm',esc(f),pct(l.length,pl.length),pct(l.filter(e=>e.kind==='pass').length,l.length));
@@ -1348,7 +1400,7 @@ function sumHTML(off,def,nG,us,D){
     const dv={};def.forEach(e=>{const k=(o,f)=>{if(o!=null){const v=dv[o]=dv[o]||{f:0,s:0,i:0,b:0};v[f]++}};
       if(e.res==='SACK')k(e.dby,'s');if(e.res==='INT')k(e.dby,'i');k(e.fby,'f');k(e.pbu,'b')});
     const top=Object.entries(dv).sort((a,b)=>(b[1].f+2*b[1].s+3*b[1].i+b[1].b)-(a[1].f+2*a[1].s+3*a[1].i+a[1].b))[0];
-    if(top){const v=top[1];x+=t('sumDefPl',top[0],[v.f?v.f+(v.f>1?' flags':' flag'):'',v.s?v.s+(v.s>1?' sacks':' sack'):'',v.i?v.i+' INT':'',v.b?v.b+' PBU':''].filter(Boolean).join(', '))}
+    if(top){const v=top[1];x+=t('sumDefPl',nn(top[0]),[v.f?v.f+(v.f>1?' flags':' flag'):'',v.s?v.s+(v.s>1?' sacks':' sack'):'',v.i?v.i+' INT':'',v.b?v.b+' PBU':''].filter(Boolean).join(', '))}
     L.push(x)}
   return `<ul class="sum">${L.map(x=>`<li>${x}</li>`).join('')}</ul><p class="note">${t('sumNote')}</p>`;
 }
@@ -1405,11 +1457,11 @@ function scoutGames(){
   return l;
 }
 /* a team is the opponent's name inside one of our teams (Elite, Academy, Girls), or the Hammers team itself */
-const scKeyOf=(x,s)=>s==='H'?'H|'+(x.store==='demo'?'demo':x.team):'A|'+x.team+'|'+normOpp(x.opp);
+const scKeyOf=(x,s)=>s==='H'?'H|'+(x.store==='demo'?'demo':x.team):aliasOf('A|'+x.team+'|'+normOpp(x.opp));
 function scoutTeams(){
   const m={};
   scoutGames().forEach(x=>['A','H'].forEach(s=>{const k=scKeyOf(x,s);
-    (m[k]=m[k]||{key:k,side:s,name:s==='H'?'Hammers':x.opp,team:x.team,demo:x.store==='demo',games:[]}).games.push(x)}));
+    (m[k]=m[k]||{key:k,side:s,name:s==='H'?'Hammers':(teamDoc(k)&&teamDoc(k).name)||x.opp,team:x.team,demo:x.store==='demo',games:[]}).games.push(x)}));
   return Object.values(m).sort((a,b)=>(a.side==='H')-(b.side==='H')||b.games.length-a.games.length||String(a.name).localeCompare(String(b.name)));
 }
 /* shared games other than the open one are read once per visit to the report */
@@ -1423,7 +1475,7 @@ function scoutFetch(G){
 }
 const scoutReady=G=>G.store!=='cloud'||G.id===cloud.subGid||!!(scoutEv[G.id]&&scoutEv[G.id].m);
 function scoutGame(G){const X={...G,events:sortEv(G.store==='cloud'?cloudEvents(G.id):clone(G.events||[]))};X.st=replay(X);
-  const lbl=(G.date||'')+' · vs '+(G.opp||'');X.events.forEach(e=>{e._g=lbl});return X}
+  const lbl=(G.date||'')+' · vs '+(G.opp||'');X.events.forEach(e=>{e._g=lbl;e._gid=G.id});return X}
 const scTop=(arr,f)=>{const m={};arr.forEach(e=>{const k=f(e);if(k!=null)m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])[0]||null};
 /* field position: 1 = own half, 2 = beyond midfield (goal to go), 0 = unknown */
 const posOf=e=>e._goal?2:e._spot!=null?1:0;
@@ -1447,8 +1499,9 @@ function scoutView(){
   // record and points, from the scouted team's side
   const nG=X.length, W=X.filter(x=>x.st.score[S]>x.st.score[O]).length, Lo=X.filter(x=>x.st.score[S]<x.st.score[O]).length;
   const avgPts=k=>nG?(X.reduce((a,x)=>a+x.st.score[k],0)/nG).toFixed(1):'-', WDL=t('scWDL');
-  const hero=`<section class="hero sc-hero side-${S}"><span class="lbl2">${esc(team.team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
-      <div class="gtxt"><b>${name}</b></div>
+  const doc=teamDoc(team.key)||{}, col=doc.color;
+  const hero=`<section class="hero sc-hero side-${S}"${col?` style="--tc:${esc(col)}"`:''}><span class="lbl2">${esc(team.team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
+      <div class="sc-name"><div class="gtxt"><b>${name}</b></div><button class="btn noprint" data-act="teamedit" data-key="${esc(team.key)}">✎ ${t('tmEdit')}</button></div>
       <div class="sc-stats">
         <div><b class="num">${W}${WDL[0]} ${nG-W-Lo}${WDL[1]} ${Lo}${WDL[2]}</b><small>${t('scRecord')}${us?'':' '+t('scRecVs')}</small></div>
         <div><b class="num">${avgPts(S)}</b><small>${t('scPtsFor')}</small></div>
@@ -1504,7 +1557,7 @@ function scoutView(){
   const pP=P.filter(isPassLike);
   const mapHTML=`<section class="panel"><div class="toolbar"><h3>${t('scMapT')}${sc.rec!=null?' · #'+sc.rec:''}</h3>${zoneModes('scm',sc.mode)}</div>
       <span class="note">${t('scPlaysN',P.length)} · ${pct(pP.filter(isComp).length,pP.length)} ${t('comp')}</span>
-      ${zoneMap(P,gl,sc.mode,'sc')}${zoneLegend(sc.mode)}<p class="note">${t('scMapNote')}</p></section>`;
+      ${zoneMap(P,gl,sc.mode,'sc')}${zoneLegend(sc.mode)}${P.some(e=>e.vt!=null)?`<button class="btn noprint" data-act="zdet" data-z="sc|all">▶ ${t('vFilt',P.filter(e=>e.vt!=null).length)}</button>`:''}<p class="note">${t('scMapNote')}</p></section>`;
   // tables
   const cellsOf=l=>{const np=l.filter(e=>e.kind!=='sack'), p=l.filter(isPassLike), z=scTop(p.filter(e=>e.zone),e=>e.zone), r=scTop(p,e=>e.rec);
     return [l.length,pct(p.length,np.length),pct(p.filter(isComp).length,p.length),z?zoneName(z[0]):'-',r?'#'+r[0]:'-']};
@@ -1529,15 +1582,15 @@ function scoutView(){
   const nT=RL.filter(isPassLike).length;
   tables+=tbl(t('scTargets'),t('thScRec'),Object.entries(rm).map(([k,l])=>({k,l,p:l.filter(isPassLike)})).sort((a,b)=>b.p.length-a.p.length||b.l.length-a.l.length).map(({k,l,p})=>{
     const z=scTop(p.filter(e=>e.zone),e=>e.zone);
-    return tr('rec',k==='?'?'':k,String(sc.rec)===k,[k==='?'?t('noNum'):'#'+k,p.length,pct(p.length,nT),pct(p.filter(isComp).length,p.length),l.filter(e=>e.res==='TD').length,l.filter(e=>e.kind==='run').length,z?zoneName(z[0]):'-'])}).join(''));
+    return tr('rec',k==='?'?'':k,String(sc.rec)===k,[k==='?'?t('noNum'):'#'+k+(pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''),p.length,pct(p.length,nT),pct(p.filter(isComp).length,p.length),l.filter(e=>e.res==='TD').length,l.filter(e=>e.kind==='run').length,z?zoneName(z[0]):'-'])}).join(''));
   const qm={};P.filter(e=>isPassLike(e)&&e.qb!=null).forEach(e=>{(qm[e.qb]=qm[e.qb]||[]).push(e)});
-  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>`<tr><td class="jn">#${k}</td><td>${l.length}</td><td>${pct(l.filter(isComp).length,l.length)}</td><td>${l.filter(e=>e.res==='TD').length}</td><td>${l.filter(e=>e.res==='INT').length}</td></tr>`).join(''));
+  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>`<tr><td class="jn">#${k}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${l.length}</td><td>${pct(l.filter(isComp).length,l.length)}</td><td>${l.filter(e=>e.res==='TD').length}</td><td>${l.filter(e=>e.res==='INT').length}</td></tr>`).join(''));
   // the scouted team on defense: where opponents throw on them, and who makes the plays
   const dfp=dp.filter(e=>e.zone&&!isGL(e.zone));
   const dv={}, dk=k=>dv[k]=dv[k]||{f:0,b:0,i:0,p6:0,s:0};
   def.forEach(e=>{if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
     if(e.fby!=null)dk(e.fby).f++;if(e.pbu!=null)dk(e.pbu).b++});
-  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
+  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
   const defHTML=dfp.length||drows||DD.length?`<section class="sc-sec"><h2>${t('scDefence',us)}</h2><div class="ana">
       ${dfp.length?`<section class="panel"><div class="toolbar"><h3>${t('scDefMap',us)}</h3><span class="note">${t('scPlaysN',dfp.length)} · ${pct(dfp.filter(isComp).length,dfp.length)} ${t('comp')}</span></div>
         ${zoneMap(dfp,false,sc.mode,'scd')}<p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
@@ -1550,12 +1603,15 @@ function scoutView(){
           <span class="res r${r==null?'':r}">${r==null?'·':WDL[r]}</span>
           <span class="gtxt"><b>${us?'vs '+esc(G.opp):esc(G.date||'')}</b><small>${us?esc(G.date||'')+' · ':''}${esc(G.comp)} · ${st}</small></span></button>
         ${G.extra?'':`<button class="btn noprint" data-act="openg" data-id="${G.id}" data-v="ana">${t('scOpenA')}</button>`}</div>`}).join('')}</div></section>`;
-  const sumSec=`<section class="sc-sec"><h2>${t('sumT')}</h2><div class="panel">${sumHTML(off,def,nG,us,DO)}</div></section>`;
+  const sumSec=`<section class="sc-sec"><h2>${t('sumT')}</h2><div class="panel">${sumHTML(off,def,nG,us,DO,team.key)}</div></section>`;
   const body=X.length&&off.length?`${sumSec}${insHTML}
     <section class="sc-sec"><h2>${t('scAttack',us)}</h2>${filters}
       <div class="ana"><div class="sc-tables">${mapHTML}${chartsHTML(P,fil(off,'down'),fil(off,'rec'))}</div><div class="sc-tables">${drivePanel(DO)}${tables}</div></div></section>
     ${defHTML}`:`<p class="note">${waiting?'':t('scNoPlays')}</p>`;
-  return `${head}${pickRow}${hero}${waiting?`<p class="note">${t('scLoading',waiting)}</p>`:''}${body}${gamesHTML}
+  const planHTML=`<section class="sc-sec"><h2>${t('planT')}</h2><div class="panel">
+      <textarea id="sc-plan" class="plan-in noprint" data-key="${esc(team.key)}" rows="4" placeholder="${t('planPh')}">${esc(doc.plan||'')}</textarea>
+      <div class="printonly plan-print">${esc(doc.plan||'').replace(/\n/g,'<br>')}</div><p class="note noprint">${t('planNote')}</p></div></section>`;
+  return `${head}${pickRow}${hero}${planHTML}${waiting?`<p class="note">${t('scLoading',waiting)}</p>`:''}${body}${gamesHTML}
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
 function logView(){
@@ -1588,15 +1644,19 @@ function logView(){
 
 /* ---------- tape review: one play at a time, next to the video ----------
    Adds to each play event: yds, yac, qb, call (play name), fby (flag pulled by), pbu, note, vt/vi (video time and part), rv (reviewed). */
-const tp={id:null,list:false,gl:null,del:null};
-const tapeEvs=()=>g.events.filter(e=>e.t==='play'||e.t==='conv');
+/* tp.only: a playlist (plays picked from a zone or a filter in the analysis or the report), watched one after the other */
+const tp={id:null,list:false,gl:null,del:null,only:null,seekId:null};
+const tapeAll=()=>g.events.filter(e=>e.t==='play'||e.t==='conv');
+const tapeEvs=()=>{const L=tapeAll();if(!tp.only)return L;const k=new Set(tp.only.ids);return L.filter(e=>k.has(e.id))};
 function tapeCur(){
   const L=tapeEvs();let i=L.findIndex(e=>e.id===tp.id);
-  if(i<0){i=L.findIndex(e=>!e.rv);if(i<0)i=L.length-1;tp.id=L[i]?L[i].id:null}
-  return {L,i,e:L[i]||null};
+  if(i<0&&L.length){i=L.findIndex(e=>!e.rv);if(i<0)i=L.length-1;tp.id=L[i].id}
+  const e=L[i]||null;
+  if(tp.seekId&&e&&e.id===tp.seekId&&e.vt!=null){tp.seekId=null;setTimeout(()=>seekPlay(e),0)}
+  return {L,i,e};
 }
 /* sticky fields (QB, formation): the value of the previous play of the same team */
-function tSugg(e,k){const L=tapeEvs();for(let j=L.indexOf(e)-1;j>=0;j--){const x=L[j];if(x._side===e._side&&x[k]!=null&&x[k]!=='')return x[k]}return null}
+function tSugg(e,k){const L=tapeAll();for(let j=L.indexOf(e)-1;j>=0;j--){const x=L[j];if(x._side===e._side&&x[k]!=null&&x[k]!=='')return x[k]}return null}
 const fmtT=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s/60)%60,ss=String(s%60).padStart(2,'0');return h?`${h}:${String(m).padStart(2,'0')}:${ss}`:`${m}:${ss}`};
 const partName=i=>t('vPart',(i||0)+1);
 function playbook(){const s=new Set(g.playbook||[]);games.forEach(x=>{if(x.team===g.team&&x.id!==g.id)(x.playbook||[]).forEach(c=>s.add(c))});return [...s]}
@@ -1619,6 +1679,11 @@ function tapeUpdate(){
   mountPlayer();
 }
 function tapePanel(){
+  if(!tp.only)return tapePanel0();
+  const {L,i}=tapeCur();
+  return `<div class="vonly"><span><b>▶ ${esc(tp.only.l)}</b><small>${t('vOnlyPos',i+1,L.length)}</small></span><button class="btn" data-act="tonlyx">${t('vOnlyX')}</button></div>${tapePanel0()}`;
+}
+function tapePanel0(){
   const {L,i,e}=tapeCur();
   if(!e)return `<div class="defcard"><h3>${t('tEmptyT')}</h3><p>${t('tEmpty')}</p>${readOnly()?'':`<button class="btn" data-act="tins">${t('tInsFirst')}</button>`}</div>`;
   const done=L.filter(x=>x.rv).length, s=e._side, conv=e.t==='conv', ours=s==='H', vs=g.videos||[], away=vidAway();
@@ -1818,9 +1883,10 @@ window.HGO_key=k=>{tapeKey(k)};
 setInterval(()=>{if(vid.win&&vid.win.closed){vid.win=null;if(view==='tape'&&document.getElementById('vpane')){document.getElementById('vpane').innerHTML=vpaneHTML();mountPlayer();tapeUpdate()}}},1000);
 
 /* ---------- tape actions ---------- */
-function tapeGo(id,seek){tp.id=id;tp.gl=null;tp.del=null;if(seek)seekPlay(tapeEvs().find(x=>x.id===id));render()}
+function tapeGo(id,seek){tp.id=id;tp.gl=null;tp.del=null;if(seek)seekPlay(tapeAll().find(x=>x.id===id));render()}
 function tapeNav(d){const {L,i}=tapeCur();const x=L[i+d];if(x)tapeGo(x.id,true)}
 function tapeNext(){
+  if(tp.only){tapeNav(1);return}
   const {L,i,e}=tapeCur();if(!e)return;
   const nx=L[i+1], now=vTime();
   if(!readOnly())act(grp=>{
@@ -1873,6 +1939,7 @@ function tapeAppend(grp,now){
   return ne.id;
 }
 function tapeInsert(){
+  if(tp.only){toast(t('vOnlyNo'));return}
   if(readOnly())return;
   const e=tapeCur().e, idx=e?g.events.indexOf(e):g.events.length, prev=g.events[idx-1];
   const ts=e?(prev?(prev.ts+e.ts)/2:e.ts-1):Date.now(), now=vTime();
@@ -1925,10 +1992,31 @@ function renderSheet(){
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='zone'){
     const L=sheet.L.slice().reverse(), ok=L.filter(okPlay).length, R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:t('convRes').G,NG:t('convRes').NG};
-    h=`<h2>${zoneName(sheet.z)}</h2><p>${t('scPlaysN',L.length)} · ${pct(ok,L.length)} ${t('zOk')}</p>
+    h=`<h2>${sheet.z==='all'?t('vAllT'):zoneName(sheet.z)}</h2><p>${t('scPlaysN',L.length)} · ${pct(ok,L.length)} ${t('zOk')}</p>
+      ${(()=>{const by={};L.filter(e=>e.vt!=null).slice().reverse().forEach(e=>{const k=e._gid||g.id;(by[k]=by[k]||{l:e._g||(g.team+' vs '+g.opp),ids:[]}).ids.push(e.id)});
+        sheet.vids=by;const n=Object.values(by).reduce((a,x)=>a+x.ids.length,0);
+        return n?`<div class="zvid"><span class="lbl2">${t('vWatch',n)}</span>${Object.entries(by).map(([gid,x])=>`<button class="btn" data-act="zvideo" data-g="${gid}">▶ ${esc(x.l)} · ${x.ids.length}</button>`).join('')}</div>`:`<p class="note">${t('vNoClips')}</p>`})()}
       <div class="zlist">${L.map(e=>`<div class="zrow"><i class="zdot ${dotCls(e)}">${e.t==='conv'?e.pts:e._down||''}</i>
-        <span><b>${R[e.res]||e.res}${e.rec!=null?' · #'+e.rec:''}</b><small>${[e.t==='conv'?t('conv')+' '+e.pts+' pt':e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),e.form?esc(e.form):'',e.call?esc(e.call):'',e.yds!=null?e.yds+' '+t('yardsShort'):'',e._g||''].filter(Boolean).join(' · ')}</small></span></div>`).join('')}</div>
+        <span><b>${R[e.res]||e.res}${e.rec!=null?' · '+numTxt(view==='scout'?sc.key:scKeyOf(g,e._side),e.rec):''}</b><small>${[e.t==='conv'?t('conv')+' '+e.pts+' pt':e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),e.form?esc(e.form):'',e.call?esc(e.call):'',e.yds!=null?e.yds+' '+t('yardsShort'):'',e._g||''].filter(Boolean).join(' · ')}</small></span>${e.vt!=null?`<button class="zplay" data-act="zvideo" data-g="${e._gid||g.id}" data-start="${e.id}" aria-label="${t('vPlayOne')}">▶</button>`:''}</div>`).join('')}</div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
+  }else if(sheet.kind==='teamedit'){
+    const T=scoutTeams(), team=T.find(x=>x.key===sheet.key)||{games:[],side:'A',team:'',name:''}, d=teamDoc(sheet.key)||{}, us=team.side==='H';
+    // numbers seen for this team: rosters of its games and the plays of the loaded ones
+    const nums=new Set();team.games.forEach(G=>{((G.roster||{})[team.side]||[]).forEach(n=>nums.add(+n));if(scoutReady(G))scoutGame(G).events.forEach(e=>{
+      if(e._side===team.side){if(e.rec!=null)nums.add(e.rec);if(e.qb!=null)nums.add(e.qb)}else{['dby','fby','pbu'].forEach(k=>{if(e[k]!=null)nums.add(e[k])})}})});
+    Object.keys(d.players||{}).forEach(n=>nums.add(+n));
+    const others=T.filter(x=>x.side==='A'&&!us&&x.team===team.team&&x.key!==sheet.key&&!x.demo);
+    const al=new Set(d.aliases||[]), cols=['#C8102E','#1F5FA8','#17804F','#6B3FA0','#E0A82A','#0E7C86','#3F4650','#111111'];
+    h=`<div class="help-head"><h2>${t('tmT')}</h2><button class="ghost" data-act="close">✕</button></div>
+      <p>${esc(team.team)} · ${us?'Hammers':esc(team.name)}</p>
+      ${us?'':`<label class="lbl2" for="te-name">${t('nameLbl')}</label><input class="field-in" id="te-name" maxlength="40" value="${esc(d.name||team.name)}">
+      <span class="lbl2">${t('tmColor')}</span><div class="swatches">${cols.map(c=>`<button class="sw" data-act="tecol" data-c="${c}" style="background:${c}" aria-pressed="${(sheet.col??d.color)===c}" aria-label="${c}"></button>`).join('')}
+        <button class="sw none" data-act="tecol" data-c="" aria-pressed="${!(sheet.col??d.color)}">✕</button></div>`}
+      <span class="lbl2">${t('tmPlayers')}</span><p class="note">${t('tmPlayersN')}</p>
+      <div class="tm-players">${[...nums].sort((a,b)=>a-b).map(n=>`<label class="tm-p"><b class="num">#${n}</b><input class="field-in" data-pn="${n}" maxlength="24" placeholder="${t('tmNamePh')}" value="${esc((d.players||{})[n]||'')}"></label>`).join('')||`<p class="note">${t('tmNoNums')}</p>`}</div>
+      ${others.length?`<span class="lbl2">${t('tmSame')}</span><p class="note">${t('tmSameN')}</p><div class="tm-al">${others.map(o=>{const a=o.key.split('|')[2];
+        return `<label class="check"><input type="checkbox" data-al="${esc(a)}" ${al.has(a)?'checked':''}>${esc(o.name)} <small>${t('scGamesN',o.games.length)}</small></label>`}).join('')}</div>`:''}
+      <button class="primary" data-act="tesave">${t('tmSave')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='other'){
     h=`<h2>${t('otherT')}</h2><p>${t('offense')}: <b>${sideName(st.poss)}</b> · ${ord(st.down)} ${t('down')}</p>
       <div class="grid2"><button class="big" data-act="safety">${t('safety')}<small>${t('safetyS',sideName(other(st.poss)))}</small></button>
@@ -2195,7 +2283,23 @@ document.addEventListener('click',ev=>{
       if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'||k==='call'?null:0;
       sc[k]=v;if(k==='area'&&v==='conv'){sc.down=0;sc.dist=0;sc.pos=0;sc.form=null}render();break}
     case 'scm':sc.mode=b.dataset.v;render();break;
+    case 'zvideo':{const gid=b.dataset.g, x=sheet&&sheet.vids&&sheet.vids[gid];if(!x)break;
+      const lbl=(sheet.z==='all'?t('vAllT'):zoneName(sheet.z))+' · '+x.l, start=b.dataset.start||x.ids[0];
+      sheet=null;document.getElementById('layer').innerHTML='';
+      if(gid!==g.id)selectGame(gid);
+      tp.only={ids:x.ids,l:lbl};tp.id=start;tp.seekId=start;tp.gl=null;tp.del=null;view='tape';render();scrollTo(0,0);break}
+    case 'tonlyx':tp.only=null;render();break;
     case 'zdet':{const L=zoneSrc[b.dataset.z];if(L)openSheet('zone',{z:b.dataset.z.split('|')[1],L});break}
+    case 'teamedit':openSheet('teamedit',{key:b.dataset.key});break;
+    case 'tecol':sheet.col=b.dataset.c;renderSheet();break;
+    case 'tesave':{const L=document.getElementById('layer'), key=sheet.key, d=teamDoc(key)||{}, players={};
+      L.querySelectorAll('[data-pn]').forEach(i=>{const v=i.value.trim();if(v)players[i.dataset.pn]=v});
+      const patch={players};const nm=L.querySelector('#te-name');if(nm&&nm.value.trim())patch.name=nm.value.trim();
+      if(sheet.col!=null)patch.color=sheet.col;
+      const al=L.querySelectorAll('[data-al]');if(al.length)patch.aliases=[...al].filter(i=>i.checked).map(i=>i.dataset.al);
+      // a name removed from the list is dropped (the merge would keep it otherwise)
+      Object.keys(d.players||{}).forEach(n=>{if(!(n in players))players[n]=''});
+      saveTeam(key,patch);if(patch.aliases&&patch.aliases.length)sc.off={};closeSheet();toast(t('tmSaved'));render();break}
     case 'scclear':{const k=sc.key,o=sc.off;scReset();sc.key=k;sc.off=o;render();break}
     case 'scgame':sc.off[b.dataset.id]=!sc.off[b.dataset.id];render();break;
     case 'scprint':window.print();break;
@@ -2276,6 +2380,7 @@ document.addEventListener('click',ev=>{
   }
 });
 document.addEventListener('change',ev=>{
+  if(authed&&ev.target&&ev.target.id==='sc-plan'){const k=ev.target.dataset.key,v=ev.target.value.trim(),d=teamDoc(k)||{};if(v!==(d.plan||'')){saveTeam(k,{plan:v});toast(t('planSaved'))}return}
   if(authed&&ev.target&&ev.target.id==='sc-team'){sc.key=ev.target.value;sc.off={};scReset();render();return}
   if(authed&&ev.target&&ev.target.id==='pen-annul'&&sheet&&sheet.kind==='pen'){sheet.annul=ev.target.checked;renderSheet();return}
   if(!authed||!ev.target||ev.target.id!=='t-note')return;
@@ -2335,6 +2440,7 @@ async function onUser(u){
   if(isAdmin)fb.shim.collection('games').onSnapshot(onPart('all'),onErr);
   else{fb.shim.collection('games').where('visibility','==','team').onSnapshot(onPart('team'),onErr);
     fb.shim.collection('games').where('owner','==',me).onSnapshot(onPart('own'),onErr)}
+  fb.shim.collection('teams').onSnapshot(s=>{const m={};s.docs.forEach(d=>{m[d.id]=d.data()});cloud.remoteTeams=m;refresh()},()=>{});
   fb.shim.collection('members').onSnapshot(s=>{members=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.id<b.id?-1:1);if(sheet&&(sheet.kind==='members'||sheet.kind==='games'))renderSheet();refresh()},()=>{});
   setTimeout(()=>{if(!cloud.ready){cloud.ready=true;refresh()}},8000);
   refresh();flush();

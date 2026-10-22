@@ -18,6 +18,11 @@ service cloud.firestore {
       allow update: if member() && id == email() &&
                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']);
     }
+    // team sheets: name, color, player names, other spellings and the game plan, shared by all members
+    match /teams/{id} {
+      allow read, create, update: if member();
+      allow delete: if admin();
+    }
     match /games/{gid} {
       allow read: if member() && canSee(resource.data);
       allow create: if member() && request.resource.data.owner == email();
