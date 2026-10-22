@@ -29,6 +29,7 @@ Site estático (HTML, CSS e JavaScript sem build), publicado no GitHub Pages. O 
 | `index.html` | página da app |
 | `app.js` | toda a lógica: registo, análise, sincronização e login |
 | `style.css` | aspeto |
+| `video.html` | janela à parte para o vídeo da tape review |
 | `firebase-config.js` | configuração do projeto Firebase |
 | `firestore.rules` | regras de acesso da base de dados (copiar para a consola Firebase) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | instalar como app e funcionar sem rede |
