@@ -120,7 +120,7 @@ pt:{
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
   driveN:n=>`Drive ${n}`, lastPlay1:'Última jogada', noPlaysYet:'ainda sem jogadas', lastRec:'último recetor',
-  sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números (sem IA).', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
+  sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números.', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
   sumGames:g=>g>1?`Em ${g} jogos: `:'', sumPass:(pp,np,nr,cp)=>`${pp} das jogadas são passes (${np} passes e ${nr} corridas), com ${cp} de completos.`,
   sumDir:(i,p)=>`A bola vai sobretudo ${['para a esquerda','para o meio','para a direita'][i]} (${p} dos passes)`, sumDirEven:(a,b,c)=>`A bola vai para os três lados (esquerda ${a}, meio ${b}, direita ${c})`,
   sumDepth:(sh,dp)=>`; ${sh} ficam até 5 jardas e ${dp} vão a mais de 15.`, sumRec:(n,sh,c)=>`Alvo principal: #${n} (${sh} dos alvos, ${c} completos).`, sumRec2:(n,sh,c)=>` A seguir vem o #${n} (${sh}, ${c} completos).`,
@@ -258,7 +258,7 @@ en:{
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
   driveN:n=>`Drive ${n}`, lastPlay1:'Last play', noPlaysYet:'no plays yet', lastRec:'last receiver',
-  sumT:'Summary', sumNote:'Written automatically from the numbers (no AI).', sumFew:'Too few plays for a summary yet (it needs at least 5).',
+  sumT:'Summary', sumNote:'Written automatically from the numbers.', sumFew:'Too few plays for a summary yet (it needs at least 5).',
   sumGames:g=>g>1?`Over ${g} games: `:'', sumPass:(pp,np,nr,cp)=>`${pp} of plays are passes (${np} passes and ${nr} runs), with ${cp} completed.`,
   sumDir:(i,p)=>`The ball goes mostly ${['to the left','to the middle','to the right'][i]} (${p} of passes)`, sumDirEven:(a,b,c)=>`The ball goes to all three sides (left ${a}, middle ${b}, right ${c})`,
   sumDepth:(sh,dp)=>`; ${sh} stay within 5 yards and ${dp} go more than 15.`, sumRec:(n,sh,c)=>`Main target: #${n} (${sh} of targets, ${c} complete).`, sumRec2:(n,sh,c)=>` Next is #${n} (${sh}, ${c} complete).`,
@@ -355,11 +355,11 @@ function helpData(){
       <li><b>Heatmap</b>: quanto mais amarelo, mais bolas foram para essa zona. Mostra o número de bolas e a % de completos.</li>
       <li><b>Alvos por jogador</b>: alvos, completos, %, TD, INT e corridas. Toca num jogador para ver só as bolas dele no mapa.</li>
       <li><b>Por down</b>: zona, alvo e formação mais usados em cada down. Toca num down para filtrar.</li>
-      <li><b>Resumo</b>: frases escritas automaticamente a partir dos números (sem IA), com as tendências principais de quem ataca e da defesa.</li>
+      <li><b>Resumo</b>: frases escritas automaticamente a partir dos números, com as tendências principais de quem ataca e da defesa.</li>
       <li><b>Visão rápida</b>: gráficos da direção e da profundidade dos passes, passe e corrida por down, e alvos com completos.</li></ul>`},
     {id:'scout',t:'Relatório de adversário',b:`<p>Junta todos os jogos registados contra uma equipa e mostra o que ela costuma fazer. Abre em <b>Início</b> → <b>Relatório de adversário</b>, em ${btn('',t('game'))} ou no botão da <b>Análise</b> de um jogo.</p>
       <ul><li><b>Equipa</b>: escolhe o adversário (separado por Elite, Academy e Girls) ou <b>Hammers</b>, para vermos se nós próprios estamos a ser previsíveis.</li>
-      <li><b>Resumo</b>: frases escritas automaticamente a partir dos números, sem IA.</li>
+      <li><b>Resumo</b>: frases escritas automaticamente a partir dos números.</li>
       <li><b>Tendências principais</b>: passe ou corrida, zona favorita, bolas fundas, alvo principal, 3º e 4º down, formação, perto da end zone, conversões e a defesa deles. Com poucas jogadas, a app avisa.</li>
       <li><b>Para onde vai a bola</b>: % das bolas em cada zona e % de completos. Filtra por down, distância, zona do campo e formação. Toca numa linha das tabelas para filtrar.</li>
       <li><b>Como defendem</b>: para onde se lhes atira e quem faz as jogadas (flags, PBU, INT, sacks).</li>
@@ -440,11 +440,11 @@ function helpData(){
       <li><b>Heatmap</b>: the more yellow, the more balls went to that zone. Shows the number of balls and completion %.</li>
       <li><b>Targets by player</b>: targets, completions, %, TD, INT and runs. Tap a player to show only their balls on the map.</li>
       <li><b>By down</b>: most used zone, target and formation on each down. Tap a down to filter.</li>
-      <li><b>Summary</b>: sentences written automatically from the numbers (no AI), with the main tendencies of the offense and of the defense.</li>
+      <li><b>Summary</b>: sentences written automatically from the numbers, with the main tendencies of the offense and of the defense.</li>
       <li><b>At a glance</b>: charts of pass direction and depth, pass and run by down, and targets with completions.</li></ul>`},
     {id:'scout',t:'Opponent report',b:`<p>Adds up every game tracked against one team and shows what it tends to do. Open it from <b>Home</b> → <b>Opponent report</b>, from ${btn('',t('game'))} or with the button in a game's <b>Analysis</b>.</p>
       <ul><li><b>Team</b>: pick the opponent (kept apart by Elite, Academy and Girls) or <b>Hammers</b>, to check whether we are predictable ourselves.</li>
-      <li><b>Summary</b>: sentences written automatically from the numbers, no AI.</li>
+      <li><b>Summary</b>: sentences written automatically from the numbers.</li>
       <li><b>Key tendencies</b>: pass or run, favorite zone, deep balls, main target, 3rd and 4th down, formation, near the end zone, conversions and their defense. With few plays, the app warns you.</li>
       <li><b>Where the ball goes</b>: % of balls in each zone and completion %. Filter by down, distance, field position and formation. Tap a table row to filter.</li>
       <li><b>How they defend</b>: where teams throw on them and who makes the plays (flags, PBU, INT, sacks).</li>
