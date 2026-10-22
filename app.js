@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.4.1';
+const APP_VERSION='1.5.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -103,7 +103,7 @@ pt:{
   tStart:'Início', tMark:'Marcar agora', tMarked:'Tempo marcado', tNoVideo:'Sem vídeo aberto', tVideos:'Vídeos', vPop:'Vídeo noutra janela', vBack:'Trazer vídeo',
   vAway:'O vídeo está noutra janela', vAwayS:'Arrasta essa janela para o outro ecrã. Os botões e as teclas daqui continuam a comandar o vídeo.',
   tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
-  tAllDone:'Chegaste à última jogada', tPass:'Passe', tRun:'Corrida', tPlaySec:'Jogada', tFix:'corrige se for preciso', tZone:'Zona', tRunner:'Corredor',
+  tNewPlay:'Nova jogada', tPick6:'Pick-6', tNoConv:'Sem conversão', tSackK:'Sack', tPass:'Passe', tRun:'Corrida', tPlaySec:'Jogada', tFix:'corrige se for preciso', tZone:'Zona', tRunner:'Corredor',
   tYds:'Jardas', tYdsS:'totais, a partir da linha de scrimmage', tYac:'YAC', tYacS:'jardas depois da receção', yardsShort:'jd', tKpYds:'Jardas', tKpYac:'YAC',
   tQb:'QB', tQbOpp:'QB do adversário', tSticky:'fica até mudares', tCall:'Nome da jogada', tCallS:'opcional, do playbook da equipa', tNewCall:'Nova jogada', tCallPh:'ex.: Smash', tTypeCall:'Escreve o nome da jogada',
   tFormOpp:'Formação do adversário', tFlag:'Quem tirou a flag', tPbu:'PBU', tPbuS:'quem desviou a bola', tOurs:'Hammers, defesa', tNote:'Nota', tNotePh:'opcional', tKeys:'Teclas: ← → muda de jogada · espaço play/pausa · Enter próxima',
@@ -208,7 +208,7 @@ en:{
   tStart:'Start', tMark:'Mark now', tMarked:'Time marked', tNoVideo:'No video open', tVideos:'Videos', vPop:'Video in another window', vBack:'Bring video back',
   vAway:'The video is in another window', vAwayS:'Drag that window to the other screen. The buttons and keys here still control the video.',
   tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', tDel:'Delete play', tDelC:'Confirm: delete',
-  tAllDone:'You reached the last play', tPass:'Pass', tRun:'Run', tPlaySec:'Play', tFix:'fix it if needed', tZone:'Zone', tRunner:'Runner',
+  tNewPlay:'New play', tPick6:'Pick-6', tNoConv:'No conversion', tSackK:'Sack', tPass:'Pass', tRun:'Run', tPlaySec:'Play', tFix:'fix it if needed', tZone:'Zone', tRunner:'Runner',
   tYds:'Yards', tYdsS:'total, from the line of scrimmage', tYac:'YAC', tYacS:'yards after the catch', yardsShort:'yds', tKpYds:'Yards', tKpYac:'YAC',
   tQb:'QB', tQbOpp:'Opponent QB', tSticky:'stays until you change it', tCall:'Play name', tCallS:"optional, from the team's playbook", tNewCall:'New play', tCallPh:'e.g. Smash', tTypeCall:'Type the play name',
   tFormOpp:'Opponent formation', tFlag:'Who pulled the flag', tPbu:'PBU', tPbuS:'who broke up the pass', tOurs:'Hammers, defense', tNote:'Note', tNotePh:'optional', tKeys:'Keys: ← → change play · space play/pause · Enter next',
@@ -295,7 +295,7 @@ function helpData(){
       <ol><li>Em <b>Vídeos</b>, cola o link do YouTube do jogo (não listado). Se o jogo estiver em vários vídeos, acrescenta uma parte para cada um. Também podes abrir um ficheiro de vídeo do aparelho: só toca nesse aparelho.</li>
       <li>Vê o clip da jogada e completa: <b>jardas</b>, <b>YAC</b> nos completos, <b>QB</b>, <b>formação</b> e <b>nome da jogada</b> (opcional) quando atacamos. Quando defendemos: QB e formação do adversário, <b>quem tirou a flag</b> e <b>PBU</b>.</li>
       <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou.</li>
-      <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte.</li></ol>
+      <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte. Na última jogada, o botão passa a <b>Nova jogada</b> e cria a seguinte, como no Registo: depois de um TD é a conversão (1 ou 2 pts, ou <b>Sem conversão</b>), senão um passe que podes mudar para corrida ou sack. Assim dá para registar o jogo todo a partir da tape.</li></ol>
       <ul><li>QB e formação vêm preenchidos com os da jogada anterior (tracejado). Só tocas se mudarem.</li>
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início.</li>
       <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
@@ -366,7 +366,7 @@ function helpData(){
       <ol><li>In <b>Videos</b>, paste the game's YouTube link (unlisted). If the game is in several videos, add one part for each. You can also open a video file from the device: it only plays on that device.</li>
       <li>Watch the play's clip and fill in: <b>yards</b>, <b>YAC</b> on completions, <b>QB</b>, <b>formation</b> and <b>play name</b> (optional) when we are on offense. On defense: opponent QB and formation, <b>who pulled the flag</b> and <b>PBU</b>.</li>
       <li>Fix the type, result, zone or receiver if the live tracking got it wrong.</li>
-      <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play.</li></ol>
+      <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play. On the last play the button becomes <b>New play</b> and creates the next one, like the Track tab: after a TD it is the conversion (1 or 2 pts, or <b>No conversion</b>), otherwise a pass you can switch to run or sack. So a whole game can be tracked from the tape.</li></ol>
       <ul><li>QB and formation come filled in from the previous play (dashed). Only tap if they change.</li>
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start.</li>
       <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
@@ -1029,7 +1029,7 @@ const tp={id:null,list:false,gl:null,del:null};
 const tapeEvs=()=>g.events.filter(e=>e.t==='play'||e.t==='conv');
 function tapeCur(){
   const L=tapeEvs();let i=L.findIndex(e=>e.id===tp.id);
-  if(i<0){i=L.findIndex(e=>!e.rv);if(i<0)i=0;tp.id=L[i]?L[i].id:null}
+  if(i<0){i=L.findIndex(e=>!e.rv);if(i<0)i=L.length-1;tp.id=L[i]?L[i].id:null}
   return {L,i,e:L[i]||null};
 }
 /* sticky fields (QB, formation): the value of the previous play of the same team */
@@ -1063,8 +1063,12 @@ function tapePanel(){
   let zones='';const ROWS=gl?t('glRows'):t('rows'),COLS=t('cols');
   for(let r=0;r<4;r++)for(let c=0;c<3;c++){const z=(gl?'g':'')+r+c;
     zones+=`<button class="tz${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}" data-act="tset" data-k="zone" data-s="${z}" aria-pressed="${e.zone===z}">${ROWS[r]} ${COLS[c]}</button>`}
-  const play=`${conv||e.kind==='sack'?'':`<div class="seg"><button data-act="tset" data-k="kind" data-s="pass" aria-pressed="${e.kind==='pass'}">${t('tPass')}</button><button data-act="tset" data-k="kind" data-s="run" aria-pressed="${e.kind==='run'}">${t('tRun')}</button></div>`}
-    ${resOpts.length?`<div class="resrow">${resOpts.map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${!conv&&(e.res==='C'||e.res==='R')?`<button class="rb" data-act="tfd" aria-pressed="${!!e.fd}">${t('fd')}</button>`:''}</div>`:`<span class="tag SACK tsack">${t('sack')}</span>`}
+  const play=`${conv?`<div class="tzhead"><div class="seg">${[1,2].map(n=>`<button data-act="tset" data-k="pts" data-n="${n}" aria-pressed="${e.pts===n}">${n} pt${n>1?'s':''}</button>`).join('')}</div>
+      ${readOnly()?'':`<button class="btn" data-act="tnoconv">${t('tNoConv')}</button>`}</div>`
+    :`<div class="seg">${[['pass',t('tPass')],['run',t('tRun')],['sack',t('tSackK')]].map(([v,l])=>`<button data-act="tset" data-k="kind" data-s="${v}" aria-pressed="${e.kind===v}">${l}</button>`).join('')}</div>`}
+    ${resOpts.length?`<div class="resrow">${resOpts.map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${!conv&&(e.res==='C'||e.res==='R')?`<button class="rb" data-act="tbool" data-k="fd" aria-pressed="${!!e.fd}">${t('fd')}</button>`:''}
+      ${!conv&&e.res==='INT'?`<button class="rb rb-TD" data-act="tbool" data-k="pick6" aria-pressed="${!!e.pick6}">${t('tPick6')}</button>`:''}
+      ${conv&&e.res==='INT'?`<button class="rb rb-TD" data-act="tset" data-k="ret" data-n="${e.pts}" aria-pressed="${!!e.ret}">${t('retTag',e.pts)}</button>`:''}</div>`:''}
     ${e.kind==='sack'?'':`<div class="tzhead"><span class="lbl2">${t('tZone')}</span><div class="seg"><button data-act="tgl" data-v="0" aria-pressed="${!gl}">${t('mapField')}</button><button data-act="tgl" data-v="1" aria-pressed="${gl}">GL</button></div></div>
     <div class="tzones">${zones}</div>
     <span class="lbl2">${e.kind==='run'?t('tRunner'):t('receiver')}</span>${nums('rec',s,e.rec??null)}`}
@@ -1098,7 +1102,7 @@ function tapePanel(){
     ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}
     ${blk(t('tNote'),'',`<input class="field-in" id="t-note" maxlength="140" placeholder="${t('tNotePh')}" value="${esc(e.note||'')}" autocomplete="off">`)}
     <div class="tfoot">
-      <button class="primary" data-act="tnext">${t('tNext')} ›</button>
+      <button class="primary" data-act="tnext">${i<L.length-1||readOnly()?t('tNext'):t('tNewPlay')} ›</button>
       <div class="row"><button class="btn" data-act="tins">${t('tIns')}</button><button class="btn" data-act="tdel" style="color:var(--bad)">${tp.del===e.id?t('tDelC'):t('tDel')}</button></div>
       <p class="note tkeys">${t('tKeys')}</p>
     </div>`;
@@ -1251,8 +1255,9 @@ function tapeNext(){
     const n=document.getElementById('t-note');if(n&&n.value.trim()!==(e.note||''))p.note=n.value.trim();
     chEv(e,p,grp);
     if(nx&&nx.vt==null&&now!=null)chEv(nx,{vt:now,vi:vid.slot},grp);
+    if(!nx)tp.id=tapeAppend(grp,now);
   });
-  if(!nx){toast(t('tAllDone'));return}
+  if(!nx){tp.gl=null;tp.del=null;render();return}
   tp.id=nx.id;tp.gl=null;tp.del=null;
   if(nx.vt!=null&&now!=null&&(Math.abs(now-nx.vt)>4||(nx.vi||0)!==vid.slot))seekPlay(nx);
   render();
@@ -1268,12 +1273,28 @@ function tapeKey(k){
 }
 function tapeSet(k,v){
   const e=tapeCur().e;if(!e||readOnly())return;
-  if(e[k]===v&&k!=='res'&&k!=='kind')v=null;
+  if(e[k]===v&&k!=='res'&&k!=='kind'&&k!=='pts')v=null;
   const patch={[k]:v};
-  if(k==='kind'){if(e.res!=='TD')patch.res=v==='run'?'R':'C'}
+  if(k==='kind'){
+    if(v==='sack')Object.assign(patch,{res:'SACK',zone:null,rec:null,fd:false,yac:null});
+    else if(e.kind==='sack')Object.assign(patch,{res:v==='run'?'R':'C',dby:null});
+    else if(e.res!=='TD'&&e.res!=='INT')patch.res=v==='run'?'R':'C';
+    else if(v==='run'&&e.res==='INT')patch.res='R';
+  }
+  if(k==='pts'&&e.ret)patch.ret=v;
   if(k==='res'&&v!=='C'&&v!=='R')patch.fd=false;
   if(k==='res'&&v!=='INT'&&e.res==='INT'){patch.dby=null;patch.pick6=null}
   act(grp=>chEv(e,patch,grp));
+}
+/* after the last play, Next adds a new one, like the Track tab would: the conversion after a TD, otherwise a pass (change it to run or sack) */
+function tapeAppend(grp,now){
+  replay();
+  const cp=convPending(), last=g.events[g.events.length-1];
+  const ne=cp?{t:'conv',side:cp.side,pts:1,zone:null,rec:null,res:'G'}
+    :{t:'play',kind:'pass',zone:null,rec:null,res:'C',fd:false,form:null,qb2:false,annul:false};
+  Object.assign(ne,{ins:true,id:Date.now().toString(36)+uid(),ts:Math.max(Date.now(),last?last.ts+1:0),by:DEV,...(now!=null?{vt:now,vi:vid.slot}:{})});
+  S().put(g.id,ne);grp.push({k:'add',id:ne.id});lastAdded=ne.id;
+  return ne.id;
 }
 function tapeInsert(){
   if(readOnly())return;
@@ -1567,7 +1588,10 @@ document.addEventListener('click',ev=>{
     case 'helpgo':goHelp(b.dataset.sec);break;
     /* tape review */
     case 'tset':tapeSet(b.dataset.k,b.dataset.n!=null?+b.dataset.n:b.dataset.s);break;
-    case 'tfd':{const e=tapeCur().e;if(e)tapeSet('fd',!e.fd);break}
+    case 'tbool':{const e=tapeCur().e,k=b.dataset.k;if(e)tapeSet(k,!e[k]);break}
+    case 'tnoconv':{const e=tapeCur().e;if(!e||e.t!=='conv'||readOnly())break;
+      const i=g.events.indexOf(e), last=i===g.events.length-1, td=[...g.events.slice(0,i)].reverse().find(x=>x.t==='play');
+      act(grp=>{rmEv(e,grp);if(td)chEv(td,{convSkip:true},grp);if(last)tp.id=tapeAppend(grp,vTime())});render();break}
     case 'tgl':tp.gl=b.dataset.v==='1';render();break;
     case 'tadj':{const e=tapeCur().e;if(e)tapeSet(b.dataset.k,(e[b.dataset.k]??0)+(+b.dataset.d));break}
     case 'tkp':openSheet('tkp',{k:b.dataset.k,v:'',neg:false});break;
