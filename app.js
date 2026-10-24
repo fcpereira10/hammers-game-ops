@@ -119,6 +119,7 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  compOther:'Outra', compPh:'ex.: Taça de Portugal, Torneio de Lisboa', compType:'Escreve o nome da competição.',
   ngOurs:'Jogo dos Hammers', ngOursS:'contra um adversário', ngOther:'Outras equipas', ngOtherS:'scouting de um jogo entre duas equipas',
   ngTeam1:'Equipa 1', ngTeam2:'Equipa 2', ngNames:'Escreve o nome das duas equipas.', ngQuick:'Modo rápido', ngQuickY:'Sim', ngQuickYS:'só zona e resultado, 2 toques', ngQuickN:'Não', ngQuickNS:'com números de camisola',
   quickOn:'ligado: zona e resultado, sem números', quickOff:'desligado: com números de camisola', quickNote:'Modo rápido: o resultado grava a jogada, sem números. Muda em Opções.',
@@ -279,6 +280,7 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  compOther:'Other', compPh:'e.g. Portugal Cup, Lisbon Tournament', compType:'Type the competition name.',
   ngOurs:'Hammers game', ngOursS:'against an opponent', ngOther:'Other teams', ngOtherS:'scouting a game between two teams',
   ngTeam1:'Team 1', ngTeam2:'Team 2', ngNames:'Type the names of both teams.', ngQuick:'Quick mode', ngQuickY:'Yes', ngQuickYS:'zone and result only, 2 taps', ngQuickN:'No', ngQuickNS:'with jersey numbers',
   quickOn:'on: zone and result, no numbers', quickOff:'off: with jersey numbers', quickNote:'Quick mode: the result saves the play, with no numbers. Change it in Options.',
@@ -354,13 +356,13 @@ function helpData(){
   const S=pt?[
     {id:'start',t:'Antes do jogo',b:`<ol>
       <li>Toca em ${btn('',t('game'))}, depois em <b>Jogos</b> e em <b>+ Novo jogo</b>. Escolhe <b>Jogo dos Hammers</b> (ou <b>Outras equipas</b> para fazer scouting, ver abaixo).</li>
-      <li>Escolhe a equipa (Elite, Academy, Girls), a competição (LFFF1, LFFF2, LFFFW) e escreve o adversário.</li>
+      <li>Escolhe a equipa (Elite, Academy, Girls) e a competição, e escreve o adversário. Para uma competição que não está na lista (uma taça ou um torneio), toca em <b>+ Outra</b> e escreve o nome: fica na lista para os jogos seguintes.</li>
       <li>Escolhe quem começa a atacar.</li>
       <li>Escolhe <b>que equipa segues</b>: Hammers, Adversário ou as duas (se estiveres sozinho).</li></ol>
       <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))} → <b>Jogos</b>.</p>`},
     {id:'xgame',t:'Jogos de outras equipas',b:`<p>Para fazer scouting de um jogo entre duas equipas que não são os Hammers (por exemplo, nos torneios da LFFF):</p>
       <ol><li>Em <b>+ Novo jogo</b>, escolhe <b>Outras equipas</b>.</li>
-      <li>Escolhe a competição e escreve o nome das duas equipas. O jogo entra no relatório dessas equipas nessa competição.</li>
+      <li>Escolhe a competição (ou <b>+ Outra</b>) e escreve o nome das duas equipas. O jogo entra no relatório dessas equipas, junto com os jogos da equipa nossa que joga nessa competição. Numa competição onde ainda não temos jogos, conta como Elite.</li>
       <li>Escolhe o <b>modo rápido</b> (só zona e resultado: tocas na zona e no resultado e a jogada fica gravada) ou o registo normal, com números de camisola. Podes mudar mais tarde em ${btn('',t('game'))}.</li></ol>
       <p>O registo, a tape review e a análise funcionam como num jogo dos Hammers, com o nome das duas equipas e outra cor. Estes jogos entram no <b>relatório de adversário</b> das duas equipas, juntos com os jogos contra nós, e na faixa de <b>scouting ao vivo</b>. Na lista de jogos do relatório aparecem marcados como scouting.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
@@ -452,13 +454,13 @@ function helpData(){
   ]:[
     {id:'start',t:'Before the game',b:`<ol>
       <li>Tap ${btn('',t('game'))}, then <b>Games</b> and <b>+ New game</b>. Pick <b>Hammers game</b> (or <b>Other teams</b> to scout, see below).</li>
-      <li>Pick the team (Elite, Academy, Girls), the competition (LFFF1, LFFF2, LFFFW) and type the opponent.</li>
+      <li>Pick the team (Elite, Academy, Girls) and the competition, and type the opponent. For a competition not on the list (a cup or a tournament), tap <b>+ Other</b> and type its name: it stays on the list for the next games.</li>
       <li>Pick who starts on offense.</li>
       <li>Pick <b>which team you follow</b>: Hammers, Opponent or both (if you are alone).</li></ol>
       <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time in ${btn('',t('game'))} → <b>Games</b>.</p>`},
     {id:'xgame',t:'Games between other teams',b:`<p>To scout a game between two teams that are not the Hammers (for example, at LFFF tournaments):</p>
       <ol><li>In <b>+ New game</b>, pick <b>Other teams</b>.</li>
-      <li>Pick the competition and type the names of both teams. The game joins those teams' reports for that competition.</li>
+      <li>Pick the competition (or <b>+ Other</b>) and type the names of both teams. The game joins those teams' reports, with the games of our team that plays in that competition. In a competition where we have no games yet, it counts as Elite.</li>
       <li>Pick <b>quick mode</b> (zone and result only: tap the zone and the result and the play is saved) or normal tracking with jersey numbers. You can change it later in ${btn('',t('game'))}.</li></ol>
       <p>Tracking, the tape review and the analysis work like in a Hammers game, with both teams' names and another color. These games count in the <b>opponent report</b> of both teams, together with the games against us, and in the <b>live scouting</b> strip. In the report's game list they are marked as scouting.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
@@ -944,6 +946,8 @@ function applyFoul(dec){
 const isGL=z=>!!z&&z[0]==='g';
 /* a scouting game goes with the team of ours that plays in its competition (so it joins the right opponent reports):
    the one we track most often in that competition, else LFFF1 Elite, LFFF2 Academy, LFFFW Girls */
+/* competitions: the LFFF ones plus every other one already used in a game (typed once in New game) */
+function allComps(){const l=[...COMPS];games.forEach(x=>{if(x.comp&&x.store!=='demo'&&!l.some(c=>c.toLowerCase()===String(x.comp).toLowerCase()))l.push(x.comp)});return l}
 function teamForComp(c){const m={};games.forEach(x=>{if(!x.scout&&x.store!=='demo'&&x.comp===c)m[x.team]=(m[x.team]||0)+1});
   const top=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];return top?top[0]:{LFFF1:'Elite',LFFF2:'Academy',LFFFW:'Girls'}[c]||'Elite'}
 /* a game's title: our team (Elite, Academy, Girls) vs the opponent, or the two teams of a scouting game */
@@ -2154,7 +2158,8 @@ function renderSheet(){
     h=`<h2>${t('newGameT')}</h2>
       <div class="grid2">${opt('kind','h',`${t('ngOurs')}<small>${t('ngOursS')}</small>`)}${opt('kind','x',`${t('ngOther')}<small>${t('ngOtherS')}</small>`)}</div>
       ${x?'':`<span class="lbl2">${t('team')}</span><div class="grid4" ${g3}>${TEAMS.map(x=>opt('team',x,x)).join('')}</div>`}
-      <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${COMPS.map(x=>opt('comp',x,x)).join('')}</div>
+      <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${allComps().map(x=>opt('comp',x,esc(x))).join('')}<button class="big" data-act="ngcompnew" aria-pressed="${!!n.compNew}">+ ${t('compOther')}</button></div>
+      ${n.compNew?`<input class="field-in" id="ng-comp" maxlength="40" value="${esc(n.compTxt||'')}" placeholder="${t('compPh')}" autocomplete="off">`:''}
       ${x?`<label class="lbl2" for="ng-home">${t('ngTeam1')}</label><input class="field-in" id="ng-home" value="${esc(n.home||'')}" placeholder="${t('teamName')}" autocomplete="off">`:''}
       <label class="lbl2" for="ng-opp">${x?t('ngTeam2'):t('opponent')}</label><input class="field-in" id="ng-opp" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">
       <span class="lbl2">${t('starts')}</span><div class="grid2">${opt('start','H',x?esc(n.home||t('ngTeam1')):'Hammers')}${opt('start','A',x?esc(n.opp||t('ngTeam2')):t('opponent'))}</div>
@@ -2295,8 +2300,12 @@ document.addEventListener('click',ev=>{
     case 'delgame':if(!sheet.delc){sheet.delc=true;renderSheet();break}
       {const id=g.id;sheet=null;document.getElementById('layer').innerHTML='';S().remove(id);curId=null;selectGame(games.find(x=>x.id!==id).id)}break;
     case 'newgame':openSheet('newgame',{ng:{kind:'h',team:'Elite',comp:'LFFF1',opp:'',home:'',start:'H',vis:'team',quick:'1'}});break;
-    case 'ng':{const o=document.getElementById('ng-opp'),hm=document.getElementById('ng-home');if(o)sheet.ng.opp=o.value;if(hm)sheet.ng.home=hm.value;sheet.ng[b.dataset.k]=b.dataset.v;renderSheet();break}
+    case 'ng':case 'ngcompnew':{const o=document.getElementById('ng-opp'),hm=document.getElementById('ng-home'),cp=document.getElementById('ng-comp');
+      if(o)sheet.ng.opp=o.value;if(hm)sheet.ng.home=hm.value;if(cp)sheet.ng.compTxt=cp.value;
+      if(a==='ngcompnew'){sheet.ng.compNew=true;sheet.ng.comp='';renderSheet();const i=document.getElementById('ng-comp');if(i)i.focus();break}
+      if(b.dataset.k==='comp')sheet.ng.compNew=false;sheet.ng[b.dataset.k]=b.dataset.v;renderSheet();break}
     case 'ngcreate':{const n=sheet.ng;n.opp=(document.getElementById('ng-opp').value||'').trim();
+      if(n.compNew){const c=(document.getElementById('ng-comp').value||'').trim();if(!c){toast(t('compType'));break}n.comp=c}
       if(n.kind==='x'){n.home=(document.getElementById('ng-home').value||'').trim();if(!n.home||!n.opp){toast(t('ngNames'));break}n.scout=true;n.quick=n.quick!=='0';n.team=teamForComp(n.comp)}
       const target=(cloud.db&&cloud.canWrite)?cloudStore:local;
       const meta=newMeta(n);if(target===cloudStore){meta.owner=me;meta.visibility=n.vis||'team'}const id=target.create(meta);sheet=null;document.getElementById('layer').innerHTML='';view='reg';an.side='H';
