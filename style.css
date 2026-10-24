@@ -747,3 +747,12 @@ button.az:not(:disabled):hover{box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
 .pn{display:block;font-family:var(--f-body);font-weight:600;font-size:11px;color:var(--muted);letter-spacing:0}
 .n .nm{display:block;font-family:var(--f-body);font-size:10px;font-weight:600;line-height:1.1;margin-top:-2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;padding:0 4px}
 @media print{.printonly{display:block}.plan-print{line-height:1.5}}
+
+/* ---------- games between two other teams (scouting): no Hammers orange ---------- */
+.app.scoutg{--hammers:#2F6FDB;--hammers-ink:#FFFFFF}
+.app.scoutg .sb-team.H.on{background:linear-gradient(90deg,rgba(47,111,219,.4),rgba(47,111,219,0))}
+.sb-team.H.on[style*="--tc"]{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 55%,transparent),transparent)}
+.quicknote{padding:10px 12px;border-radius:var(--r);background:var(--surface);border:1px dashed var(--line)}
+@keyframes zglow{0%{box-shadow:inset 0 0 0 4px var(--accent)}100%{box-shadow:inset 0 0 0 0 transparent}}
+@media (prefers-reduced-motion:no-preference){.zone.zglow{animation:zglow .9s ease-out}}
+.app.scoutg .dprev.side-H span:first-child{color:#2F6FDB}
