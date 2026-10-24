@@ -119,7 +119,7 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
-  ngOurs:'Jogo dos Hammers', ngOursS:'contra um adversário', ngOther:'Outras equipas', ngOtherS:'scouting de um jogo entre duas equipas', ngCat:'Escalão',
+  ngOurs:'Jogo dos Hammers', ngOursS:'contra um adversário', ngOther:'Outras equipas', ngOtherS:'scouting de um jogo entre duas equipas',
   ngTeam1:'Equipa 1', ngTeam2:'Equipa 2', ngNames:'Escreve o nome das duas equipas.', ngQuick:'Modo rápido', ngQuickY:'Sim', ngQuickYS:'só zona e resultado, 2 toques', ngQuickN:'Não', ngQuickNS:'com números de camisola',
   quickOn:'ligado: zona e resultado, sem números', quickOff:'desligado: com números de camisola', quickNote:'Modo rápido: o resultado grava a jogada, sem números. Muda em Opções.',
   hQuick:'Toca na <b>zona</b> e depois no <b>resultado</b>. A jogada fica gravada.', hQuick2:'Agora toca no <b>resultado</b> para gravar.', hRunQ:'Corrida: toca na zona e escolhe Corrida ou TD.', resSubQ:'grava a jogada',
@@ -279,7 +279,7 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
-  ngOurs:'Hammers game', ngOursS:'against an opponent', ngOther:'Other teams', ngOtherS:'scouting a game between two teams', ngCat:'Division',
+  ngOurs:'Hammers game', ngOursS:'against an opponent', ngOther:'Other teams', ngOtherS:'scouting a game between two teams',
   ngTeam1:'Team 1', ngTeam2:'Team 2', ngNames:'Type the names of both teams.', ngQuick:'Quick mode', ngQuickY:'Yes', ngQuickYS:'zone and result only, 2 taps', ngQuickN:'No', ngQuickNS:'with jersey numbers',
   quickOn:'on: zone and result, no numbers', quickOff:'off: with jersey numbers', quickNote:'Quick mode: the result saves the play, with no numbers. Change it in Options.',
   hQuick:'Tap the <b>zone</b>, then the <b>result</b>. The play is saved.', hQuick2:'Now tap the <b>result</b> to save.', hRunQ:'Run: tap the zone and pick Run or TD.', resSubQ:'saves the play',
@@ -360,7 +360,7 @@ function helpData(){
       <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))} → <b>Jogos</b>.</p>`},
     {id:'xgame',t:'Jogos de outras equipas',b:`<p>Para fazer scouting de um jogo entre duas equipas que não são os Hammers (por exemplo, nos torneios da LFFF):</p>
       <ol><li>Em <b>+ Novo jogo</b>, escolhe <b>Outras equipas</b>.</li>
-      <li>Escolhe o escalão e a competição e escreve o nome das duas equipas.</li>
+      <li>Escolhe a competição e escreve o nome das duas equipas. O jogo entra no relatório dessas equipas nessa competição.</li>
       <li>Escolhe o <b>modo rápido</b> (só zona e resultado: tocas na zona e no resultado e a jogada fica gravada) ou o registo normal, com números de camisola. Podes mudar mais tarde em ${btn('',t('game'))}.</li></ol>
       <p>O registo, a tape review e a análise funcionam como num jogo dos Hammers, com o nome das duas equipas e outra cor. Estes jogos entram no <b>relatório de adversário</b> das duas equipas, juntos com os jogos contra nós, e na faixa de <b>scouting ao vivo</b>. Na lista de jogos do relatório aparecem marcados como scouting.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
@@ -458,7 +458,7 @@ function helpData(){
       <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time in ${btn('',t('game'))} → <b>Games</b>.</p>`},
     {id:'xgame',t:'Games between other teams',b:`<p>To scout a game between two teams that are not the Hammers (for example, at LFFF tournaments):</p>
       <ol><li>In <b>+ New game</b>, pick <b>Other teams</b>.</li>
-      <li>Pick the division and the competition and type the names of both teams.</li>
+      <li>Pick the competition and type the names of both teams. The game joins those teams' reports for that competition.</li>
       <li>Pick <b>quick mode</b> (zone and result only: tap the zone and the result and the play is saved) or normal tracking with jersey numbers. You can change it later in ${btn('',t('game'))}.</li></ol>
       <p>Tracking, the tape review and the analysis work like in a Hammers game, with both teams' names and another color. These games count in the <b>opponent report</b> of both teams, together with the games against us, and in the <b>live scouting</b> strip. In the report's game list they are marked as scouting.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
@@ -942,9 +942,13 @@ function applyFoul(dec){
 
 /* ---------- render ---------- */
 const isGL=z=>!!z&&z[0]==='g';
+/* a scouting game goes with the team of ours that plays in its competition (so it joins the right opponent reports):
+   the one we track most often in that competition, else LFFF1 Elite, LFFF2 Academy, LFFFW Girls */
+function teamForComp(c){const m={};games.forEach(x=>{if(!x.scout&&x.store!=='demo'&&x.comp===c)m[x.team]=(m[x.team]||0)+1});
+  const top=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];return top?top[0]:{LFFF1:'Elite',LFFF2:'Academy',LFFFW:'Girls'}[c]||'Elite'}
 /* a game's title: our team (Elite, Academy, Girls) vs the opponent, or the two teams of a scouting game */
 const gTitle=x=>x.scout?`${esc(x.home||'')} vs ${esc(x.opp)}`:`${esc(x.team)} vs ${esc(x.opp)}`;
-const gSub=x=>x.scout?`${esc(x.team)} · ${t('xTag')} · `:'';
+const gSub=x=>x.scout?`${t('xTag')} · `:'';
 function sideName(s){return s==='H'?(g.scout?esc(g.home||''):'Hammers'):esc(g.opp)}
 
 function render(){
@@ -1526,12 +1530,13 @@ function scoutView(){
   const R={};list.forEach(G=>{if(scoutReady(G))R[G.id]=scoutGame(G)});
   for(const id in R){R[id].S=team.sideIn[id];R[id].O=other(R[id].S)}
   const X=list.filter(G=>!sc.off[G.id]&&R[G.id]).map(G=>R[G.id]), waiting=list.filter(G=>!sc.off[G.id]&&!R[G.id]&&!(scoutEv[G.id]&&scoutEv[G.id].err)).length;
-  const opts=T.map(x=>`<option value="${esc(x.key)}" ${x.key===sc.key?'selected':''}>${x.side==='H'?t('scUs'):esc(x.name)} · ${esc(x.team)}${x.demo?' ('+t('sample')+')':''} · ${t('scGamesN',x.games.length)}</option>`).join('');
+  const tag=x=>x.side==='H'?esc(x.team):[...new Set(x.games.map(G=>G.comp))].map(esc).join(' / ');
+  const opts=T.map(x=>`<option value="${esc(x.key)}" ${x.key===sc.key?'selected':''}>${x.side==='H'?t('scUs'):esc(x.name)} · ${tag(x)}${x.demo?' ('+t('sample')+')':''} · ${t('scGamesN',x.games.length)}</option>`).join('');
   // record and points, from the scouted team's side
   const nG=X.length, W=X.filter(x=>x.st.score[x.S]>x.st.score[x.O]).length, Lo=X.filter(x=>x.st.score[x.S]<x.st.score[x.O]).length;
   const avgPts=k=>nG?(X.reduce((a,x)=>a+x.st.score[x[k]],0)/nG).toFixed(1):'-', WDL=t('scWDL'), vsUs=!us&&X.length&&X.every(x=>!x.scout);
   const doc=teamDoc(team.key)||{}, col=doc.color;
-  const hero=`<section class="hero sc-hero side-${S}"${col?` style="--tc:${esc(col)}"`:''}><span class="lbl2">${esc(team.team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
+  const hero=`<section class="hero sc-hero side-${S}"${col?` style="--tc:${esc(col)}"`:''}><span class="lbl2">${tag(team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
       <div class="sc-name"><div class="gtxt"><b>${name}</b></div><button class="btn noprint" data-act="teamedit" data-key="${esc(team.key)}">✎ ${t('tmEdit')}</button></div>
       <div class="sc-stats">
         <div><b class="num">${W}${WDL[0]} ${nG-W-Lo}${WDL[1]} ${Lo}${WDL[2]}</b><small>${t('scRecord')}${vsUs?' '+t('scRecVs'):''}</small></div>
@@ -2148,7 +2153,7 @@ function renderSheet(){
     const x=n.kind==='x';
     h=`<h2>${t('newGameT')}</h2>
       <div class="grid2">${opt('kind','h',`${t('ngOurs')}<small>${t('ngOursS')}</small>`)}${opt('kind','x',`${t('ngOther')}<small>${t('ngOtherS')}</small>`)}</div>
-      <span class="lbl2">${x?t('ngCat'):t('team')}</span><div class="grid4" ${g3}>${TEAMS.map(x=>opt('team',x,x)).join('')}</div>
+      ${x?'':`<span class="lbl2">${t('team')}</span><div class="grid4" ${g3}>${TEAMS.map(x=>opt('team',x,x)).join('')}</div>`}
       <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${COMPS.map(x=>opt('comp',x,x)).join('')}</div>
       ${x?`<label class="lbl2" for="ng-home">${t('ngTeam1')}</label><input class="field-in" id="ng-home" value="${esc(n.home||'')}" placeholder="${t('teamName')}" autocomplete="off">`:''}
       <label class="lbl2" for="ng-opp">${x?t('ngTeam2'):t('opponent')}</label><input class="field-in" id="ng-opp" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">
@@ -2292,7 +2297,7 @@ document.addEventListener('click',ev=>{
     case 'newgame':openSheet('newgame',{ng:{kind:'h',team:'Elite',comp:'LFFF1',opp:'',home:'',start:'H',vis:'team',quick:'1'}});break;
     case 'ng':{const o=document.getElementById('ng-opp'),hm=document.getElementById('ng-home');if(o)sheet.ng.opp=o.value;if(hm)sheet.ng.home=hm.value;sheet.ng[b.dataset.k]=b.dataset.v;renderSheet();break}
     case 'ngcreate':{const n=sheet.ng;n.opp=(document.getElementById('ng-opp').value||'').trim();
-      if(n.kind==='x'){n.home=(document.getElementById('ng-home').value||'').trim();if(!n.home||!n.opp){toast(t('ngNames'));break}n.scout=true;n.quick=n.quick!=='0'}
+      if(n.kind==='x'){n.home=(document.getElementById('ng-home').value||'').trim();if(!n.home||!n.opp){toast(t('ngNames'));break}n.scout=true;n.quick=n.quick!=='0';n.team=teamForComp(n.comp)}
       const target=(cloud.db&&cloud.canWrite)?cloudStore:local;
       const meta=newMeta(n);if(target===cloudStore){meta.owner=me;meta.visibility=n.vis||'team'}const id=target.create(meta);sheet=null;document.getElementById('layer').innerHTML='';view='reg';an.side='H';
       selectGame(id);toast(t('gameCreated'));break}
