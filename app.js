@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.10.0';
+const APP_VERSION='1.11.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -119,6 +119,12 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  compOther:'Outra', compPh:'ex.: Taça de Portugal, Torneio de Lisboa', compType:'Escreve o nome da competição.',
+  ngOurs:'Jogo dos Hammers', ngOursS:'contra um adversário', ngOther:'Outras equipas', ngOtherS:'scouting de um jogo entre duas equipas',
+  ngTeam1:'Equipa 1', ngTeam2:'Equipa 2', ngNames:'Escreve o nome das duas equipas.', ngQuick:'Modo rápido', ngQuickY:'Sim', ngQuickYS:'só zona e resultado, 2 toques', ngQuickN:'Não', ngQuickNS:'com números de camisola',
+  quickOn:'ligado: zona e resultado, sem números', quickOff:'desligado: com números de camisola', quickNote:'Modo rápido: o resultado grava a jogada, sem números. Muda em Opções.',
+  hQuick:'Toca na <b>zona</b> e depois no <b>resultado</b>. A jogada fica gravada.', hQuick2:'Agora toca no <b>resultado</b> para gravar.', hRunQ:'Corrida: toca na zona e escolhe Corrida ou TD.', resSubQ:'grava a jogada',
+  roleHs2:s=>`Registas quando ${s} ataca`, xTag:'scouting',
   tmEdit:'Ficha da equipa', tmT:'Ficha da equipa', tmColor:'Cor', tmPlayers:'Jogadores', tmPlayersN:'Nome de cada número de camisola. Aparece no registo, nas tabelas e no resumo.', tmNamePh:'nome',
   tmNoNums:'Ainda não há números registados para esta equipa.', tmSame:'É a mesma equipa que', tmSameN:'Marca os nomes escritos de outra forma noutros jogos. Esses jogos passam a contar para esta equipa no relatório.',
   tmSave:'Guardar ficha', tmSaved:'Ficha guardada', planT:'Plano de jogo', planPh:'ex.: cobrir o #13 em Curto Dir; blitz no 3º down; atacar Fundo Esq', planSaved:'Plano guardado',
@@ -274,6 +280,12 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  compOther:'Other', compPh:'e.g. Portugal Cup, Lisbon Tournament', compType:'Type the competition name.',
+  ngOurs:'Hammers game', ngOursS:'against an opponent', ngOther:'Other teams', ngOtherS:'scouting a game between two teams',
+  ngTeam1:'Team 1', ngTeam2:'Team 2', ngNames:'Type the names of both teams.', ngQuick:'Quick mode', ngQuickY:'Yes', ngQuickYS:'zone and result only, 2 taps', ngQuickN:'No', ngQuickNS:'with jersey numbers',
+  quickOn:'on: zone and result, no numbers', quickOff:'off: with jersey numbers', quickNote:'Quick mode: the result saves the play, with no numbers. Change it in Options.',
+  hQuick:'Tap the <b>zone</b>, then the <b>result</b>. The play is saved.', hQuick2:'Now tap the <b>result</b> to save.', hRunQ:'Run: tap the zone and pick Run or TD.', resSubQ:'saves the play',
+  roleHs2:s=>`You track when ${s} is on offense`, xTag:'scouting',
   tmEdit:'Team sheet', tmT:'Team sheet', tmColor:'Color', tmPlayers:'Players', tmPlayersN:'The name for each jersey number. It shows in tracking, in the tables and in the summary.', tmNamePh:'name',
   tmNoNums:'No numbers tracked for this team yet.', tmSame:'Same team as', tmSameN:'Tick the names written another way in other games. Those games then count for this team in the report.',
   tmSave:'Save sheet', tmSaved:'Sheet saved', planT:'Game plan', planPh:'e.g. cover #13 on Short Right; blitz on 3rd down; attack Deep Left', planSaved:'Plan saved',
@@ -343,11 +355,16 @@ function helpData(){
   ];
   const S=pt?[
     {id:'start',t:'Antes do jogo',b:`<ol>
-      <li>Toca em ${btn('',t('game'))}, depois em <b>Jogos</b> e em <b>+ Novo jogo</b>.</li>
-      <li>Escolhe a equipa (Elite, Academy, Girls), a competição (LFFF1, LFFF2, LFFFW) e escreve o adversário.</li>
+      <li>Toca em ${btn('',t('game'))}, depois em <b>Jogos</b> e em <b>+ Novo jogo</b>. Escolhe <b>Jogo dos Hammers</b> (ou <b>Outras equipas</b> para fazer scouting, ver abaixo).</li>
+      <li>Escolhe a equipa (Elite, Academy, Girls) e a competição, e escreve o adversário. Para uma competição que não está na lista (uma taça ou um torneio), toca em <b>+ Outra</b> e escreve o nome: fica na lista para os jogos seguintes.</li>
       <li>Escolhe quem começa a atacar.</li>
       <li>Escolhe <b>que equipa segues</b>: Hammers, Adversário ou as duas (se estiveres sozinho).</li></ol>
       <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))} → <b>Jogos</b>.</p>`},
+    {id:'xgame',t:'Jogos de outras equipas',b:`<p>Para fazer scouting de um jogo entre duas equipas que não são os Hammers (por exemplo, nos torneios da LFFF):</p>
+      <ol><li>Em <b>+ Novo jogo</b>, escolhe <b>Outras equipas</b>.</li>
+      <li>Escolhe a competição (ou <b>+ Outra</b>) e escreve o nome das duas equipas. O jogo entra no relatório dessas equipas, junto com os jogos da equipa nossa que joga nessa competição. Numa competição onde ainda não temos jogos, conta como Elite.</li>
+      <li>Escolhe o <b>modo rápido</b> (só zona e resultado: tocas na zona e no resultado e a jogada fica gravada) ou o registo normal, com números de camisola. Podes mudar mais tarde em ${btn('',t('game'))}.</li></ol>
+      <p>O registo, a tape review e a análise funcionam como num jogo dos Hammers, com o nome das duas equipas e outra cor. Estes jogos entram no <b>relatório de adversário</b> das duas equipas, juntos com os jogos contra nós, e na faixa de <b>scouting ao vivo</b>. Na lista de jogos do relatório aparecem marcados como scouting.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
       <li>Toca na <b>zona</b> para onde a bola foi lançada.</li>
       <li>Escolhe o <b>resultado</b> na linha que aparece: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('td','TD')} ou ${btn('int','INT')}.</li>
@@ -436,11 +453,16 @@ function helpData(){
       <p>A língua muda-se em ${btn('',t('game'))} → <b>Língua</b>. Os dados não mudam.</p>`}
   ]:[
     {id:'start',t:'Before the game',b:`<ol>
-      <li>Tap ${btn('',t('game'))}, then <b>Games</b> and <b>+ New game</b>.</li>
-      <li>Pick the team (Elite, Academy, Girls), the competition (LFFF1, LFFF2, LFFFW) and type the opponent.</li>
+      <li>Tap ${btn('',t('game'))}, then <b>Games</b> and <b>+ New game</b>. Pick <b>Hammers game</b> (or <b>Other teams</b> to scout, see below).</li>
+      <li>Pick the team (Elite, Academy, Girls) and the competition, and type the opponent. For a competition not on the list (a cup or a tournament), tap <b>+ Other</b> and type its name: it stays on the list for the next games.</li>
       <li>Pick who starts on offense.</li>
       <li>Pick <b>which team you follow</b>: Hammers, Opponent or both (if you are alone).</li></ol>
       <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time in ${btn('',t('game'))} → <b>Games</b>.</p>`},
+    {id:'xgame',t:'Games between other teams',b:`<p>To scout a game between two teams that are not the Hammers (for example, at LFFF tournaments):</p>
+      <ol><li>In <b>+ New game</b>, pick <b>Other teams</b>.</li>
+      <li>Pick the competition (or <b>+ Other</b>) and type the names of both teams. The game joins those teams' reports, with the games of our team that plays in that competition. In a competition where we have no games yet, it counts as Elite.</li>
+      <li>Pick <b>quick mode</b> (zone and result only: tap the zone and the result and the play is saved) or normal tracking with jersey numbers. You can change it later in ${btn('',t('game'))}.</li></ol>
+      <p>Tracking, the tape review and the analysis work like in a Hammers game, with both teams' names and another color. These games count in the <b>opponent report</b> of both teams, together with the games against us, and in the <b>live scouting</b> strip. In the report's game list they are marked as scouting.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
       <li>Tap the <b>zone</b> the ball was thrown to.</li>
       <li>Pick the <b>result</b> on the row that appears: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('td','TD')} or ${btn('int','INT')}.</li>
@@ -546,9 +568,11 @@ const sortEv=a=>a.sort((x,y)=>(x.ts||0)-(y.ts||0)||(x.id<y.id?-1:x.id>y.id?1:0))
 function merge(base,patch){const o={...base};for(const k in patch){const v=patch[k];
   o[k]=(v&&typeof v==='object'&&!Array.isArray(v)&&o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k]))?merge(o[k],v):v}return o}
 function newMeta(o){
+  const x=!!o.scout;
   return {team:o.team,comp:o.comp,opp:o.opp||t('opponent'),date:new Date().toISOString().slice(0,10),start:o.start||'H',mode:'both',
-    roster:{H:o.rosterH||[2,5,8,11,17,23,31,77],A:o.rosterA||[]},
-    formations:{H:o.formH||['Double','Trips','Bunch'],A:o.formA||[]},curForm:{H:null,A:null},created:Date.now(),by:DEV};
+    ...(x?{scout:true,home:o.home,quick:!!o.quick}:{}),
+    roster:{H:o.rosterH||(x?[]:[2,5,8,11,17,23,31,77]),A:o.rosterA||[]},
+    formations:{H:o.formH||(x?[]:['Double','Trips','Bunch']),A:o.formA||[]},curForm:{H:null,A:null},created:Date.now(),by:DEV};
 }
 
 /* ---------- store: this device only (localStorage) and demo (memory) ---------- */
@@ -816,8 +840,9 @@ function tapZone(z){
   else{draft={kind:runMode?'run':'pass',zone:z,res:runMode?'R':'C',fd:false};runMode=false}
   render();
 }
-function tapRes(r){if(!draft)return;draft.res=r;render()}
-function startSack(){draft={kind:'sack',zone:null,res:'SACK',step:'by'};runMode=false;render()}
+/* quick mode (games between other teams): the result saves the play, with no numbers */
+function tapRes(r){if(!draft)return;draft.res=r;if(g.quick){draft.rec=null;draft.by=null;return finalize()}render()}
+function startSack(){draft={kind:'sack',zone:null,res:'SACK',step:'by'};runMode=false;if(g.quick){draft.by=null;return finalize()}render()}
 function finalize(){
   const st=replay(),d=draft;draft=null;runMode=false;
   let e;
@@ -919,7 +944,16 @@ function applyFoul(dec){
 
 /* ---------- render ---------- */
 const isGL=z=>!!z&&z[0]==='g';
-function sideName(s){return s==='H'?'Hammers':esc(g.opp)}
+/* a scouting game goes with the team of ours that plays in its competition (so it joins the right opponent reports):
+   the one we track most often in that competition, else LFFF1 Elite, LFFF2 Academy, LFFFW Girls */
+/* competitions: the LFFF ones plus every other one already used in a game (typed once in New game) */
+function allComps(){const l=[...COMPS];games.forEach(x=>{if(x.comp&&x.store!=='demo'&&!l.some(c=>c.toLowerCase()===String(x.comp).toLowerCase()))l.push(x.comp)});return l}
+function teamForComp(c){const m={};games.forEach(x=>{if(!x.scout&&x.store!=='demo'&&x.comp===c)m[x.team]=(m[x.team]||0)+1});
+  const top=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];return top?top[0]:{LFFF1:'Elite',LFFF2:'Academy',LFFFW:'Girls'}[c]||'Elite'}
+/* a game's title: our team (Elite, Academy, Girls) vs the opponent, or the two teams of a scouting game */
+const gTitle=x=>x.scout?`${esc(x.home||'')} vs ${esc(x.opp)}`:`${esc(x.team)} vs ${esc(x.opp)}`;
+const gSub=x=>x.scout?`${t('xTag')} · `:'';
+function sideName(s){return s==='H'?(g.scout?esc(g.home||''):'Hammers'):esc(g.opp)}
 
 function render(){
   document.documentElement.lang=lang==='pt'?'pt-PT':'en';
@@ -929,6 +963,7 @@ function render(){
     app.querySelector('.top').outerHTML=topHTML(st);tapeUpdate();animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
   if(document.getElementById('vbox')&&!vidAway()){const tt=vTime();if(tt!=null)vid.resume=tt}
   app.dataset.tape=view==='tape'?g.id:'';
+  app.classList.toggle('scoutg',!!g.scout&&view!=='home'&&view!=='scout');
   if(view==='home'){app.innerHTML=homeView(st);animateRender(st);if(pendingReload)setTimeout(reloadIfIdle,300);return}
   if(view==='scout'){const ae=document.activeElement, keep=ae&&ae.id==='sc-plan'?{v:ae.value,a:ae.selectionStart,b:ae.selectionEnd}:null;
     app.innerHTML=scoutView();if(keep){const x=document.getElementById('sc-plan');if(x){x.value=keep.v;x.focus();x.setSelectionRange(keep.a,keep.b)}}prevRender=null;if(pendingReload)setTimeout(reloadIfIdle,300);return}
@@ -951,18 +986,18 @@ const BALL='<svg class="ball" viewBox="0 0 24 14" aria-hidden="true"><ellipse cx
 /* scoreboard: the team on offense carries the ball; tapping the other team hands it the ball (change of possession) */
 function topHTML(st){
   const showPoss=g.mode==='both'&&!readOnly();
-  const r=role(), roleTxt=r==='both'?t('roleB'):r==='H'?'Hammers':t('roleA');
+  const r=role(), roleTxt=r==='both'?t('roleB'):sideName(r);
   const pend=cloud.outbox.length;
   const sync=g.store==='demo'?`<span class="sample">${t('sample')}</span>`
     :g.store==='local'?`<span class="sync local">${t('localOnly')}</span>`
     :`<span class="sync ${pend?'pend':g.visibility==='private'?'local':'ok'}">${pend?t('sending',pend):g.visibility==='private'?'🔒 '+t('visMe'):t('visTeam')}</span>`;
-  const team=s=>{const on=st.poss===s, tc=s==='A'&&teamColor(scKeyOf(g,'A'));
+  const team=s=>{const on=st.poss===s, tc=(s==='A'||g.scout)&&teamColor(scKeyOf(g,s));
     return `<button class="sb-team ${s}${on?' poss on':''}"${tc?` style="--tc:${esc(tc)}"`:''} data-act="poss" ${showPoss&&!on?'':'disabled'} aria-label="${sideName(s)}${on?', '+t('offense'):''}">
       <span class="sb-name">${on?BALL:''}<span>${sideName(s)}</span></span><span class="s num">${st.score[s]}</span></button>`};
   return `<header class="top sb">
     <div class="sb-bar">
       <button class="hlogo-btn" data-act="home" aria-label="${t('home')}"><img class="hlogo" src="icons/logo.png" alt="" width="52" height="50"></button>
-      <button class="sb-game" data-act="opts" aria-label="${t('options')}"><span class="gt">${esc(g.team)} vs ${esc(g.opp)} <small>${esc(g.comp)}</small></span>
+      <button class="sb-game" data-act="opts" aria-label="${t('options')}"><span class="gt">${gTitle(g)} <small>${esc(g.comp)}</small></span>
         <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></button>
       <button class="chip undo" data-act="undo" aria-label="${t('undo')}">↶<span class="sb-lt"> ${t('undo')}</span></button>
       <button class="chip opts" data-act="opts" aria-label="${t('options')}"><span class="dots" aria-hidden="true">⋮</span><span class="sb-lt">${t('options')}</span></button>
@@ -986,11 +1021,11 @@ function animateRender(st){
   if(p.A!==cur.A)flash(sc[1],'bump');
   if(p.down!==cur.down||p.half!==cur.half)flash(app.querySelector('.down'),'tick');
   if(p.poss!==cur.poss){flash(app.querySelector('.poss'),'swap');flash(app.querySelector('.field'),'fadein')}
-  if(lastAdded){const m=app.querySelector(`[data-e="${lastAdded}"]`);if(m)flash(m,'pop');lastAdded=null}
+  if(lastAdded){const m=app.querySelector(`[data-e="${lastAdded}"]`);if(m)flash(m,m.classList.contains('zone')?'zglow':'pop');lastAdded=null}
 }
 function celebrate(big,side,mini){
   if(!motionOK())return;
-  const ours=side==='H', small=sideName(side);
+  const ours=side==='H'&&!g.scout, small=sideName(side);
   const el=document.createElement('div');el.className='celebrate'+(mini?' mini':'')+(ours?'':' opp');el.setAttribute('aria-hidden','true');
   let bits='';for(let i=0;i<(mini?10:22);i++){const a=Math.random()*360,d=90+Math.random()*(mini?110:220),c=(ours?['#FF3300','#C8102E','#141414','#F2C14E','#FFFFFF']:['#9AA1AA','#5F6670','#D6D9DD','#FFFFFF','#3F4650'])[i%5];
     bits+=`<i style="--a:${a}deg;--d:${d}px;--c:${c};--t:${(.55+Math.random()*.5).toFixed(2)}s"></i>`}
@@ -1006,7 +1041,7 @@ function homeView(st){
   const cur=g&&g.store!=='demo'?g:null;
   const lock=x=>x.visibility==='private'?`<span class="sync local">🔒 ${t('visMe')}</span>`:'';
   const card=x=>`<div class="gcard">
-      <div class="gtxt"><b>${esc(x.team)} vs ${esc(x.opp)}</b><small>${esc(x.comp)} · ${x.date}${x.owner?' · '+t('byOwner',esc(personName(x.owner))):''}</small>${lock(x)}</div>
+      <div class="gtxt"><b>${gTitle(x)}</b><small>${gSub(x)}${esc(x.comp)} · ${x.date}${x.owner?' · '+t('byOwner',esc(personName(x.owner))):''}</small>${lock(x)}</div>
       <div class="gbtns"><button class="btn" data-act="openg" data-id="${x.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${x.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${x.id}" data-v="ana">${t('viewAna')}</button></div></div>`;
   const tile=(act,icon,l,d,cls='')=>`<button class="htile ${cls}" data-act="${act}"><span class="hi" aria-hidden="true">${icon}</span><b>${l}</b><small>${d}</small></button>`;
   const recent=list.filter(x=>!cur||x.id!==cur.id).slice(0,5);
@@ -1017,7 +1052,7 @@ function homeView(st){
     </header>
     ${cur?`<section class="hero">
       <span class="lbl2">${t('continueG')}</span>
-      <div class="hero-row"><div class="gtxt"><b>${esc(cur.team)} vs ${esc(cur.opp)}</b><small>${esc(cur.comp)} · ${cur.date}${cur.owner?' · '+t('byOwner',esc(personName(cur.owner))):''}</small>${lock(cur)}</div>
+      <div class="hero-row"><div class="gtxt"><b>${gTitle(cur)}</b><small>${esc(cur.comp)} · ${cur.date}${cur.owner?' · '+t('byOwner',esc(personName(cur.owner))):''}</small>${lock(cur)}</div>
         <div class="hscore num"><span>${st.score.H}</span><small>:</small><span>${st.score.A}</span><em>${ord(st.down)} ${t('down')} · ${st.half===2?t('h2'):t('h1')}</em></div></div>
       <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
     </section>`:''}
@@ -1031,12 +1066,13 @@ function homeView(st){
     <section class="hlist">
       <span class="lbl2">${t('recent')}</span>
       ${recent.length?recent.map(card).join(''):`<p class="note">${list.length?'':t('noGames')}</p>`}
-      ${demoG?`<div class="gcard demo"><div class="gtxt"><b>${esc(demoG.team)} vs ${esc(demoG.opp)}</b><small>${t('demoS')}</small></div>
+      ${demoG?`<div class="gcard demo"><div class="gtxt"><b>${gTitle(demoG)}</b><small>${t('demoS')}</small></div>
         <div class="gbtns"><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${demoG.id}" data-v="ana">${t('viewAna')}</button></div></div>`:''}
     </section>
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
 function hintText(){
+  if(g.quick)return draft?t('hQuick2'):runMode?t('hRunQ'):t('hQuick');
   if(draft){
     if(draft.step==='by')return draft.kind==='sack'?t('hSack'):t('hIntBy');
     if(draft.kind==='conv')return draft.zone?`${zoneName(draft.zone)} · <b>${t('convRes')[draft.res]}</b>. ${t('hNow')}`:t('hConv',draft.pts);
@@ -1079,17 +1115,17 @@ function bannerHTML(r){
 }
 /* live scouting: while the opponent has the ball, what it did on this down in the earlier games against it, and what is different today */
 function liveScoutHTML(st,s){
-  if(s!=='A')return '';
-  const key=scKeyOf(g,'A'), team=scoutTeams().find(x=>x.key===key);if(!team)return '';
+  const key=scKeyOf(g,s);if(key.startsWith('H|'))return '';
+  const team=scoutTeams().find(x=>x.key===key);if(!team)return '';
   const others=team.games.filter(G=>G.id!==g.id);others.forEach(scoutFetch);
-  const ready=others.filter(scoutReady), plays=x=>x.filter(e=>e.t==='play'&&e._side==='A'&&!e.annul&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
-  const H=plays(ready.map(scoutGame).flatMap(x=>x.events));if(H.length<8)return '';
+  const ready=others.filter(scoutReady), plays=(x,sd)=>x.filter(e=>e.t==='play'&&e._side===sd&&!e.annul&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
+  const H=ready.map(scoutGame).flatMap(x=>plays(x.events,team.sideIn[x.id]));if(H.length<8)return '';
   const hd=H.filter(e=>e._down===st.down), hp=hd.filter(e=>e.kind==='pass'), z=scTop(hp.filter(e=>e.zone),e=>e.zone), r=scTop(hp,e=>e.rec);
   let line=hd.length?t('lsDown',ord(st.down),pct(hp.length,hd.length),z?zoneName(z[0]):'',r?r[0]:''):t('lsNoDown',ord(st.down));
   const hg=H.filter(e=>isGL(e.zone)), gz=scTop(hg,e=>e.zone);
   if(st.goal&&gz&&hg.length>=3)line+=' · '+t('lsGl',zoneName(gz[0]));
   // what is different today (only once there are enough plays to compare)
-  const T=plays(g.events), al=[];
+  const T=plays(g.events,s), al=[];
   if(T.length>=6){
     const rr=l=>l.filter(e=>e.kind==='run').length/l.length, rh=rr(H), rt=rr(T);
     if(Math.abs(rt-rh)>=.2)al.push(t('alRun',pct(Math.round(rt*100),100),pct(Math.round(rh*100),100)));
@@ -1114,7 +1150,7 @@ function slotsHTML(s){
   const by=d&&d.step==='by', numL=d&&d.kind==='run'||runMode?t('tRunner'):t('receiver');
   return `<div class="slots">${slot(t('tZone'),d&&d.zone?zoneName(d.zone):null,!d)}
     ${slot(d&&d.kind==='conv'?t('conv')+' '+d.pts+' pt':t('result'),d&&d.res?RES[d.res]:runMode?t('tagR'):null,false,d&&d.res?'r-'+d.res:'')}
-    ${slot(numL,by?(d.rec!=null?'#'+d.rec:t('noNumShort')):null,!!d&&!by)}${d&&d.res==='INT'&&d.kind!=='conv'?slot(t('whoInt'),null,by):''}</div>`;
+    ${g.quick?'':slot(numL,by?(d.rec!=null?'#'+d.rec:t('noNumShort')):null,!!d&&!by)+(d&&d.res==='INT'&&d.kind!=='conv'?slot(t('whoInt'),null,by):'')}</div>`;
 }
 /* one line per play for the drive card */
 function evLine(e){
@@ -1155,7 +1191,7 @@ function regView(st){
     const resTxt=e=>({C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack')}[e.res]);
     const card=readOnly()?`<div class="defcard"><h3>${t('roTitle')}</h3><p>${t('readOnly')}</p></div>`
       :`<div class="defcard"><span class="lbl2">${t('offense')}</span><h3>${sideName(s)}</h3>
-        <p>${t('defBody',r==='H'?'Hammers':t('roleA'),s==='H'?'Hammers':t('roleA'))}</p>
+        <p>${t('defBody',sideName(r),sideName(s))}</p>
         ${recent.length?`<span class="lbl2">${t('lastPlays')}</span><div class="mini">${recent.map(e=>`<div><b class="num">${ord(e._down)}</b><span>${e.rec!=null?'#'+e.rec:e.dby!=null?'#'+e.dby:''}</span><span>${e.zone?zoneName(e.zone):''}</span><span class="tag ${e.res}">${resTxt(e)}</span></div>`).join('')}</div>`:''}
         <button class="btn" data-act="defover">${t('defOverride')}</button>
         <button class="btn" data-act="opts">${t('changeRole')}</button></div>`;
@@ -1180,13 +1216,13 @@ function regView(st){
     +`<button class="n none" data-act="nonum" ${ready?'':'disabled'} aria-label="${t('saveNoNum')}">?<small>${t('noNumShort')}</small></button>`
     +`<button class="n add" data-act="addnum" aria-label="${t('newNum')}">+</button>`;
   const numLbl=byStep?(draft.kind==='sack'?t('whoSack'):t('whoInt')):t('receiver');
-  const numSub=byStep?`${ns==='H'?'Hammers':t('opponent')}, ${t('defense')}`:`${s==='H'?'Hammers':t('opponent')}, ${t('mostUsed')}`;
+  const numSub=byStep?`${sideName(ns)}, ${t('defense')}`:`${sideName(s)}, ${t('mostUsed')}`;
   let resRow='';
   if(draft&&!byStep&&draft.kind!=='sack'){
     const opts=draft.kind==='conv'?[['G',t('convRes').G],['NG',t('convRes').NG],['INT','INT']]
       :draft.kind==='run'?[['R',t('tagR')],['TD','TD']]
       :[['C',t('tagC')],['X',t('tagX')],['TD','TD'],['INT','INT']];
-    resRow=`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${t('result')}${qh('track')}</span><span>${t('resSub')}</span></div>
+    resRow=`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${t('result')}${qh('track')}</span><span>${g.quick?t('resSubQ'):t('resSub')}</span></div>
       <div class="resrow">${opts.map(([v,l])=>`<button class="rb rb-${v}" data-act="res" data-r="${v}" aria-pressed="${draft.res===v}">${l}</button>`).join('')}</div></div>`;
   }
   const forms=g.formations[s].map(f=>`<button class="f" data-act="form" data-f="${esc(f)}" aria-pressed="${g.curForm[s]===f}">${esc(f)}</button>`).join('')
@@ -1209,7 +1245,7 @@ function regView(st){
     </section>
     <section class="controls">
       ${resRow}
-      <div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${numLbl}${qh('track')}</span><span>${numSub}</span></div><div class="nums">${nums}</div></div>
+      ${g.quick?`<p class="note quicknote">⚡ ${t('quickNote')}</p>`:`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${numLbl}${qh('track')}</span><span>${numSub}</span></div><div class="nums">${nums}</div></div>`}
       ${byStep||conv?'':`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${t('formation')}${qh('buttons')}</span><span>${t('formSticky')}</span></div><div class="forms">${forms}</div></div>`}
       <div class="actions">
         <button class="a" data-act="fd" aria-pressed="${draft?!!draft.fd:false}">${t('fd')}</button>
@@ -1289,7 +1325,7 @@ function anaView(){
   const seg=(key,opts,cls='')=>`<div class="seg ${cls}">${opts.map(([v,l,c])=>`<button class="${c||''}" data-act="an" data-k="${key}" data-v="${v}" aria-pressed="${String(an[key])===String(v)}">${l}</button>`).join('')}</div>`;
   const D=t('downs'), thP=t('thP'), thD=t('thD');
   return `<div class="filters">
-      ${seg('side',[['H','Hammers','H'],['A',esc(g.opp),'A']],'side')}
+      ${seg('side',[['H',sideName('H'),'H'],['A',sideName('A'),'A']],'side')}
       ${seg('area',[['field',t('mapField')],['gl','GL'],['conv',t('convs')]])}
       ${conv?'':seg('kind',[['pass',t('passes')],['run',t('runs')],['all',t('all')]])}
       ${conv?'':seg('down',[[0,t('allM')],[1,D[0]],[2,D[1]],[3,D[2]],[4,D[3]]])}
@@ -1457,11 +1493,13 @@ function scoutGames(){
   return l;
 }
 /* a team is the opponent's name inside one of our teams (Elite, Academy, Girls), or the Hammers team itself */
-const scKeyOf=(x,s)=>s==='H'?'H|'+(x.store==='demo'?'demo':x.team):aliasOf('A|'+x.team+'|'+normOpp(x.opp));
+/* in a game between two other teams (x.scout), side H is x.home and side A is x.opp, and both are scouted teams */
+const scKeyOf=(x,s)=>s==='H'&&!x.scout?'H|'+(x.store==='demo'?'demo':x.team):aliasOf('A|'+x.team+'|'+normOpp(s==='H'?x.home:x.opp));
 function scoutTeams(){
   const m={};
-  scoutGames().forEach(x=>['A','H'].forEach(s=>{const k=scKeyOf(x,s);
-    (m[k]=m[k]||{key:k,side:s,name:s==='H'?'Hammers':(teamDoc(k)&&teamDoc(k).name)||x.opp,team:x.team,demo:x.store==='demo',games:[]}).games.push(x)}));
+  scoutGames().forEach(x=>['A','H'].forEach(s=>{const k=scKeyOf(x,s), us=k.startsWith('H|');
+    const e=m[k]=m[k]||{key:k,side:us?'H':'A',name:us?'Hammers':(teamDoc(k)&&teamDoc(k).name)||(s==='H'?x.home:x.opp),team:x.team,demo:x.store==='demo',games:[],sideIn:{}};
+    e.games.push(x);e.sideIn[x.id]=s}));
   return Object.values(m).sort((a,b)=>(a.side==='H')-(b.side==='H')||b.games.length-a.games.length||String(a.name).localeCompare(String(b.name)));
 }
 /* shared games other than the open one are read once per visit to the report */
@@ -1494,22 +1532,24 @@ function scoutView(){
   const list=team.games.slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(b.created||0)-(a.created||0));
   list.forEach(scoutFetch);
   const R={};list.forEach(G=>{if(scoutReady(G))R[G.id]=scoutGame(G)});
+  for(const id in R){R[id].S=team.sideIn[id];R[id].O=other(R[id].S)}
   const X=list.filter(G=>!sc.off[G.id]&&R[G.id]).map(G=>R[G.id]), waiting=list.filter(G=>!sc.off[G.id]&&!R[G.id]&&!(scoutEv[G.id]&&scoutEv[G.id].err)).length;
-  const opts=T.map(x=>`<option value="${esc(x.key)}" ${x.key===sc.key?'selected':''}>${x.side==='H'?t('scUs'):esc(x.name)} · ${esc(x.team)}${x.demo?' ('+t('sample')+')':''} · ${t('scGamesN',x.games.length)}</option>`).join('');
+  const tag=x=>x.side==='H'?esc(x.team):[...new Set(x.games.map(G=>G.comp))].map(esc).join(' / ');
+  const opts=T.map(x=>`<option value="${esc(x.key)}" ${x.key===sc.key?'selected':''}>${x.side==='H'?t('scUs'):esc(x.name)} · ${tag(x)}${x.demo?' ('+t('sample')+')':''} · ${t('scGamesN',x.games.length)}</option>`).join('');
   // record and points, from the scouted team's side
-  const nG=X.length, W=X.filter(x=>x.st.score[S]>x.st.score[O]).length, Lo=X.filter(x=>x.st.score[S]<x.st.score[O]).length;
-  const avgPts=k=>nG?(X.reduce((a,x)=>a+x.st.score[k],0)/nG).toFixed(1):'-', WDL=t('scWDL');
+  const nG=X.length, W=X.filter(x=>x.st.score[x.S]>x.st.score[x.O]).length, Lo=X.filter(x=>x.st.score[x.S]<x.st.score[x.O]).length;
+  const avgPts=k=>nG?(X.reduce((a,x)=>a+x.st.score[x[k]],0)/nG).toFixed(1):'-', WDL=t('scWDL'), vsUs=!us&&X.length&&X.every(x=>!x.scout);
   const doc=teamDoc(team.key)||{}, col=doc.color;
-  const hero=`<section class="hero sc-hero side-${S}"${col?` style="--tc:${esc(col)}"`:''}><span class="lbl2">${esc(team.team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
+  const hero=`<section class="hero sc-hero side-${S}"${col?` style="--tc:${esc(col)}"`:''}><span class="lbl2">${tag(team)}${team.demo?' · '+t('sample'):''} · ${t('scGamesN',nG)}</span>
       <div class="sc-name"><div class="gtxt"><b>${name}</b></div><button class="btn noprint" data-act="teamedit" data-key="${esc(team.key)}">✎ ${t('tmEdit')}</button></div>
       <div class="sc-stats">
-        <div><b class="num">${W}${WDL[0]} ${nG-W-Lo}${WDL[1]} ${Lo}${WDL[2]}</b><small>${t('scRecord')}${us?'':' '+t('scRecVs')}</small></div>
-        <div><b class="num">${avgPts(S)}</b><small>${t('scPtsFor')}</small></div>
-        <div><b class="num">${avgPts(O)}</b><small>${t('scPtsAg')}</small></div>
+        <div><b class="num">${W}${WDL[0]} ${nG-W-Lo}${WDL[1]} ${Lo}${WDL[2]}</b><small>${t('scRecord')}${vsUs?' '+t('scRecVs'):''}</small></div>
+        <div><b class="num">${avgPts('S')}</b><small>${t('scPtsFor')}</small></div>
+        <div><b class="num">${avgPts('O')}</b><small>${t('scPtsAg')}</small></div>
       </div></section>`;
   const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select></div>`;
-  const evs=side=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===side&&!e.annul));
-  const off=evs(S), def=evs(O), DO=X.flatMap(x=>drivesOf(x.events,S)), DD=X.flatMap(x=>drivesOf(x.events,O));
+  const evs=k=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x[k]&&!e.annul));
+  const off=evs('S'), def=evs('O'), DO=X.flatMap(x=>drivesOf(x.events,x.S)), DD=X.flatMap(x=>drivesOf(x.events,x.O));
   // key tendencies: plain numbers a coach can read before the game
   const plays=off.filter(e=>e.t==='play'), pas=plays.filter(e=>e.kind==='pass'), runs=plays.filter(e=>e.kind==='run');
   const fp=pas.filter(e=>e.zone&&!isGL(e.zone)), ins=[];
@@ -1595,13 +1635,14 @@ function scoutView(){
       ${dfp.length?`<section class="panel"><div class="toolbar"><h3>${t('scDefMap',us)}</h3><span class="note">${t('scPlaysN',dfp.length)} · ${pct(dfp.filter(isComp).length,dfp.length)} ${t('comp')}</span></div>
         ${zoneMap(dfp,false,sc.mode,'scd')}<p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
       <div class="sc-tables">${drivePanel(DD,t('drvAg'))}${tbl(t('scDefPl'),t('thScDef'),drows)}</div></div></section>`:'';
-  const resOf=x=>x.st.score[S]>x.st.score[O]?0:x.st.score[S]<x.st.score[O]?2:1;
+  const resOf=x=>x.st.score[x.S]>x.st.score[x.O]?0:x.st.score[x.S]<x.st.score[x.O]?2:1;
+  const vsName=G=>{const sd=team.sideIn[G.id];return G.scout?esc(sd==='H'?G.opp:G.home):sd==='H'?esc(G.opp):'Hammers'};
   const gamesHTML=`<section class="sc-sec"><h2>${t('scGamesT')}</h2><p class="note noprint">${t('scGamesNote')}</p><div class="sc-games">${list.map(G=>{
       const x=R[G.id], off_=!!sc.off[G.id], e=scoutEv[G.id], r=x?resOf(x):null;
-      const st=off_?t('scOff'):x?`${x.st.score[S]}-${x.st.score[O]} · ${t('scPlaysN',x.events.filter(e=>e.t==='play').length)}`:e&&e.err?t('scLoadFail'):t('scLoadingG');
+      const st=off_?t('scOff'):x?`${x.st.score[x.S]}-${x.st.score[x.O]} · ${t('scPlaysN',x.events.filter(e=>e.t==='play').length)}`:e&&e.err?t('scLoadFail'):t('scLoadingG');
       return `<div class="scg${off_?' off':''}"><button class="scg-main" data-act="scgame" data-id="${G.id}" aria-pressed="${!off_}">
           <span class="res r${r==null?'':r}">${r==null?'·':WDL[r]}</span>
-          <span class="gtxt"><b>${us?'vs '+esc(G.opp):esc(G.date||'')}</b><small>${us?esc(G.date||'')+' · ':''}${esc(G.comp)} · ${st}</small></span></button>
+          <span class="gtxt"><b>vs ${vsName(G)}</b><small>${esc(G.date||'')} · ${esc(G.comp)}${G.scout?' · '+t('xTag'):''} · ${st}</small></span></button>
         ${G.extra?'':`<button class="btn noprint" data-act="openg" data-id="${G.id}" data-v="ana">${t('scOpenA')}</button>`}</div>`}).join('')}</div></section>`;
   const sumSec=`<section class="sc-sec"><h2>${t('sumT')}</h2><div class="panel">${sumHTML(off,def,nG,us,DO,team.key)}</div></section>`;
   const body=X.length&&off.length?`${sumSec}${insHTML}
@@ -1797,7 +1838,7 @@ function ytFrame(h,key,id){
 }
 function mountPlayer(){
   if(vidAway()){const l=vid.win.document.getElementById('vlabel'),c=tapeCur().e;
-    if(l)l.textContent=c?`${g.team} vs ${g.opp} · ${t('tPlay',tapeEvs().indexOf(c)+1,tapeEvs().length)} · ${c.t==='conv'?t('conv'):ord(c._down)+' '+t('down')} · ${c._side==='H'?'Hammers':g.opp}`:''}
+    if(l)l.textContent=c?`${g.scout?g.home:g.team} vs ${g.opp} · ${t('tPlay',tapeEvs().indexOf(c)+1,tapeEvs().length)} · ${c.t==='conv'?t('conv'):ord(c._down)+' '+t('down')} · ${c._side==='H'?'Hammers':g.opp}`:''}
   const h=vHost();if(!h)return;
   const src=vSrc(), key=src?src.key:'none:'+lang+':'+(h.win===window);
   if(h.win.HGO_src===key&&h.box.firstChild)return;
@@ -1866,7 +1907,7 @@ function openVideoWindow(){
     if(vid.win!==w||w.closed)return;
     let ok=false;try{ok=w.document.readyState==='complete'&&!!w.document.getElementById('vbox')&&w.location.href!=='about:blank'||PREVIEW&&!!w.document.getElementById('vbox')}catch(e){}
     if(!ok){if(++n<100)setTimeout(ready,100);return}
-    w.document.title=`${t('vWin')} · ${g.team} vs ${g.opp}`;w.HGO_src=null;
+    w.document.title=`${t('vWin')} · ${g.scout?g.home:g.team} vs ${g.opp}`;w.HGO_src=null;
     mountPlayer();tapeUpdate();try{w.focus()}catch(e){}
   };ready();
 }
@@ -2002,8 +2043,8 @@ function renderSheet(){
   }else if(sheet.kind==='teamedit'){
     const T=scoutTeams(), team=T.find(x=>x.key===sheet.key)||{games:[],side:'A',team:'',name:''}, d=teamDoc(sheet.key)||{}, us=team.side==='H';
     // numbers seen for this team: rosters of its games and the plays of the loaded ones
-    const nums=new Set();team.games.forEach(G=>{((G.roster||{})[team.side]||[]).forEach(n=>nums.add(+n));if(scoutReady(G))scoutGame(G).events.forEach(e=>{
-      if(e._side===team.side){if(e.rec!=null)nums.add(e.rec);if(e.qb!=null)nums.add(e.qb)}else{['dby','fby','pbu'].forEach(k=>{if(e[k]!=null)nums.add(e[k])})}})});
+    const nums=new Set();team.games.forEach(G=>{const sd=(team.sideIn||{})[G.id]||team.side;((G.roster||{})[sd]||[]).forEach(n=>nums.add(+n));if(scoutReady(G))scoutGame(G).events.forEach(e=>{
+      if(e._side===sd){if(e.rec!=null)nums.add(e.rec);if(e.qb!=null)nums.add(e.qb)}else{['dby','fby','pbu'].forEach(k=>{if(e[k]!=null)nums.add(e[k])})}})});
     Object.keys(d.players||{}).forEach(n=>nums.add(+n));
     const others=T.filter(x=>x.side==='A'&&!us&&x.team===team.team&&x.key!==sheet.key&&!x.demo);
     const al=new Set(d.aliases||[]), cols=['#C8102E','#1F5FA8','#17804F','#6B3FA0','#E0A82A','#0E7C86','#3F4650','#111111'];
@@ -2042,14 +2083,15 @@ function renderSheet(){
     const row=(act,icon,l,d)=>`<button class="optrow" data-act="${act}"><span class="oi" aria-hidden="true">${icon}</span><span><b>${l}</b><small>${d}</small></span><span aria-hidden="true">›</span></button>`;
     h=`<div class="help-head"><h2>${t('options')}</h2><button class="ghost" data-act="close" aria-label="${t('close')}" style="font-size:22px">✕</button></div>
       <span class="lbl2">${t('curGame')}</span>
-      <div class="curgame"><b>${esc(g.team)} vs ${esc(g.opp)}</b><small>${esc(g.comp)} · ${g.date}${g.store==='cloud'&&g.owner?' · '+t('byOwner',esc(personName(g.owner))):''}</small></div>
-      ${g.store!=='demo'&&!readOnly()?`<span class="lbl2">${t('roleQ')}</span><div class="grid4" style="grid-template-columns:repeat(3,1fr)">${rb('H','Hammers',t('roleHs'))}${rb('A',t('roleA'),t('roleAs'))}${rb('both',t('roleB'),t('roleBs'))}</div>`:''}
+      <div class="curgame"><b>${gTitle(g)}</b><small>${esc(g.comp)} · ${g.date}${g.store==='cloud'&&g.owner?' · '+t('byOwner',esc(personName(g.owner))):''}</small></div>
+      ${g.store!=='demo'&&!readOnly()?`<span class="lbl2">${t('roleQ')}</span><div class="grid4" style="grid-template-columns:repeat(3,1fr)">${rb('H',sideName('H'),t('roleHs2',sideName('H')))}${rb('A',sideName('A'),t('roleHs2',sideName('A')))}${rb('both',t('roleB'),t('roleBs'))}</div>`:''}
       ${canChangeVis(g)?`<span class="lbl2">${t('visLbl')}</span><div class="grid2">
         <button class="big" data-act="setvis" data-v="team" aria-pressed="${g.visibility!=='private'}">${t('visTeam')}<small>${t('visTeamS')}</small></button>
         <button class="big" data-act="setvis" data-v="private" aria-pressed="${g.visibility==='private'}">🔒 ${t('visMe')}<small>${t('visMeS')}</small></button></div>`:''}
       <div class="optlist">
         ${row('home','⌂',t('home'),t('homeS'))}
         ${row('games','▦',t('gamesMenu'),t('gamesS'))}
+        ${g.scout&&!readOnly()?row('quick','⚡',t('ngQuick'),g.quick?t('quickOn'):t('quickOff')):''}
         ${row('scout','◎',t('sc'),t('scS'))}
         ${isAdmin?row('members','👥',t('members'),t('membersS')):''}
         ${row('help','?',t('helpMenu'),t('helpS'))}
@@ -2064,7 +2106,7 @@ function renderSheet(){
     const tag=x=>x.store==='cloud'?`<span class="owner">${x.owner?t('byOwner',esc(personName(x.owner))):''}</span>${x.visibility==='private'?` <span class="sync local">🔒 ${t('visMe')}</span>`:''}`:x.store==='local'?`<span class="sync local">${t('localOnly')}</span>`:`<span class="sample">${t('sample')}</span>`;
     const cnt=x=>{const ev=x.id===g.id?g.events:(x.events||null);return ev?`${ev.filter(e=>e.t==='play').length} ${t('playsAbbr')}`:''};
     h=`<div class="help-head"><h2>${t('games')}</h2><button class="ghost" data-act="opts">‹ ${t('options')}</button></div>
-      <div class="gl">${games.map(x=>`<button data-act="pickgame" data-id="${x.id}" aria-current="${x.id===g.id}"><span><b>${esc(x.team)} vs ${esc(x.opp)}</b><br><small>${esc(x.comp)} · ${x.date}</small> ${tag(x)}</span><span class="num">${cnt(x)}</span></button>`).join('')}</div>
+      <div class="gl">${games.map(x=>`<button data-act="pickgame" data-id="${x.id}" aria-current="${x.id===g.id}"><span><b>${gTitle(x)}</b><br><small>${esc(x.comp)} · ${x.date}</small> ${tag(x)}</span><span class="num">${cnt(x)}</span></button>`).join('')}</div>
       ${cloud.db&&!cloud.ready?`<p>${t('loadingShared')}</p>`:''}
       <button class="primary" data-act="newgame">${t('newGame')}</button>
       ${g.store==='demo'||readOnly()||(g.store==='cloud'&&!isAdmin)?'':`<button class="ghost" data-act="delgame" style="color:var(--bad)">${sheet.delc?t('delGameC'):t('delGame')}</button>`}
@@ -2107,16 +2149,21 @@ function renderSheet(){
   }else if(sheet.kind==='role'){
     const rb=(v,l,d)=>`<button class="big" data-act="role" data-r="${v}">${l}<small>${d}</small></button>`;
     h=`<h2>${t('roleQ')}</h2><p>${t('roleNote')}</p>
-      <div class="gl" style="gap:8px">${rb('H','Hammers',t('roleHs'))}${rb('A',t('roleA'),t('roleAs'))}${rb('both',t('roleB'),t('roleBs'))}</div>`;
+      <div class="gl" style="gap:8px">${rb('H',sideName('H'),t('roleHs2',sideName('H')))}${rb('A',sideName('A'),t('roleHs2',sideName('A')))}${rb('both',t('roleB'),t('roleBs'))}</div>`;
   }else if(sheet.kind==='newgame'){
     const n=sheet.ng;
     const opt=(k,v,l)=>`<button class="big" data-act="ng" data-k="${k}" data-v="${v}" aria-pressed="${n[k]===v}">${l}</button>`;
     const g3='style="grid-template-columns:repeat(3,1fr)"';
+    const x=n.kind==='x';
     h=`<h2>${t('newGameT')}</h2>
-      <span class="lbl2">${t('team')}</span><div class="grid4" ${g3}>${TEAMS.map(x=>opt('team',x,x)).join('')}</div>
-      <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${COMPS.map(x=>opt('comp',x,x)).join('')}</div>
-      <label class="lbl2" for="ng-opp">${t('opponent')}</label><input class="field-in" id="ng-opp" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">
-      <span class="lbl2">${t('starts')}</span><div class="grid2">${opt('start','H','Hammers')}${opt('start','A',t('opponent'))}</div>
+      <div class="grid2">${opt('kind','h',`${t('ngOurs')}<small>${t('ngOursS')}</small>`)}${opt('kind','x',`${t('ngOther')}<small>${t('ngOtherS')}</small>`)}</div>
+      ${x?'':`<span class="lbl2">${t('team')}</span><div class="grid4" ${g3}>${TEAMS.map(x=>opt('team',x,x)).join('')}</div>`}
+      <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${allComps().map(x=>opt('comp',x,esc(x))).join('')}<button class="big" data-act="ngcompnew" aria-pressed="${!!n.compNew}">+ ${t('compOther')}</button></div>
+      ${n.compNew?`<input class="field-in" id="ng-comp" maxlength="40" value="${esc(n.compTxt||'')}" placeholder="${t('compPh')}" autocomplete="off">`:''}
+      ${x?`<label class="lbl2" for="ng-home">${t('ngTeam1')}</label><input class="field-in" id="ng-home" value="${esc(n.home||'')}" placeholder="${t('teamName')}" autocomplete="off">`:''}
+      <label class="lbl2" for="ng-opp">${x?t('ngTeam2'):t('opponent')}</label><input class="field-in" id="ng-opp" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">
+      <span class="lbl2">${t('starts')}</span><div class="grid2">${opt('start','H',x?esc(n.home||t('ngTeam1')):'Hammers')}${opt('start','A',x?esc(n.opp||t('ngTeam2')):t('opponent'))}</div>
+      ${x?`<span class="lbl2">${t('ngQuick')}</span><div class="grid2">${opt('quick','1',`${t('ngQuickY')}<small>${t('ngQuickYS')}</small>`)}${opt('quick','0',`${t('ngQuickN')}<small>${t('ngQuickNS')}</small>`)}</div>`:''}
       ${cloud.db&&cloud.canWrite?`<span class="lbl2">${t('visLbl')}</span><div class="grid2">${opt('vis','team',`${t('visTeam')}<small>${t('visTeamS')}</small>`)}${opt('vis','private',`🔒 ${t('visMe')}<small>${t('visMeS')}</small>`)}</div>`:`<p>${t('willLocal')}</p>`}
       <button class="primary" data-act="ngcreate">${t('start')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='help'){
@@ -2181,7 +2228,7 @@ function toast(msg){
 function numSide(st){const s=draft&&draft.kind==='conv'?draft.side:st.poss;return draft&&draft.step==='by'?other(s):s}
 function csv(){
   replay();
-  const lines=g.events.filter(e=>e.t==='play'||e.t==='conv').map(e=>[g.date,g.team,g.comp,g.opp,e._half,e._side==='H'?'Hammers':g.opp,e.t==='conv'?'':e._down,
+  const lines=g.events.filter(e=>e.t==='play'||e.t==='conv').map(e=>[g.date,g.team,g.comp,g.opp,e._half,e._side==='H'?(g.scout?g.home:'Hammers'):g.opp,e.t==='conv'?'':e._down,
     e.t==='conv'?t('kind').conv+' '+e.pts:t('kind')[e.kind],e.t==='conv'?t('kind').conv:isGL(e.zone)?'GL':t('mapField'),e.zone?zoneName(e.zone):'',e.rec??'',e.res,e.dby??'',
     e.fd?1:0,e.form||'',e.qb2?1:0,e.pick6?1:0,e.ret??'',e.annul?1:0,e.yds??'',e.yac??'',e.qb??'',e.call||'',e.fby??'',e.pbu??'',e.vt!=null?fmtT(e.vt):'',e.rv?1:0,e.note||'',e.t==='conv'||e._dist==null?'':e._goal?'goal':e._dist,e.t==='conv'?'':spotTxt(e._spot)]
     .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
@@ -2252,9 +2299,14 @@ document.addEventListener('click',ev=>{
     case 'pickgame':sheet=null;document.getElementById('layer').innerHTML='';if(view==='home')view='reg';selectGame(b.dataset.id);break;
     case 'delgame':if(!sheet.delc){sheet.delc=true;renderSheet();break}
       {const id=g.id;sheet=null;document.getElementById('layer').innerHTML='';S().remove(id);curId=null;selectGame(games.find(x=>x.id!==id).id)}break;
-    case 'newgame':openSheet('newgame',{ng:{team:'Elite',comp:'LFFF1',opp:'',start:'H',vis:'team'}});break;
-    case 'ng':sheet.ng.opp=(document.getElementById('ng-opp')||{}).value||sheet.ng.opp;sheet.ng[b.dataset.k]=b.dataset.v;renderSheet();break;
+    case 'newgame':openSheet('newgame',{ng:{kind:'h',team:'Elite',comp:'LFFF1',opp:'',home:'',start:'H',vis:'team',quick:'1'}});break;
+    case 'ng':case 'ngcompnew':{const o=document.getElementById('ng-opp'),hm=document.getElementById('ng-home'),cp=document.getElementById('ng-comp');
+      if(o)sheet.ng.opp=o.value;if(hm)sheet.ng.home=hm.value;if(cp)sheet.ng.compTxt=cp.value;
+      if(a==='ngcompnew'){sheet.ng.compNew=true;sheet.ng.comp='';renderSheet();const i=document.getElementById('ng-comp');if(i)i.focus();break}
+      if(b.dataset.k==='comp')sheet.ng.compNew=false;sheet.ng[b.dataset.k]=b.dataset.v;renderSheet();break}
     case 'ngcreate':{const n=sheet.ng;n.opp=(document.getElementById('ng-opp').value||'').trim();
+      if(n.compNew){const c=(document.getElementById('ng-comp').value||'').trim();if(!c){toast(t('compType'));break}n.comp=c}
+      if(n.kind==='x'){n.home=(document.getElementById('ng-home').value||'').trim();if(!n.home||!n.opp){toast(t('ngNames'));break}n.scout=true;n.quick=n.quick!=='0';n.team=teamForComp(n.comp)}
       const target=(cloud.db&&cloud.canWrite)?cloudStore:local;
       const meta=newMeta(n);if(target===cloudStore){meta.owner=me;meta.visibility=n.vis||'team'}const id=target.create(meta);sheet=null;document.getElementById('layer').innerHTML='';view='reg';an.side='H';
       selectGame(id);toast(t('gameCreated'));break}
@@ -2273,6 +2325,7 @@ document.addEventListener('click',ev=>{
     case 'lang':{lang=b.dataset.l;lsSet(LS_LANG,lang);render();if(sheet){if(sheet.kind==='help')sheet.sec=null;renderSheet()}break}
     case 'help':openSheet('help',{sec:b.dataset.sec||''});break;
     case 'members':openSheet('members');break;
+    case 'quick':{const q=!g.quick;updGame({quick:q});setTimeout(renderSheet,50);toast(q?t('quickOn'):t('quickOff'));break}
     case 'other':if(!readOnly()){draft=null;runMode=false;openSheet('other')}break;
     case 'safety':case 'badsnap':{closeSheet();const sf=a==='safety';
       act(grp=>addEv({t:'play',kind:sf?'safety':'snap',zone:null,rec:null,res:sf?'SF':'BS',fd:false,form:g.curForm[st.poss]||null,qb2:false,annul:false},grp));
