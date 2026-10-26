@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.11.0';
+const APP_VERSION='1.11.1';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -606,7 +606,10 @@ const cloudStore={
   remove(gid){const G=games.find(x=>x.id===gid);(G&&G.id===g.id?g.events:[]).forEach(e=>cloud.outbox.push({k:'del',path:evPath(gid,e.id)}));
     queue({k:'del',path:'games/'+gid})}
 };
-function overlayOps(){const now=Date.now();cloud.recent=cloud.recent.filter(r=>now-r.at<6000);return [...cloud.recent.map(r=>r.op),...cloud.outbox]}
+/* writes already sent stay on screen for 6 s; plays of the open game stay until an events snapshot that came after them (at most 10 min) */
+function overlayOps(){const now=Date.now(), evp=cloud.subGid?`games/${cloud.subGid}/events/`:null;
+  cloud.recent=cloud.recent.filter(r=>now-r.at<6000||(now-r.at<600000&&!!evp&&r.op.path.startsWith(evp)&&!(cloud.evSnapAt>r.at)));
+  return [...cloud.recent.map(r=>r.op),...cloud.outbox]}
 function cloudGames(){
   const m={};for(const id in cloud.remoteGames)m[id]=cloud.remoteGames[id];
   for(const op of overlayOps()){const p=op.path.split('/');if(p.length!==2||p[0]!=='games')continue;const id=p[1];
@@ -622,13 +625,18 @@ function cloudEvents(gid){
     if(op.k==='set')m[id]=op.body;else if(op.k==='del')delete m[id]}
   return Object.entries(m).map(([id,b])=>({...clone(b),id}));
 }
-function subscribeEvents(gid){
-  if(cloud.subGid===gid)return;
+/* live events of the open game. A refused listener (for example a game created a moment ago, not on the server yet)
+   is tried again with a growing delay instead of being dropped */
+function subscribeEvents(gid,retry){
+  if(cloud.subGid===gid&&!retry)return;
   if(cloud.unsubEv){cloud.unsubEv();cloud.unsubEv=null}
-  cloud.subGid=gid;cloud.remoteEv={};
+  if(cloud.subGid!==gid){cloud.remoteEv={};cloud.evSnapAt=0;cloud.evTries=0}
+  cloud.subGid=gid;
   if(!cloud.db||!gid)return;
+  const again=()=>{cloud.unsubEv=null;if(cloud.subGid!==gid)return;const n=cloud.evTries=(cloud.evTries||0)+1;
+    setTimeout(()=>{if(cloud.subGid===gid&&!cloud.unsubEv)subscribeEvents(gid,true)},Math.min(30000,1500*2**Math.min(n-1,4)))};
   try{cloud.unsubEv=cloud.db.collection(`games/${gid}/events`).orderBy('ts').limit(1000).onSnapshot(s=>{
-    const m={};s.docs.forEach(d=>{m[d.id]=d.data()});cloud.remoteEv=m;refresh()},()=>{})}catch(e){}
+    const m={};s.docs.forEach(d=>{m[d.id]=d.data()});cloud.remoteEv=m;cloud.evSnapAt=Date.now();cloud.evTries=0;refresh()},again)}catch(e){again()}
 }
 let flushing=false;
 async function flush(){
