@@ -118,7 +118,7 @@ pt:{
   vPopBlocked:'O browser bloqueou a janela. Autoriza pop-ups para este site e tenta outra vez.', vWin:'Vídeo',
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
-  insTag:'inserida na review',
+  insTag:'inserida na review', tDragS:'Arrasta a bola até onde acabou a jogada: a lupa mostra a jarda e as jardas ficam preenchidas. Até à end zone, a jogada passa a TD.',
   spotQ2:'Onde está a bola agora? Arrasta a bola', spotHint2:'A linha de scrimmage não era conhecida: marca onde está a bola e as jardas voltam a contar', postSaved:'Guardado',
   skip:'Saltar', spotQ:'Onde acabou a jogada? Arrasta a bola', spotHint:'Arrasta a bola ou escolhe as jardas',
   postSave:'Guardar', postT:'Depois de cada jogada', postOnS:'pergunta o sítio da bola e quem tirou a flag', postOffS:'desligado', postOnT:'Pergunta o sítio da bola e a flag depois de cada jogada', postOffT:'Já não pergunta depois de cada jogada',
@@ -287,7 +287,7 @@ en:{
   vPopBlocked:'The browser blocked the window. Allow pop-ups for this site and try again.', vWin:'Video',
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
-  insTag:'inserted in review',
+  insTag:'inserted in review', tDragS:'Drag the ball to where the play ended: the loupe shows the yard line and the yards are filled in. Into the end zone, the play becomes a TD.',
   spotQ2:'Where is the ball now? Drag the ball', spotHint2:'The line of scrimmage was not known: mark where the ball is and yards count again', postSaved:'Saved',
   skip:'Skip', spotQ:'Where did the play end? Drag the ball', spotHint:'Drag the ball or pick the yards',
   postSave:'Save', postT:'After each play', postOnS:'asks for the ball spot and who pulled the flag', postOffS:'off', postOnT:'Asks for the ball spot and the flag after each play', postOffT:'No longer asks after each play',
@@ -458,7 +458,8 @@ function helpData(){
       <li>Vê o clip da jogada e completa: <b>jardas</b>, <b>YAC</b> nos completos, <b>QB</b>, <b>formação</b> e <b>nome da jogada</b> (opcional) quando atacamos. Quando defendemos: QB e formação do adversário, <b>quem tirou a flag</b> e <b>PBU</b>.</li>
       <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou.</li>
       <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte. Na última jogada, o botão passa a <b>Nova jogada</b> e cria a seguinte, como no Registo: depois de um TD é a conversão (1 ou 2 pts, ou <b>Sem conversão</b>), senão um passe que podes mudar para corrida ou sack. Assim dá para registar o jogo todo a partir da tape.</li></ol>
-      <ul><li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (0-5, 5-10, 10-15, 15+).</li>
+      <ul><li><b>Jardas no campo</b>: por cima das jardas há uma faixa de campo com a linha de scrimmage (azul) e o meio-campo (amarelo). Arrasta a bola até onde acabou a jogada: uma lupa mostra a jarda exata e as jardas ficam preenchidas. Se a arrastares até à end zone, um completo ou uma corrida passa a TD. Serve também para corrigir o que foi marcado no live.</li>
+      <li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (0-5, 5-10, 10-15, 15+).</li>
       <li>QB e formação vêm preenchidos com os da jogada anterior (tracejado). Só tocas se mudarem.</li>
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>⚑ Falta</b> regista uma falta nesta jogada: escolhes a equipa e a falta, e a app aplica as jardas a partir do sítio certo, o efeito no down e o novo spot da bola.</li>
@@ -565,7 +566,8 @@ function helpData(){
       <li>Watch the play's clip and fill in: <b>yards</b>, <b>YAC</b> on completions, <b>QB</b>, <b>formation</b> and <b>play name</b> (optional) when we are on offense. On defense: opponent QB and formation, <b>who pulled the flag</b> and <b>PBU</b>.</li>
       <li>Fix the type, result, zone or receiver if the live tracking got it wrong.</li>
       <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play. On the last play the button becomes <b>New play</b> and creates the next one, like the Track tab: after a TD it is the conversion (1 or 2 pts, or <b>No conversion</b>), otherwise a pass you can switch to run or sack. So a whole game can be tracked from the tape.</li></ol>
-      <ul><li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (0-5, 5-10, 10-15, 15+).</li>
+      <ul><li><b>Yards on the field</b>: above the yards there is a field strip with the line of scrimmage (blue) and midfield (yellow). Drag the ball to where the play ended: a loupe shows the exact yard line and the yards are filled in. Dragging a completion or a run into the end zone turns it into a TD. It also fixes what was marked live.</li>
+      <li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (0-5, 5-10, 10-15, 15+).</li>
       <li>QB and formation come filled in from the previous play (dashed). Only tap if they change.</li>
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>⚑ Foul</b> records a foul on this play: pick the team and the foul, and the app applies the yards from the right spot, the effect on the down and the new ball spot.</li>
@@ -1034,7 +1036,7 @@ function render(){
     ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape')+'<span class="beta">BETA</span>':t('tabs')[k]}</button>`).join('')}
   </nav>
   ${view==='reg'?regView(st):view==='tape'?tapeView():view==='ana'?anaView():logView()}`;
-  if(view==='tape')mountPlayer();
+  if(view==='tape'){mountPlayer();bindTapeSpot()}
   animateRender(st);
   if(pendingReload)setTimeout(reloadIfIdle,300);
 }
@@ -1798,9 +1800,30 @@ function penLines(e){
     ${readOnly()?'':`<button class="linkbtn" data-act="tpenrm" data-id="${pe.id}">${t('penRemove')}</button>`}</div>`).join('')}</div>`;
 }
 function tapeView(){return `<div class="tape"><section class="vpane" id="vpane">${vpaneHTML()}</section><section class="tpanel" id="tpanel">${tapePanel()}</section></div>`}
+/* tape review: drag the ball to where the play ended (a loupe shows the yard line) and the yards are filled in */
+function tapeStrip(e){
+  if(e._spot==null||e.t!=='play')return '';
+  const los=e._spot, end=e.yds!=null?Math.max(0,Math.min(FIELD,los+e.yds)):null;
+  return `<div class="fs-spot side-${e._side}" id="tspotbar" data-los="${los}"><div class="fs-f"><b class="fs-ez own"></b><b class="fs-ez opp"></b>${fieldLines()}
+    ${e._goal?'':`<i class="fs-fd" style="left:${spX(MID)}%"></i>`}<i class="fs-los" style="left:${spX(los)}%"></i>
+    <span class="fs-ball${end==null?' ghost':''}" id="tspball" style="left:${spX(end??los)}%">${BALL}</span><span class="fs-loupe" id="tsploupe"></span></div>
+    <p class="note">${t('tDragS')}</p></div>`;
+}
+function bindTapeSpot(){
+  const bar=document.getElementById('tspotbar');if(!bar||readOnly())return;
+  const ff=bar.querySelector('.fs-f'), ball=document.getElementById('tspball'), lp=document.getElementById('tsploupe'), los=+bar.dataset.los;
+  const at=x=>{const r=ff.getBoundingClientRect();return Math.max(0,Math.min(FIELD,Math.round(((x-r.left)/r.width*100-6)/88*FIELD)))};
+  let on=false, v=null;
+  const show=x=>{v=at(x);ball.style.left=spX(v)+'%';ball.classList.remove('ghost');lp.style.left=spX(v)+'%';lp.textContent=v>=FIELD?'TD':`${spotTxt(v)} · ${v-los>0?'+':''}${v-los}`;lp.classList.add('on')};
+  ff.addEventListener('pointerdown',ev=>{on=true;ff.setPointerCapture(ev.pointerId);show(ev.clientX);ev.preventDefault()});
+  ff.addEventListener('pointermove',ev=>{if(on)show(ev.clientX)});
+  const end=()=>{if(!on)return;on=false;lp.classList.remove('on');const e=tapeCur().e;if(!e||v==null)return;
+    const patch=v>=FIELD&&(e.res==='C'||e.res==='R')?{res:'TD',yds:null}:{yds:v-los};act(grp=>chEv(e,patch,grp))};
+  ff.addEventListener('pointerup',end);ff.addEventListener('pointercancel',end);
+}
 function tapeUpdate(){
   const P=document.getElementById('tpanel'), a=document.activeElement, keep=a&&a.id==='t-note'?{v:a.value,s:a.selectionStart,id:tp.id}:null;
-  P.innerHTML=tapePanel();
+  P.innerHTML=tapePanel();bindTapeSpot();
   if(keep&&keep.id===tp.id){const n=document.getElementById('t-note');if(n){n.value=keep.v;n.focus();try{n.setSelectionRange(keep.s,keep.s)}catch(e){}}}
   mountPlayer();
 }
@@ -1859,7 +1882,7 @@ function tapePanel0(){
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
       <p class="note">${e._spot==null?t('tSpotQ'):e.spot!=null?t('tManualS'):t('tAutoS')}${e.spot!=null&&!readOnly()?` · <button class="linkbtn" data-act="tspotauto">${t('tSpotAuto')}</button>`:''}</p>`)}
-    ${conv?'':blk(t('tYds'),t('tYdsS'),yds('yds',e.yds??null))}
+    ${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
     ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
     ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
     ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}

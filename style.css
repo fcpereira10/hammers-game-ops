@@ -794,3 +794,5 @@ button.az:not(:disabled):hover{box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
 button.slot{text-align:left;cursor:pointer;font:inherit;color:inherit}
 .slot.qbslot{flex:0 0 auto;min-width:76px;border-style:solid}
 @media (max-width:560px){.fs-q{grid-template-columns:repeat(4,minmax(0,1fr))}.slot.qbslot{min-width:64px}}
+.fs-spot .fs-f + .note{margin-top:4px}
+#tspotbar .fs-f{height:64px}
