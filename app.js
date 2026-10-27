@@ -386,12 +386,12 @@ function helpData(){
       <p>O registo, a tape review e a análise funcionam como num jogo dos Hammers, com o nome das duas equipas e outra cor. Estes jogos entram no <b>relatório de adversário</b> das duas equipas, juntos com os jogos contra nós, e na faixa de <b>scouting ao vivo</b>. Na lista de jogos do relatório aparecem marcados como scouting.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
       <li>Toca na <b>zona</b> para onde a bola foi lançada. Abre a folha da jogada.</li>
-      <li>Escolhe o <b>resultado</b>: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('td','TD')} ou ${btn('int','INT')}.</li>
+      <li>Escolhe o <b>resultado</b>: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('',t('tagR'))}, ${btn('td','TD')} ou ${btn('int','INT')}. Numa corrida, a zona é onde a corrida acabou.</li>
       <li>Toca no <b>número</b> do recetor (o ponto laranja marca o último).</li>
       <li>Se quiseres, num completo ou corrida: arrasta a bola até <b>onde acabou a jogada</b> (uma lupa mostra a jarda exata) ou toca nas jardas, e marca <b>quem tirou a flag</b>.</li>
       <li>Toca em <b>Guardar jogada</b>. Tocar fora da folha ou em Cancelar não grava nada.</li></ol>
       <p>Com o sítio da bola, a app calcula as jardas, o down e a distância, o 1º down ao passar o meio-campo e o "& Goal". Arrastar até à end zone passa a jogada a TD. Se a app não souber onde está a bola (uma jogada sem jardas, ou depois de um INT), pergunta <b>onde está a bola agora</b>.</p>
-      <p>Para corridas, toca primeiro em ${btn('',t('run'))} e depois na zona. No sack, toca em ${btn('int',t('sack'))} e no número de quem fez o sack; depois abre uma folha curta para o sítio da bola.</p>
+      <p>Para corridas, escolhe <b>Corrida</b> na folha (ou toca primeiro em ${btn('',t('run'))} e depois na zona). No sack, toca em ${btn('int',t('sack'))} e no número de quem fez o sack; depois abre uma folha curta para o sítio da bola.</p>
       <p>Para o registo mais simples (zona, resultado e número no ecrã, sem folha), desliga ${btn('',t('game'))} → <b>Depois de cada jogada</b>. Nos jogos em modo rápido vem desligado.</p>
       <dl class="hl">
       <dt>${btn('int','INT')}</dt><dd>Escolhe também <b>quem intercetou</b>. A posse muda e a barra pergunta se foi <b>pick-6</b>.</dd>
@@ -496,12 +496,12 @@ function helpData(){
       <p>Tracking, the tape review and the analysis work like in a Hammers game, with both teams' names and another color. These games count in the <b>opponent report</b> of both teams, together with the games against us, and in the <b>live scouting</b> strip. In the report's game list they are marked as scouting.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
       <li>Tap the <b>zone</b> the ball was thrown to. The play sheet opens.</li>
-      <li>Pick the <b>result</b>: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('td','TD')} or ${btn('int','INT')}.</li>
+      <li>Pick the <b>result</b>: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('',t('tagR'))}, ${btn('td','TD')} or ${btn('int','INT')}. For a run, the zone is where the run ended.</li>
       <li>Tap the receiver's <b>number</b> (the orange dot marks the last one).</li>
       <li>If you like, on a completion or a run: drag the ball to <b>where the play ended</b> (a loupe shows the exact yard line) or tap the yards, and mark <b>who pulled the flag</b>.</li>
       <li>Tap <b>Save play</b>. Tapping outside the sheet or Cancel saves nothing.</li></ol>
       <p>With the ball spot, the app works out the yards, the down and distance, the 1st down when crossing midfield and "& Goal". Dragging into the end zone turns the play into a TD. If the app does not know where the ball is (a play without yards, or after an INT), it asks <b>where the ball is now</b>.</p>
-      <p>For runs, tap ${btn('',t('run'))} first and then the zone. For a sack, tap ${btn('int',t('sack'))} and the number of who made it; a short sheet then asks for the ball spot.</p>
+      <p>For runs, pick <b>Run</b> in the sheet (or tap ${btn('',t('run'))} first and then the zone). For a sack, tap ${btn('int',t('sack'))} and the number of who made it; a short sheet then asks for the ball spot.</p>
       <p>For the simplest tracking (zone, result and number on the screen, no sheet), turn off ${btn('',t('game'))} → <b>After each play</b>. It is off in quick mode games.</p>
       <dl class="hl">
       <dt>${btn('int','INT')}</dt><dd>Also pick <b>who intercepted</b>. Possession changes and the bar asks whether it was a <b>pick-6</b>.</dd>
@@ -2169,7 +2169,8 @@ function renderSheet(){
     const sd=sheet.side, ds=other(sd), key=scKeyOf(g,sd), run=d.kind==='run', gain=d.res==='C'||d.res==='R';
     const cnt={};g.events.forEach(x=>{if(x.t==='play'&&x._side===sd&&x.rec!=null)cnt[x.rec]=(cnt[x.rec]||0)+1});
     let lastRec=null;for(let i=g.events.length-1;i>=0;i--){const x=g.events[i];if(x.t==='play'&&x._side===sd&&x.rec!=null&&!x.annul){lastRec=x.rec;break}}
-    const opts=run?[['R',t('tagR')],['TD','TD']]:[['C',t('tagC')],['X',t('tagX')],['TD','TD'],['INT','INT']];
+    // one row for passes and runs: Run turns the play into a run, Complete / Incomplete / INT into a pass, TD keeps the kind
+    const opts=[['C',t('tagC')],['X',t('tagX')],['R',t('tagR')],['TD','TD'],['INT','INT']];
     const recs=[...g.roster[sd]].sort((a,b)=>(cnt[b]||0)-(cnt[a]||0)||a-b);
     h=`<div class="help-head"><h2>${zoneName(d.zone)}<small class="pk-dd">${st.spot!=null?ddTxt({_down:st.down,_dist:st.goal?FIELD-st.spot:MID-st.spot,_goal:st.goal}):ord(st.down)+' '+t('down')}</small></h2><button class="ghost" data-act="pkcancel">${t('cancel')}</button></div>
       <div class="resrow">${opts.map(([v,l])=>`<button class="rb rb-${v}" data-act="pkres" data-r="${v}" aria-pressed="${d.res===v}">${l}</button>`).join('')}</div>
@@ -2545,7 +2546,7 @@ document.addEventListener('click',ev=>{
     case 'teamedit':openSheet('teamedit',{key:b.dataset.key});break;
     case 'postv':{const T=sheet.kind==='play'?draft:sheet;T.v=Math.max(0,Math.min(FIELD,sheet.los+(+b.dataset.n)));renderSheet();break}
     case 'postf':{const T=sheet.kind==='play'?draft:sheet, n=+b.dataset.n;T.f=T.f===n?null:n;renderSheet();break}
-    case 'pkres':draft.res=b.dataset.r;if(draft.res!=='INT')draft.by=null;renderSheet();break;
+    case 'pkres':{const r=b.dataset.r;draft.res=r;if(r==='R')draft.kind='run';else if(r!=='TD')draft.kind='pass';if(r!=='INT')draft.by=null;renderSheet();break}
     case 'pkrec':{const n=+b.dataset.n;draft.rec=draft.rec===n?null:n;renderSheet();break}
     case 'pkby':{const n=+b.dataset.n;draft.by=draft.by===n?null:n;renderSheet();break}
     case 'pkaddrec':case 'pkaddby':{const id=a==='pkaddrec'?'pk-rn':'pk-in', v=parseInt((document.getElementById(id)||{}).value,10);if(isNaN(v)){toast(t('typeNum'));break}
