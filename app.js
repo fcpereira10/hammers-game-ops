@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.11.1';
+const APP_VERSION='1.12.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -119,6 +119,10 @@ pt:{
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review',
+  glTeam:'Equipa', glAllTeams:'Todas as equipas', glAllComps:'Todas as competições', glGroup:'Agrupar por', glByDate:'Data', glByTeam:'Equipa', glByComp:'Competição', glScout:'Scouting (outras equipas)',
+  glCount:(a,b)=>a===b?`${b} jogos`:`${a} de ${b} jogos`,
+  ntBtn:'Nova equipa', ntT:'Nova equipa', ntLead:'Cria a ficha de uma equipa antes de haver jogos com ela, para preparar os jogadores e o plano de jogo. Quando registares o primeiro jogo com este nome, junta-se a esta ficha.',
+  ntName:'Escreve o nome da equipa.', ntCreate:'Criar equipa', ntMade:'Equipa criada', ntExists:'Essa equipa já existe', tmNumPh:'nº', tmAddNum:'Número',
   compOther:'Outra', compPh:'ex.: Taça de Portugal, Torneio de Lisboa', compType:'Escreve o nome da competição.',
   ngOurs:'Jogo dos Hammers', ngOursS:'contra um adversário', ngOther:'Outras equipas', ngOtherS:'scouting de um jogo entre duas equipas',
   ngTeam1:'Equipa 1', ngTeam2:'Equipa 2', ngNames:'Escreve o nome das duas equipas.', ngQuick:'Modo rápido', ngQuickY:'Sim', ngQuickYS:'só zona e resultado, 2 toques', ngQuickN:'Não', ngQuickNS:'com números de camisola',
@@ -280,6 +284,10 @@ en:{
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review',
+  glTeam:'Team', glAllTeams:'All teams', glAllComps:'All competitions', glGroup:'Group by', glByDate:'Date', glByTeam:'Team', glByComp:'Competition', glScout:'Scouting (other teams)',
+  glCount:(a,b)=>a===b?`${b} games`:`${a} of ${b} games`,
+  ntBtn:'New team', ntT:'New team', ntLead:'Create a team sheet before there are games with it, to prepare the players and the game plan. When you track the first game with this name, it joins this sheet.',
+  ntName:'Type the team name.', ntCreate:'Create team', ntMade:'Team created', ntExists:'That team already exists', tmNumPh:'no.', tmAddNum:'Number',
   compOther:'Other', compPh:'e.g. Portugal Cup, Lisbon Tournament', compType:'Type the competition name.',
   ngOurs:'Hammers game', ngOursS:'against an opponent', ngOther:'Other teams', ngOtherS:'scouting a game between two teams',
   ngTeam1:'Team 1', ngTeam2:'Team 2', ngNames:'Type the names of both teams.', ngQuick:'Quick mode', ngQuickY:'Yes', ngQuickYS:'zone and result only, 2 taps', ngQuickN:'No', ngQuickNS:'with jersey numbers',
@@ -359,7 +367,8 @@ function helpData(){
       <li>Escolhe a equipa (Elite, Academy, Girls) e a competição, e escreve o adversário. Para uma competição que não está na lista (uma taça ou um torneio), toca em <b>+ Outra</b> e escreve o nome: fica na lista para os jogos seguintes.</li>
       <li>Escolhe quem começa a atacar.</li>
       <li>Escolhe <b>que equipa segues</b>: Hammers, Adversário ou as duas (se estiveres sozinho).</li></ol>
-      <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))} → <b>Jogos</b>.</p>`},
+      <p>Ao escrever o nome de uma equipa, a app sugere os nomes já usados: toca na sugestão para não criar a mesma equipa com outro nome.</p>
+      <p>O jogo "Demo FC" é só um exemplo para veres como fica. Podes trocar de jogo a qualquer momento em ${btn('',t('game'))} → <b>Jogos</b>. Aí podes filtrar os jogos por equipa (uma das nossas ou um adversário) e por competição, e agrupá-los por data, equipa ou competição.</p>`},
     {id:'xgame',t:'Jogos de outras equipas',b:`<p>Para fazer scouting de um jogo entre duas equipas que não são os Hammers (por exemplo, nos torneios da LFFF):</p>
       <ol><li>Em <b>+ Novo jogo</b>, escolhe <b>Outras equipas</b>.</li>
       <li>Escolhe a competição (ou <b>+ Outra</b>) e escreve o nome das duas equipas. O jogo entra no relatório dessas equipas, junto com os jogos da equipa nossa que joga nessa competição. Numa competição onde ainda não temos jogos, conta como Elite.</li>
@@ -420,6 +429,9 @@ function helpData(){
       <li><b>Por jogada do playbook</b> (só nos Hammers): quantas vezes chamamos cada jogada, em que downs e como corre. Toca numa jogada para filtrar o mapa. Os nomes vêm da tape review.</li>
       <li><b>Como defendem</b>: para onde se lhes atira e quem faz as jogadas (flags, PBU, INT, sacks).</li>
       <li><b>Jogos incluídos</b>: toca num jogo para o tirar do relatório.</li>
+      <li><b>+ Nova equipa</b>: cria a ficha de um adversário antes do primeiro jogo (nome e competição), para preparar os jogadores e o plano de jogo. O primeiro jogo registado com esse nome junta-se a ela.</li>
+      <li>Os nomes das equipas comparam-se sem maiúsculas, acentos nem espaços a mais: "Águias", "aguias" e "AGUIAS " são a mesma equipa. Para nomes diferentes da mesma equipa (por exemplo "Lumberjacks" e "Jacks"), usa "é a mesma equipa que" na ficha.</li>
+      <li><b>Competição</b>: se a equipa jogou em mais do que uma competição, escolhe uma para ver só esses jogos.</li>
       <li><b>Ficha da equipa</b> (botão junto ao nome): cor, nome de cada jogador por número e "é a mesma equipa que", para juntar jogos onde o nome foi escrito de outra forma. Os nomes aparecem no registo, nas tabelas e no resumo, e a cor no marcador.</li>
       <li><b>Plano de jogo</b>: notas dos treinadores para este adversário, partilhadas com a equipa. Aparecem no registo, numa caixa por cima do campo, e na impressão.</li>
       <li><b>Ver no vídeo</b>: toca numa zona, ou no botão por baixo do mapa para as jogadas filtradas, e escolhe o jogo. A tape review abre só com essas jogadas e <b>Próxima</b> salta para a seguinte da lista. Só entram as jogadas que já têm tempo de vídeo.</li></ul>
@@ -457,7 +469,8 @@ function helpData(){
       <li>Pick the team (Elite, Academy, Girls) and the competition, and type the opponent. For a competition not on the list (a cup or a tournament), tap <b>+ Other</b> and type its name: it stays on the list for the next games.</li>
       <li>Pick who starts on offense.</li>
       <li>Pick <b>which team you follow</b>: Hammers, Opponent or both (if you are alone).</li></ol>
-      <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time in ${btn('',t('game'))} → <b>Games</b>.</p>`},
+      <p>While you type a team name, the app suggests the names already used: tap the suggestion so the same team is not created with another name.</p>
+      <p>The "Demo FC" game is just a sample so you can see how it looks. Switch games at any time in ${btn('',t('game'))} → <b>Games</b>. There you can filter games by team (one of ours or an opponent) and by competition, and group them by date, team or competition.</p>`},
     {id:'xgame',t:'Games between other teams',b:`<p>To scout a game between two teams that are not the Hammers (for example, at LFFF tournaments):</p>
       <ol><li>In <b>+ New game</b>, pick <b>Other teams</b>.</li>
       <li>Pick the competition (or <b>+ Other</b>) and type the names of both teams. The game joins those teams' reports, with the games of our team that plays in that competition. In a competition where we have no games yet, it counts as Elite.</li>
@@ -518,6 +531,9 @@ function helpData(){
       <li><b>By playbook call</b> (Hammers only): how often we call each play, on which downs and how it goes. Tap a play to filter the map. Play names come from the tape review.</li>
       <li><b>How they defend</b>: where teams throw on them and who makes the plays (flags, PBU, INT, sacks).</li>
       <li><b>Games included</b>: tap a game to leave it out of the report.</li>
+      <li><b>+ New team</b>: creates an opponent's sheet before the first game (name and competition), to prepare the players and the game plan. The first game tracked with that name joins it.</li>
+      <li>Team names are compared without case, accents or extra spaces: "Águias", "aguias" and "AGUIAS " are the same team. For different names of the same team (for example "Lumberjacks" and "Jacks"), use "same team as" on the sheet.</li>
+      <li><b>Competition</b>: if the team played in more than one competition, pick one to see only those games.</li>
       <li><b>Team sheet</b> (button next to the name): color, each player's name by number and "same team as", to join games where the name was written another way. Names show in tracking, the tables and the summary, and the color on the scoreboard.</li>
       <li><b>Game plan</b>: coaches' notes for this opponent, shared with the team. They show in tracking, in a box above the field, and when printing.</li>
       <li><b>Watch on video</b>: tap a zone, or the button under the map for the filtered plays, and pick the game. The tape review opens with just those plays and <b>Next</b> jumps to the next one in the list. Only plays that already have a video time are included.</li></ul>
@@ -667,15 +683,22 @@ function teamsAll(){
     if(op.k==='upd')m[p[1]]=merge(m[p[1]]||{},op.patch);else if(op.k==='del')delete m[p[1]]}
   return m;
 }
-const teamDoc=key=>teamsAll()[tid(key)]||null;
+/* team names are compared without case, accents or repeated spaces ("Águias  FC" = "aguias fc") */
+const normName=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
+const normKey=k=>String(k||'').split('|').map((p,i)=>i===2?normName(p):p).join('|');
+/* the sheet of a team, also when it was saved under an older spelling of the same key */
+function teamIdOf(key){const all=teamsAll(), id=tid(key);if(all[id])return id;const nk=normKey(key);
+  for(const i in all){const d=all[i];if(d&&d.key&&normKey(d.key)===nk)return i}return id}
+const teamDoc=key=>teamsAll()[teamIdOf(key)]||null;
 function saveTeam(key,patch){
-  patch={...patch,key,updated:Date.now()};
-  if(cloud.db){queue({k:'upd',path:'teams/'+tid(key),patch});return}
-  const m=teamsAll();m[tid(key)]=merge(m[tid(key)]||{},patch);lsSet(LS_TEAMS,JSON.stringify(m));refresh();
+  const id=teamIdOf(key);patch={...patch,key,updated:Date.now()};
+  if(cloud.db){queue({k:'upd',path:'teams/'+id,patch});return}
+  const m=teamsAll();m[id]=merge(m[id]||{},patch);lsSet(LS_TEAMS,JSON.stringify(m));refresh();
 }
 /* other spellings saved on a sheet point to that team */
 function aliasOf(base){
-  const all=teamsAll();for(const id in all){const d=all[id];if(d&&d.key&&d.key!==base&&(d.aliases||[]).some(a=>d.key.split('|').slice(0,2).join('|')+'|'+a===base))return d.key}
+  const nb=normKey(base), all=teamsAll();
+  for(const id in all){const d=all[id];if(d&&d.key&&normKey(d.key)!==nb&&(d.aliases||[]).some(a=>normKey(d.key.split('|').slice(0,2).join('|')+'|'+a)===nb))return d.key}
   return base;
 }
 const pName=(key,n)=>{const d=key&&teamDoc(key);return d&&d.players&&n!=null?d.players[n]||'':''};
@@ -954,6 +977,14 @@ function applyFoul(dec){
 const isGL=z=>!!z&&z[0]==='g';
 /* a scouting game goes with the team of ours that plays in its competition (so it joins the right opponent reports):
    the one we track most often in that competition, else LFFF1 Elite, LFFF2 Academy, LFFFW Girls */
+/* team names already used (games and team sheets), offered while typing a name */
+function knownTeams(){const m=new Map();const add=n=>{const k=normName(n), v=String(n||'').trim().replace(/\s+/g,' ');
+    // the spelling with accents wins over the same name without them
+    if(k&&(!m.has(k)||(v.normalize('NFD').length>v.length&&m.get(k).normalize('NFD').length===m.get(k).length)))m.set(k,v)};
+  Object.values(teamsAll()).forEach(d=>{if(d&&d.name&&d.key&&d.key.startsWith('A|'))add(d.name)});
+  games.forEach(x=>{if(x.store!=='demo'){add(x.opp);if(x.scout)add(x.home)}});
+  return [...m.values()].sort((a,b)=>a.localeCompare(b))}
+const teamList=()=>`<datalist id="dl-teams">${knownTeams().map(n=>`<option value="${esc(n)}"></option>`).join('')}</datalist>`;
 /* competitions: the LFFF ones plus every other one already used in a game (typed once in New game) */
 function allComps(){const l=[...COMPS];games.forEach(x=>{if(x.comp&&x.store!=='demo'&&!l.some(c=>c.toLowerCase()===String(x.comp).toLowerCase()))l.push(x.comp)});return l}
 function teamForComp(c){const m={};games.forEach(x=>{if(!x.scout&&x.store!=='demo'&&x.comp===c)m[x.team]=(m[x.team]||0)+1});
@@ -1147,6 +1178,9 @@ function liveScoutHTML(st,s){
   }
   return `<button class="scoutbar" data-act="scout" data-key="${esc(key)}"><span class="lbl2">${t('lsT',ready.length)}</span><b>${line}</b>${al.map(a=>`<span class="alert">⚠ ${a}</span>`).join('')}</button>`;
 }
+/* the team sheet keeps what was typed when it redraws (a color, a number added) */
+function teKeep(){const L=document.getElementById('layer');if(!L||!sheet)return;const dp={};L.querySelectorAll('[data-pn]').forEach(i=>{dp[i.dataset.pn]=i.value});sheet.dp=dp;
+  const nm=L.querySelector('#te-name');if(nm)sheet.nm=nm.value;const al=L.querySelectorAll('[data-al]');if(al.length)sheet.al=[...al].filter(i=>i.checked).map(i=>i.dataset.al)}
 /* the game plan for this opponent, folded, above the field */
 function planBox(){const d=teamDoc(scKeyOf(g,'A'));if(!d||!d.plan)return '';
   return `<details class="planbox"><summary>${t('planT')} · ${esc(d.name||g.opp)}</summary><p>${esc(d.plan).replace(/\n/g,'<br>')}</p></details>`}
@@ -1493,7 +1527,7 @@ function chartsHTML(P,downL,recL){
 const sc={mode:'rings',key:null,off:{},area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null};
 const scReset=()=>Object.assign(sc,{area:'field',kind:'pass',down:0,dist:0,pos:0,form:null,rec:null,call:null});
 let scFresh={}, demoX=null;
-const normOpp=x=>String(x||'').trim().toLowerCase();
+const normOpp=normName;
 /* the sample opponent gets two more sample games, so the report has games to add up in the demo and the preview */
 function scoutGames(){
   const l=games.filter(x=>x.store!=='demo'), d=games.find(x=>x.store==='demo');
@@ -1507,7 +1541,12 @@ function scoutTeams(){
   const m={};
   scoutGames().forEach(x=>['A','H'].forEach(s=>{const k=scKeyOf(x,s), us=k.startsWith('H|');
     const e=m[k]=m[k]||{key:k,side:us?'H':'A',name:us?'Hammers':(teamDoc(k)&&teamDoc(k).name)||(s==='H'?x.home:x.opp),team:x.team,demo:x.store==='demo',games:[],sideIn:{}};
-    e.games.push(x);e.sideIn[x.id]=s}));
+    e.games.push(x);e.sideIn[x.id]=s;
+    // without a sheet name, the spelling with accents wins over the same name without them
+    const nm=String(s==='H'?x.home:x.opp||'').trim();if(!us&&!(teamDoc(k)&&teamDoc(k).name)&&nm.normalize('NFD').length>nm.length&&String(e.name).normalize('NFD').length===String(e.name).length)e.name=nm}));
+  const all=teamsAll();for(const id in all){const d=all[id];if(!d||!d.manual||!d.key||!d.key.startsWith('A|'))continue;
+    const nk=normKey(aliasOf(d.key));if(Object.keys(m).some(k=>normKey(k)===nk))continue;
+    m[d.key]={key:d.key,side:'A',name:d.name||d.key.split('|')[2],team:d.key.split('|')[1],demo:false,games:[],sideIn:{},comps:d.comps||[]}}
   return Object.values(m).sort((a,b)=>(a.side==='H')-(b.side==='H')||b.games.length-a.games.length||String(a.name).localeCompare(String(b.name)));
 }
 /* shared games other than the open one are read once per visit to the report */
@@ -1537,12 +1576,13 @@ function scoutView(){
     </header>`;
   if(!team)return head+`<p class="note">${t('scNone')}</p>`;
   const S=team.side, O=other(S), us=S==='H', name=us?'Hammers':esc(team.name);
-  const list=team.games.slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(b.created||0)-(a.created||0));
+  const comps=[...new Set([...team.games.map(G=>G.comp),...(team.comps||[])])].filter(Boolean);if(sc.comp&&!comps.includes(sc.comp))sc.comp=null;
+  const list=team.games.filter(G=>!sc.comp||G.comp===sc.comp).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(b.created||0)-(a.created||0));
   list.forEach(scoutFetch);
   const R={};list.forEach(G=>{if(scoutReady(G))R[G.id]=scoutGame(G)});
   for(const id in R){R[id].S=team.sideIn[id];R[id].O=other(R[id].S)}
   const X=list.filter(G=>!sc.off[G.id]&&R[G.id]).map(G=>R[G.id]), waiting=list.filter(G=>!sc.off[G.id]&&!R[G.id]&&!(scoutEv[G.id]&&scoutEv[G.id].err)).length;
-  const tag=x=>x.side==='H'?esc(x.team):[...new Set(x.games.map(G=>G.comp))].map(esc).join(' / ');
+  const tag=x=>x.side==='H'?esc(x.team):[...new Set([...x.games.map(G=>G.comp),...(x.comps||[])])].map(esc).join(' / ');
   const opts=T.map(x=>`<option value="${esc(x.key)}" ${x.key===sc.key?'selected':''}>${x.side==='H'?t('scUs'):esc(x.name)} · ${tag(x)}${x.demo?' ('+t('sample')+')':''} · ${t('scGamesN',x.games.length)}</option>`).join('');
   // record and points, from the scouted team's side
   const nG=X.length, W=X.filter(x=>x.st.score[x.S]>x.st.score[x.O]).length, Lo=X.filter(x=>x.st.score[x.S]<x.st.score[x.O]).length;
@@ -1555,7 +1595,8 @@ function scoutView(){
         <div><b class="num">${avgPts('S')}</b><small>${t('scPtsFor')}</small></div>
         <div><b class="num">${avgPts('O')}</b><small>${t('scPtsAg')}</small></div>
       </div></section>`;
-  const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select></div>`;
+  const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select><button class="btn" data-act="newteam">+ ${t('ntBtn')}</button></div>
+    ${comps.length>1?`<div class="filters noprint"><span class="lbl2">${t('competition')}</span><div class="seg">${[['',t('allF')],...comps.map(c=>[c,esc(c)])].map(([v,l])=>`<button data-act="sccomp" data-v="${esc(v)}" aria-pressed="${(sc.comp||'')===v}">${l}</button>`).join('')}</div></div>`:''}`;
   const evs=k=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x[k]&&!e.annul));
   const off=evs('S'), def=evs('O'), DO=X.flatMap(x=>drivesOf(x.events,x.S)), DD=X.flatMap(x=>drivesOf(x.events,x.O));
   // key tendencies: plain numbers a coach can read before the game
@@ -2048,23 +2089,33 @@ function renderSheet(){
       <div class="zlist">${L.map(e=>`<div class="zrow"><i class="zdot ${dotCls(e)}">${e.t==='conv'?e.pts:e._down||''}</i>
         <span><b>${R[e.res]||e.res}${e.rec!=null?' · '+numTxt(view==='scout'?sc.key:scKeyOf(g,e._side),e.rec):''}</b><small>${[e.t==='conv'?t('conv')+' '+e.pts+' pt':e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),e.form?esc(e.form):'',e.call?esc(e.call):'',e.yds!=null?e.yds+' '+t('yardsShort'):'',e._g||''].filter(Boolean).join(' · ')}</small></span>${e.vt!=null?`<button class="zplay" data-act="zvideo" data-g="${e._gid||g.id}" data-start="${e.id}" aria-label="${t('vPlayOne')}">▶</button>`:''}</div>`).join('')}</div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
+  }else if(sheet.kind==='newteam'){
+    const cs=allComps();
+    h=`<div class="help-head"><h2>${t('ntT')}</h2><button class="ghost" data-act="close">✕</button></div><p>${t('ntLead')}</p>
+      <label class="lbl2" for="nt-name">${t('nameLbl')}</label><input class="field-in" id="nt-name" list="dl-teams" maxlength="40" value="${esc(sheet.nm||'')}" placeholder="${t('teamName')}" autocomplete="off">${teamList()}
+      <span class="lbl2">${t('competition')}</span><div class="grid4" style="grid-template-columns:repeat(3,1fr)">${cs.map(c=>`<button class="big" data-act="ntcomp" data-v="${esc(c)}" aria-pressed="${!sheet.compNew&&sheet.comp===c}">${esc(c)}</button>`).join('')}
+        <button class="big" data-act="ntcomp" data-v="" aria-pressed="${!!sheet.compNew}">+ ${t('compOther')}</button></div>
+      ${sheet.compNew?`<input class="field-in" id="nt-comp" maxlength="40" placeholder="${t('compPh')}" autocomplete="off">`:''}
+      <button class="primary" data-act="ntcreate">${t('ntCreate')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='teamedit'){
     const T=scoutTeams(), team=T.find(x=>x.key===sheet.key)||{games:[],side:'A',team:'',name:''}, d=teamDoc(sheet.key)||{}, us=team.side==='H';
     // numbers seen for this team: rosters of its games and the plays of the loaded ones
     const nums=new Set();team.games.forEach(G=>{const sd=(team.sideIn||{})[G.id]||team.side;((G.roster||{})[sd]||[]).forEach(n=>nums.add(+n));if(scoutReady(G))scoutGame(G).events.forEach(e=>{
       if(e._side===sd){if(e.rec!=null)nums.add(e.rec);if(e.qb!=null)nums.add(e.qb)}else{['dby','fby','pbu'].forEach(k=>{if(e[k]!=null)nums.add(e[k])})}})});
-    Object.keys(d.players||{}).forEach(n=>nums.add(+n));
+    Object.keys(d.players||{}).forEach(n=>nums.add(+n));(sheet.extra||[]).forEach(n=>nums.add(+n));
+    const dp=sheet.dp||{}, pv=n=>dp[n]!=null?dp[n]:(d.players||{})[n]||'';
     const others=T.filter(x=>x.side==='A'&&!us&&x.team===team.team&&x.key!==sheet.key&&!x.demo);
     const al=new Set(d.aliases||[]), cols=['#C8102E','#1F5FA8','#17804F','#6B3FA0','#E0A82A','#0E7C86','#3F4650','#111111'];
     h=`<div class="help-head"><h2>${t('tmT')}</h2><button class="ghost" data-act="close">✕</button></div>
-      <p>${esc(team.team)} · ${us?'Hammers':esc(team.name)}</p>
-      ${us?'':`<label class="lbl2" for="te-name">${t('nameLbl')}</label><input class="field-in" id="te-name" maxlength="40" value="${esc(d.name||team.name)}">
+      <p>${us?esc(team.team)+' · Hammers':[...new Set([...team.games.map(G=>G.comp),...(team.comps||[])])].filter(Boolean).map(esc).join(' / ')+' · '+esc(team.name)}</p>
+      ${us?'':`<label class="lbl2" for="te-name">${t('nameLbl')}</label><input class="field-in" id="te-name" maxlength="40" value="${esc(sheet.nm!=null?sheet.nm:d.name||team.name)}">
       <span class="lbl2">${t('tmColor')}</span><div class="swatches">${cols.map(c=>`<button class="sw" data-act="tecol" data-c="${c}" style="background:${c}" aria-pressed="${(sheet.col??d.color)===c}" aria-label="${c}"></button>`).join('')}
         <button class="sw none" data-act="tecol" data-c="" aria-pressed="${!(sheet.col??d.color)}">✕</button></div>`}
       <span class="lbl2">${t('tmPlayers')}</span><p class="note">${t('tmPlayersN')}</p>
-      <div class="tm-players">${[...nums].sort((a,b)=>a-b).map(n=>`<label class="tm-p"><b class="num">#${n}</b><input class="field-in" data-pn="${n}" maxlength="24" placeholder="${t('tmNamePh')}" value="${esc((d.players||{})[n]||'')}"></label>`).join('')||`<p class="note">${t('tmNoNums')}</p>`}</div>
+      <div class="tm-players">${[...nums].sort((a,b)=>a-b).map(n=>`<label class="tm-p"><b class="num">#${n}</b><input class="field-in" data-pn="${n}" maxlength="24" placeholder="${t('tmNamePh')}" value="${esc(pv(n))}"></label>`).join('')||`<p class="note">${t('tmNoNums')}</p>`}</div>
+      <div class="tm-add"><input class="field-in" id="te-num" type="number" inputmode="numeric" min="0" max="99" placeholder="${t('tmNumPh')}"><button class="btn" data-act="teaddnum">+ ${t('tmAddNum')}</button></div>
       ${others.length?`<span class="lbl2">${t('tmSame')}</span><p class="note">${t('tmSameN')}</p><div class="tm-al">${others.map(o=>{const a=o.key.split('|')[2];
-        return `<label class="check"><input type="checkbox" data-al="${esc(a)}" ${al.has(a)?'checked':''}>${esc(o.name)} <small>${t('scGamesN',o.games.length)}</small></label>`}).join('')}</div>`:''}
+        return `<label class="check"><input type="checkbox" data-al="${esc(a)}" ${(sheet.al?sheet.al.includes(a):al.has(a))?'checked':''}>${esc(o.name)} <small>${t('scGamesN',o.games.length)}</small></label>`}).join('')}</div>`:''}
       <button class="primary" data-act="tesave">${t('tmSave')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='other'){
     h=`<h2>${t('otherT')}</h2><p>${t('offense')}: <b>${sideName(st.poss)}</b> · ${ord(st.down)} ${t('down')}</p>
@@ -2114,7 +2165,20 @@ function renderSheet(){
     const tag=x=>x.store==='cloud'?`<span class="owner">${x.owner?t('byOwner',esc(personName(x.owner))):''}</span>${x.visibility==='private'?` <span class="sync local">🔒 ${t('visMe')}</span>`:''}`:x.store==='local'?`<span class="sync local">${t('localOnly')}</span>`:`<span class="sample">${t('sample')}</span>`;
     const cnt=x=>{const ev=x.id===g.id?g.events:(x.events||null);return ev?`${ev.filter(e=>e.t==='play').length} ${t('playsAbbr')}`:''};
     h=`<div class="help-head"><h2>${t('games')}</h2><button class="ghost" data-act="opts">‹ ${t('options')}</button></div>
-      <div class="gl">${games.map(x=>`<button data-act="pickgame" data-id="${x.id}" aria-current="${x.id===g.id}"><span><b>${gTitle(x)}</b><br><small>${esc(x.comp)} · ${x.date}</small> ${tag(x)}</span><span class="num">${cnt(x)}</span></button>`).join('')}</div>
+      ${(()=>{
+        // filter by a team (one of ours, or any opponent) and by competition; group by date, by our team or by competition
+        const f=sheet.gf||{name:'',comp:'',grp:'date'}, nk=normName(f.name);
+        const L=games.filter(x=>(!f.comp||x.comp===f.comp)&&(!f.name||(TEAMS.includes(f.name)?!x.scout&&x.team===f.name:[x.opp,x.scout?x.home:''].some(n=>normName(n)===nk))))
+          .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(b.created||0)-(a.created||0));
+        const row=x=>`<button data-act="pickgame" data-id="${x.id}" aria-current="${x.id===g.id}"><span><b>${gTitle(x)}</b><br><small>${gSub(x)}${esc(x.comp)} · ${x.date}</small> ${tag(x)}</span><span class="num">${cnt(x)}</span></button>`;
+        const by=f.grp==='date'?null:x=>f.grp==='comp'?x.comp:x.store==='demo'?t('sample'):x.scout?t('glScout'):x.team, grp={};
+        if(by)L.forEach(x=>{(grp[by(x)]=grp[by(x)]||[]).push(x)});
+        const names=[...TEAMS.filter(n=>games.some(x=>!x.scout&&x.team===n)),...knownTeams()], comps=[...new Set(games.map(x=>x.comp).filter(Boolean))];
+        return `<div class="glf"><label class="lbl2" for="gl-name">${t('glTeam')}</label><select id="gl-name"><option value="">${t('glAllTeams')}</option>${names.map(n=>`<option ${f.name===n?'selected':''}>${esc(n)}</option>`).join('')}</select>
+          <label class="lbl2" for="gl-comp">${t('competition')}</label><select id="gl-comp"><option value="">${t('glAllComps')}</option>${comps.map(c=>`<option ${f.comp===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+          <span class="lbl2">${t('glGroup')}</span><div class="seg">${[['date',t('glByDate')],['team',t('glByTeam')],['comp',t('glByComp')]].map(([v,l])=>`<button data-act="glgrp" data-v="${v}" aria-pressed="${f.grp===v}">${l}</button>`).join('')}</div></div>
+          <p class="note">${t('glCount',L.length,games.length)}</p>
+          ${by?Object.entries(grp).map(([k,l])=>`<div class="glg"><span class="lbl2">${esc(k)} · ${l.length}</span><div class="gl">${l.map(row).join('')}</div></div>`).join(''):`<div class="gl">${L.map(row).join('')}</div>`}`})()}
       ${cloud.db&&!cloud.ready?`<p>${t('loadingShared')}</p>`:''}
       <button class="primary" data-act="newgame">${t('newGame')}</button>
       ${g.store==='demo'||readOnly()||(g.store==='cloud'&&!isAdmin)?'':`<button class="ghost" data-act="delgame" style="color:var(--bad)">${sheet.delc?t('delGameC'):t('delGame')}</button>`}
@@ -2168,8 +2232,8 @@ function renderSheet(){
       ${x?'':`<span class="lbl2">${t('team')}</span><div class="grid4" ${g3}>${TEAMS.map(x=>opt('team',x,x)).join('')}</div>`}
       <span class="lbl2">${t('competition')}</span><div class="grid4" ${g3}>${allComps().map(x=>opt('comp',x,esc(x))).join('')}<button class="big" data-act="ngcompnew" aria-pressed="${!!n.compNew}">+ ${t('compOther')}</button></div>
       ${n.compNew?`<input class="field-in" id="ng-comp" maxlength="40" value="${esc(n.compTxt||'')}" placeholder="${t('compPh')}" autocomplete="off">`:''}
-      ${x?`<label class="lbl2" for="ng-home">${t('ngTeam1')}</label><input class="field-in" id="ng-home" value="${esc(n.home||'')}" placeholder="${t('teamName')}" autocomplete="off">`:''}
-      <label class="lbl2" for="ng-opp">${x?t('ngTeam2'):t('opponent')}</label><input class="field-in" id="ng-opp" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">
+      ${x?`<label class="lbl2" for="ng-home">${t('ngTeam1')}</label><input class="field-in" id="ng-home" list="dl-teams" value="${esc(n.home||'')}" placeholder="${t('teamName')}" autocomplete="off">`:''}
+      <label class="lbl2" for="ng-opp">${x?t('ngTeam2'):t('opponent')}</label><input class="field-in" id="ng-opp" list="dl-teams" value="${esc(n.opp)}" placeholder="${t('teamName')}" autocomplete="off">${teamList()}
       <span class="lbl2">${t('starts')}</span><div class="grid2">${opt('start','H',x?esc(n.home||t('ngTeam1')):'Hammers')}${opt('start','A',x?esc(n.opp||t('ngTeam2')):t('opponent'))}</div>
       ${x?`<span class="lbl2">${t('ngQuick')}</span><div class="grid2">${opt('quick','1',`${t('ngQuickY')}<small>${t('ngQuickYS')}</small>`)}${opt('quick','0',`${t('ngQuickN')}<small>${t('ngQuickNS')}</small>`)}</div>`:''}
       ${cloud.db&&cloud.canWrite?`<span class="lbl2">${t('visLbl')}</span><div class="grid2">${opt('vis','team',`${t('visTeam')}<small>${t('visTeamS')}</small>`)}${opt('vis','private',`🔒 ${t('visMe')}<small>${t('visMeS')}</small>`)}</div>`:`<p>${t('willLocal')}</p>`}
@@ -2302,7 +2366,8 @@ document.addEventListener('click',ev=>{
     case 'flipposs':act(grp=>addEv({t:'poss'},grp));closeSheet();break;
     case 'defover':override=st.drive;render();break;
     case 'close':closeSheet();break;
-    case 'games':openSheet('games');break;
+    case 'games':openSheet('games',{gf:(sheet&&sheet.gf)||{name:'',comp:'',grp:'date'}});break;
+    case 'glgrp':sheet.gf={...sheet.gf,grp:b.dataset.v};renderSheet();break;
     case 'role':setRole(g.id,b.dataset.r);override=null;if(sheet&&sheet.kind==='opts')renderSheet();else closeSheet();render();toast(t('roleSet'));break;
     case 'pickgame':sheet=null;document.getElementById('layer').innerHTML='';if(view==='home')view='reg';selectGame(b.dataset.id);break;
     case 'delgame':if(!sheet.delc){sheet.delc=true;renderSheet();break}
@@ -2339,7 +2404,7 @@ document.addEventListener('click',ev=>{
       act(grp=>addEv({t:'play',kind:sf?'safety':'snap',zone:null,rec:null,res:sf?'SF':'BS',fd:false,form:g.curForm[st.poss]||null,qb2:false,annul:false},grp));
       toast(sf?`${t('safety')} · +2 ${sideName(other(st.poss))}`:`${t('badSnap')} · ${ord(st.down)} ${t('down')}`);if(sf)celebrate('SAFETY',other(st.poss),true);break}
     case 'scout':{sheet=null;document.getElementById('layer').innerHTML='';draft=null;runMode=false;
-      if(b.dataset.key&&b.dataset.key!==sc.key){sc.key=b.dataset.key;sc.off={};scReset()}scFresh={};view='scout';render();scrollTo(0,0);break}
+      if(b.dataset.key&&b.dataset.key!==sc.key){sc.key=b.dataset.key;sc.off={};sc.comp=null;scReset()}scFresh={};view='scout';render();scrollTo(0,0);break}
     case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=v===''?null:+v;if((k==='form'||k==='call')&&v==='')v=null;
       if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'||k==='call'?null:0;
       sc[k]=v;if(k==='area'&&v==='conv'){sc.down=0;sc.dist=0;sc.pos=0;sc.form=null}render();break}
@@ -2352,7 +2417,17 @@ document.addEventListener('click',ev=>{
     case 'tonlyx':tp.only=null;render();break;
     case 'zdet':{const L=zoneSrc[b.dataset.z];if(L)openSheet('zone',{z:b.dataset.z.split('|')[1],L});break}
     case 'teamedit':openSheet('teamedit',{key:b.dataset.key});break;
-    case 'tecol':sheet.col=b.dataset.c;renderSheet();break;
+    case 'sccomp':sc.comp=b.dataset.v||null;render();break;
+    case 'newteam':openSheet('newteam',{comp:'LFFF1'});break;
+    case 'ntcomp':sheet.nm=(document.getElementById('nt-name')||{}).value||'';sheet.comp=b.dataset.v;sheet.compNew=b.dataset.v==='';renderSheet();break;
+    case 'ntcreate':{const nm=(document.getElementById('nt-name').value||'').trim(), cp=sheet.compNew?((document.getElementById('nt-comp')||{}).value||'').trim():sheet.comp;
+      if(!nm){toast(t('ntName'));break}if(!cp){toast(t('compType'));break}
+      const key=aliasOf('A|'+teamForComp(cp)+'|'+normName(nm)), had=scoutTeams().find(x=>normKey(x.key)===normKey(key));
+      if(had){sc.key=had.key;toast(t('ntExists'))}else{saveTeam(key,{name:nm,manual:true,comps:[cp]});sc.key=key;toast(t('ntMade'))}
+      sc.off={};sc.comp=null;scReset();closeSheet();render();break}
+    case 'teaddnum':{teKeep();const v=parseInt((document.getElementById('te-num')||{}).value,10);if(isNaN(v)){toast(t('typeNum'));break}
+      sheet.extra=[...new Set([...(sheet.extra||[]),v])];renderSheet();const i=document.querySelector(`[data-pn="${v}"]`);if(i)i.focus();break}
+    case 'tecol':teKeep();sheet.col=b.dataset.c;renderSheet();break;
     case 'tesave':{const L=document.getElementById('layer'), key=sheet.key, d=teamDoc(key)||{}, players={};
       L.querySelectorAll('[data-pn]').forEach(i=>{const v=i.value.trim();if(v)players[i.dataset.pn]=v});
       const patch={players};const nm=L.querySelector('#te-name');if(nm&&nm.value.trim())patch.name=nm.value.trim();
@@ -2442,7 +2517,8 @@ document.addEventListener('click',ev=>{
 });
 document.addEventListener('change',ev=>{
   if(authed&&ev.target&&ev.target.id==='sc-plan'){const k=ev.target.dataset.key,v=ev.target.value.trim(),d=teamDoc(k)||{};if(v!==(d.plan||'')){saveTeam(k,{plan:v});toast(t('planSaved'))}return}
-  if(authed&&ev.target&&ev.target.id==='sc-team'){sc.key=ev.target.value;sc.off={};scReset();render();return}
+  if(authed&&ev.target&&(ev.target.id==='gl-name'||ev.target.id==='gl-comp')&&sheet&&sheet.kind==='games'){sheet.gf={...sheet.gf,[ev.target.id==='gl-name'?'name':'comp']:ev.target.value};renderSheet();return}
+  if(authed&&ev.target&&ev.target.id==='sc-team'){sc.key=ev.target.value;sc.off={};sc.comp=null;scReset();render();return}
   if(authed&&ev.target&&ev.target.id==='pen-annul'&&sheet&&sheet.kind==='pen'){sheet.annul=ev.target.checked;renderSheet();return}
   if(!authed||!ev.target||ev.target.id!=='t-note')return;
   const e=tapeCur().e,v=ev.target.value.trim();
