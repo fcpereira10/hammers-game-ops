@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.13.0';
+const APP_VERSION='1.13.1';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -24,7 +24,7 @@ pt:{
   tabs:{reg:'Registo',ana:'Análise',log:'Jogadas'},
   hRes:{C:'<b>completo</b>',X:'<b>incompleto</b>',R:'<b>corrida</b>',TD:'<b>TD</b>',INT:'<b>INT</b>'},
   hAgain:'Toca outra vez para incompleto. ', hNow:'Agora toca no <b>número</b>.',
-  hRun:'Corrida: toca na zona (ou logo no <b>número</b>) e escolhe Corrida ou TD.',
+  hRun:'Corrida: toca numa das zonas <b>curtas</b> (por onde parte a corrida) e escolhe Corrida ou TD.', tRunZone:'A corrida regista-se numa das zonas curtas: Curto Esq, Meio ou Dir',
   hIdle:'Toca na <b>zona</b>, escolhe o <b>resultado</b> e toca no <b>número</b>.',
   targets:'alvos', saveNoNum:'Gravar sem número', noNumShort:'sem nº', newNum:'Novo número',
   conv:'Conversão', failed:'Falhou', offenseArrow:'▲ ataque', los:'Linha de scrimmage', yards:'jardas',
@@ -132,7 +132,7 @@ pt:{
   ngOurs:'Jogo dos Hammers', ngOursS:'contra um adversário', ngOther:'Outras equipas', ngOtherS:'scouting de um jogo entre duas equipas',
   ngTeam1:'Equipa 1', ngTeam2:'Equipa 2', ngNames:'Escreve o nome das duas equipas.', ngQuick:'Modo rápido', ngQuickY:'Sim', ngQuickYS:'só zona e resultado, 2 toques', ngQuickN:'Não', ngQuickNS:'com números de camisola',
   quickOn:'ligado: zona e resultado, sem números', quickOff:'desligado: com números de camisola', quickNote:'Modo rápido: o resultado grava a jogada, sem números. Muda em Opções.',
-  hQuick:'Toca na <b>zona</b> e depois no <b>resultado</b>. A jogada fica gravada.', hQuick2:'Agora toca no <b>resultado</b> para gravar.', hRunQ:'Corrida: toca na zona e escolhe Corrida ou TD.', resSubQ:'grava a jogada',
+  hQuick:'Toca na <b>zona</b> e depois no <b>resultado</b>. A jogada fica gravada.', hQuick2:'Agora toca no <b>resultado</b> para gravar.', hRunQ:'Corrida: toca numa das zonas curtas e escolhe Corrida ou TD.', resSubQ:'grava a jogada',
   roleHs2:s=>`Registas quando ${s} ataca`, xTag:'scouting',
   tmEdit:'Ficha da equipa', tmT:'Ficha da equipa', tmColor:'Cor', tmPlayers:'Jogadores', tmPlayersN:'Nome de cada número de camisola. Aparece no registo, nas tabelas e no resumo.', tmNamePh:'nome',
   tmNoNums:'Ainda não há números registados para esta equipa.', tmSame:'É a mesma equipa que', tmSameN:'Marca os nomes escritos de outra forma noutros jogos. Esses jogos passam a contar para esta equipa no relatório.',
@@ -194,7 +194,7 @@ en:{
   tabs:{reg:'Track',ana:'Analysis',log:'Plays'},
   hRes:{C:'<b>complete</b>',X:'<b>incomplete</b>',R:'<b>run</b>',TD:'<b>TD</b>',INT:'<b>INT</b>'},
   hAgain:'Tap again for incomplete. ', hNow:'Now tap the <b>number</b>.',
-  hRun:'Run: tap the zone (or go straight to the <b>number</b>) and pick Run or TD.',
+  hRun:'Run: tap one of the <b>short</b> zones (where the run starts) and pick Run or TD.', tRunZone:'A run goes in one of the short zones: Short Left, Middle or Right',
   hIdle:'Tap the <b>zone</b>, pick the <b>result</b>, then tap the <b>number</b>.',
   targets:'targets', saveNoNum:'Save without number', noNumShort:'no #', newNum:'New number',
   conv:'Conversion', failed:'Failed', offenseArrow:'▲ offense', los:'Line of scrimmage', yards:'yards',
@@ -302,7 +302,7 @@ en:{
   ngOurs:'Hammers game', ngOursS:'against an opponent', ngOther:'Other teams', ngOtherS:'scouting a game between two teams',
   ngTeam1:'Team 1', ngTeam2:'Team 2', ngNames:'Type the names of both teams.', ngQuick:'Quick mode', ngQuickY:'Yes', ngQuickYS:'zone and result only, 2 taps', ngQuickN:'No', ngQuickNS:'with jersey numbers',
   quickOn:'on: zone and result, no numbers', quickOff:'off: with jersey numbers', quickNote:'Quick mode: the result saves the play, with no numbers. Change it in Options.',
-  hQuick:'Tap the <b>zone</b>, then the <b>result</b>. The play is saved.', hQuick2:'Now tap the <b>result</b> to save.', hRunQ:'Run: tap the zone and pick Run or TD.', resSubQ:'saves the play',
+  hQuick:'Tap the <b>zone</b>, then the <b>result</b>. The play is saved.', hQuick2:'Now tap the <b>result</b> to save.', hRunQ:'Run: tap one of the short zones and pick Run or TD.', resSubQ:'saves the play',
   roleHs2:s=>`You track when ${s} is on offense`, xTag:'scouting',
   tmEdit:'Team sheet', tmT:'Team sheet', tmColor:'Color', tmPlayers:'Players', tmPlayersN:'The name for each jersey number. It shows in tracking, in the tables and in the summary.', tmNamePh:'name',
   tmNoNums:'No numbers tracked for this team yet.', tmSame:'Same team as', tmSameN:'Tick the names written another way in other games. Those games then count for this team in the report.',
@@ -363,11 +363,11 @@ const btn=(cls,txt)=>`<span class="pill ${cls}">${txt}</span>`;
 function helpData(){
   const pt=lang==='pt';
   const quick=pt?[
-    ['Passo 1','Toca na zona','Onde a bola foi lançada (ou onde acabou a corrida). Abre a jogada.'],
+    ['Passo 1','Toca na zona','Onde a bola foi lançada (numa corrida, a zona curta por onde parte). Abre a jogada.'],
     ['Passo 2','Resultado e recetor','Completo já vem marcado. Toca no número do recetor. Se quiseres, arrasta a bola até onde acabou e marca quem tirou a flag.'],
     ['Passo 3','Guardar jogada','A jogada fica gravada e o down avança sozinho.']
   ]:[
-    ['Step 1','Tap the zone','Where the ball was thrown (or where the run ended). The play opens.'],
+    ['Step 1','Tap the zone','Where the ball was thrown (for a run, the short zone it starts through). The play opens.'],
     ['Step 2','Result and receiver','Complete is already selected. Tap the receiver\'s number. If you like, drag the ball to where it ended and mark who pulled the flag.'],
     ['Step 3','Save play','The play is saved and the down moves on by itself.']
   ];
@@ -386,12 +386,12 @@ function helpData(){
       <p>O registo, a tape review e a análise funcionam como num jogo dos Hammers, com o nome das duas equipas e outra cor. Estes jogos entram no <b>relatório de adversário</b> das duas equipas, juntos com os jogos contra nós, e na faixa de <b>scouting ao vivo</b>. Na lista de jogos do relatório aparecem marcados como scouting.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
       <li>Toca na <b>zona</b> para onde a bola foi lançada. Abre a folha da jogada.</li>
-      <li>Escolhe o <b>resultado</b>: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('',t('tagR'))}, ${btn('td','TD')} ou ${btn('int','INT')}. Numa corrida, a zona é onde a corrida acabou.</li>
+      <li>Escolhe o <b>resultado</b>: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('',t('tagR'))}, ${btn('td','TD')} ou ${btn('int','INT')}. ${btn('',t('tagR'))} só aparece nas três zonas curtas (Curto Esq, Meio e Dir, ou 0-5 no mapa GL): numa corrida, toca na zona curta por onde a corrida parte.</li>
       <li>Toca no <b>número</b> do recetor (o ponto laranja marca o último).</li>
       <li>Se quiseres, num completo ou corrida: arrasta a bola até <b>onde acabou a jogada</b> (uma lupa mostra a jarda exata) ou toca nas jardas, e marca <b>quem tirou a flag</b>.</li>
       <li>Toca em <b>Guardar jogada</b>. Tocar fora da folha ou em Cancelar não grava nada.</li></ol>
       <p>Com o sítio da bola, a app calcula as jardas, o down e a distância, o 1º down ao passar o meio-campo e o "& Goal". Arrastar até à end zone passa a jogada a TD. Se a app não souber onde está a bola (uma jogada sem jardas, ou depois de um INT), pergunta <b>onde está a bola agora</b>.</p>
-      <p>Para corridas, escolhe <b>Corrida</b> na folha (ou toca primeiro em ${btn('',t('run'))} e depois na zona). No sack, toca em ${btn('int',t('sack'))} e no número de quem fez o sack; depois abre uma folha curta para o sítio da bola.</p>
+      <p>Para corridas, toca na zona curta e escolhe <b>Corrida</b> na folha (ou toca primeiro em ${btn('',t('run'))} e depois na zona curta). No sack, toca em ${btn('int',t('sack'))} e no número de quem fez o sack; depois abre uma folha curta para o sítio da bola.</p>
       <p>Para o registo mais simples (zona, resultado e número no ecrã, sem folha), desliga ${btn('',t('game'))} → <b>Depois de cada jogada</b>. Nos jogos em modo rápido vem desligado.</p>
       <dl class="hl">
       <dt>${btn('int','INT')}</dt><dd>Escolhe também <b>quem intercetou</b>. A posse muda e a barra pergunta se foi <b>pick-6</b>.</dd>
@@ -415,7 +415,7 @@ function helpData(){
     {id:'buttons',t:'Botões',b:`<dl class="hl">
       <dt>${btn('',t('fd'))}</dt><dd>Passaram o meio-campo ou ganharam novo 1º down. O down volta a 1.</dd>
       <dt>${btn('pen',t('penalty'))}</dt><dd>Escolhe a equipa que fez a falta e a falta (por exemplo interferência de passe ou flag guarding). A app aplica as jardas e o efeito no down das regras IFAF e, com as jardas da tape review, mexe a bola. Também dá para marcar como recusada, ou escolher "Outra falta".</dd>
-      <dt>${btn('',t('run'))}</dt><dd>A jogada é uma corrida. Toca na zona, escolhe Corrida ou TD e toca no número de quem correu.</dd>
+      <dt>${btn('',t('run'))}</dt><dd>A jogada é uma corrida. Toca na zona curta por onde parte (esquerda, meio ou direita), escolhe Corrida ou TD e o número de quem correu.</dd>
       <dt>${btn('int',t('sack'))}</dt><dd>Sack. Toca no número de quem fez o sack. O down avança.</dd>
       <dt>${btn('','GL')}</dt><dd>Troca o campo pelo mapa de goal line.</dd>
       <dt>${btn('','Double')}</dt><dd>Formação. Fica selecionada até mudares. Toca outra vez para tirar.</dd>
@@ -496,12 +496,12 @@ function helpData(){
       <p>Tracking, the tape review and the analysis work like in a Hammers game, with both teams' names and another color. These games count in the <b>opponent report</b> of both teams, together with the games against us, and in the <b>live scouting</b> strip. In the report's game list they are marked as scouting.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
       <li>Tap the <b>zone</b> the ball was thrown to. The play sheet opens.</li>
-      <li>Pick the <b>result</b>: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('',t('tagR'))}, ${btn('td','TD')} or ${btn('int','INT')}. For a run, the zone is where the run ended.</li>
+      <li>Pick the <b>result</b>: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('',t('tagR'))}, ${btn('td','TD')} or ${btn('int','INT')}. ${btn('',t('tagR'))} only shows on the three short zones (Short Left, Middle and Right, or 0-5 on the GL map): for a run, tap the short zone the run starts through.</li>
       <li>Tap the receiver's <b>number</b> (the orange dot marks the last one).</li>
       <li>If you like, on a completion or a run: drag the ball to <b>where the play ended</b> (a loupe shows the exact yard line) or tap the yards, and mark <b>who pulled the flag</b>.</li>
       <li>Tap <b>Save play</b>. Tapping outside the sheet or Cancel saves nothing.</li></ol>
       <p>With the ball spot, the app works out the yards, the down and distance, the 1st down when crossing midfield and "& Goal". Dragging into the end zone turns the play into a TD. If the app does not know where the ball is (a play without yards, or after an INT), it asks <b>where the ball is now</b>.</p>
-      <p>For runs, pick <b>Run</b> in the sheet (or tap ${btn('',t('run'))} first and then the zone). For a sack, tap ${btn('int',t('sack'))} and the number of who made it; a short sheet then asks for the ball spot.</p>
+      <p>For runs, tap the short zone and pick <b>Run</b> in the sheet (or tap ${btn('',t('run'))} first and then the short zone). For a sack, tap ${btn('int',t('sack'))} and the number of who made it; a short sheet then asks for the ball spot.</p>
       <p>For the simplest tracking (zone, result and number on the screen, no sheet), turn off ${btn('',t('game'))} → <b>After each play</b>. It is off in quick mode games.</p>
       <dl class="hl">
       <dt>${btn('int','INT')}</dt><dd>Also pick <b>who intercepted</b>. Possession changes and the bar asks whether it was a <b>pick-6</b>.</dd>
@@ -525,7 +525,7 @@ function helpData(){
     {id:'buttons',t:'Buttons',b:`<dl class="hl">
       <dt>${btn('',t('fd'))}</dt><dd>They crossed midfield or earned a new 1st down. The down goes back to 1.</dd>
       <dt>${btn('pen',t('penalty'))}</dt><dd>Pick the team that committed the foul and the foul (for example pass interference or flag guarding). The app applies the yards and the effect on the down from the IFAF rules and, with the tape review yards, moves the ball. It can also be declined, or pick "Other foul".</dd>
-      <dt>${btn('',t('run'))}</dt><dd>The play is a run. Tap the zone, pick Run or TD and tap the runner's number.</dd>
+      <dt>${btn('',t('run'))}</dt><dd>The play is a run. Tap the short zone it starts through (left, middle or right), pick Run or TD and the runner's number.</dd>
       <dt>${btn('int',t('sack'))}</dt><dd>Sack. Tap the number of who made the sack. The down moves forward.</dd>
       <dt>${btn('','GL')}</dt><dd>Switches the field to the goal line map.</dd>
       <dt>${btn('','Double')}</dt><dd>Formation. Stays selected until you change it. Tap again to clear.</dd>
@@ -890,8 +890,11 @@ function makeSample(seed0=7,id='demo',ago=0){
 
 /* ---------- actions ---------- */
 let glOn=null;
+/* runs start through one of the three short zones (0-5 on the GL map), which tell the side of the run */
+const runZone=z=>!!z&&(z[0]==='2'||z.slice(0,2)==='g2');
 function tapZone(z){
   if(draft&&(draft.step==='by'||draft.kind==='sack'))return;
+  if(!runZone(z)&&((runMode&&!draft)||(draft&&draft.kind==='run'&&draft.zone!==z))){toast(t('tRunZone'));return}
   if(draft&&draft.zone===z){
     if(draft.kind==='conv')draft.zone=null;else{draft=null;runMode=false}
   }else if(draft){draft.zone=z}
@@ -940,7 +943,8 @@ function markFD(){
   const on=!p.fd;act(grp=>chEv(p,{fd:on},grp));toast(on?t('tFdOn'):t('tFdOff'));
 }
 function toggleRun(){
-  if(draft&&(draft.kind==='pass'||draft.kind==='run')&&!draft.step){draft.kind=draft.kind==='run'?'pass':'run';draft.res=draft.kind==='run'?'R':'C';render();return}
+  if(draft&&(draft.kind==='pass'||draft.kind==='run')&&!draft.step){if(draft.kind==='pass'&&!runZone(draft.zone)){toast(t('tRunZone'));return}
+    draft.kind=draft.kind==='run'?'pass':'run';draft.res=draft.kind==='run'?'R':'C';render();return}
   if(draft)return;
   runMode=!runMode;render();
 }
@@ -2170,7 +2174,7 @@ function renderSheet(){
     const cnt={};g.events.forEach(x=>{if(x.t==='play'&&x._side===sd&&x.rec!=null)cnt[x.rec]=(cnt[x.rec]||0)+1});
     let lastRec=null;for(let i=g.events.length-1;i>=0;i--){const x=g.events[i];if(x.t==='play'&&x._side===sd&&x.rec!=null&&!x.annul){lastRec=x.rec;break}}
     // one row for passes and runs: Run turns the play into a run, Complete / Incomplete / INT into a pass, TD keeps the kind
-    const opts=[['C',t('tagC')],['X',t('tagX')],['R',t('tagR')],['TD','TD'],['INT','INT']];
+    const opts=[['C',t('tagC')],['X',t('tagX')],...(runZone(d.zone)?[['R',t('tagR')]]:[]),['TD','TD'],['INT','INT']];
     const recs=[...g.roster[sd]].sort((a,b)=>(cnt[b]||0)-(cnt[a]||0)||a-b);
     h=`<div class="help-head"><h2>${zoneName(d.zone)}<small class="pk-dd">${st.spot!=null?ddTxt({_down:st.down,_dist:st.goal?FIELD-st.spot:MID-st.spot,_goal:st.goal}):ord(st.down)+' '+t('down')}</small></h2><button class="ghost" data-act="pkcancel">${t('cancel')}</button></div>
       <div class="resrow">${opts.map(([v,l])=>`<button class="rb rb-${v}" data-act="pkres" data-r="${v}" aria-pressed="${d.res===v}">${l}</button>`).join('')}</div>
