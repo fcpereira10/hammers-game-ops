@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.12.0';
+const APP_VERSION='1.13.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -118,7 +118,12 @@ pt:{
   vPopBlocked:'O browser bloqueou a janela. Autoriza pop-ups para este site e tenta outra vez.', vWin:'Vídeo',
   thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
-  insTag:'inserida na review',
+  insTag:'inserida na review', tDragS:'Arrasta a bola até onde acabou a jogada: a lupa mostra a jarda e as jardas ficam preenchidas. Até à end zone, a jogada passa a TD.',
+  pkSave:'Guardar jogada', hPop:'Toca na <b>zona</b>: abre a jogada para escolheres o resultado e o recetor (e, se quiseres, onde acabou e quem tirou a flag).',
+  spotQ2:'Onde está a bola agora? Arrasta a bola', spotHint2:'A linha de scrimmage não era conhecida: marca onde está a bola e as jardas voltam a contar', postSaved:'Guardado',
+  skip:'Saltar', spotQ:'Onde acabou a jogada? Arrasta a bola', spotHint:'Arrasta a bola ou escolhe as jardas',
+  postSave:'Guardar', postT:'Depois de cada jogada', postOnS:'a zona abre a jogada: resultado, recetor, sítio da bola e flag', postOffS:'desligado: zona, resultado e número no ecrã', postOnT:'Pergunta o sítio da bola e a flag depois de cada jogada', postOffT:'Já não pergunta depois de cada jogada',
+  qbLead:'Fica até mudares e é gravado em cada passe.', qbNone:'Sem QB',
   glTeam:'Equipa', glAllTeams:'Todas as equipas', glAllComps:'Todas as competições', glGroup:'Agrupar por', glByDate:'Data', glByTeam:'Equipa', glByComp:'Competição', glScout:'Scouting (outras equipas)',
   glCount:(a,b)=>a===b?`${b} jogos`:`${a} de ${b} jogos`,
   ntBtn:'Nova equipa', ntT:'Nova equipa', ntLead:'Cria a ficha de uma equipa antes de haver jogos com ela, para preparar os jogadores e o plano de jogo. Quando registares o primeiro jogo com este nome, junta-se a esta ficha.',
@@ -283,7 +288,12 @@ en:{
   vPopBlocked:'The browser blocked the window. Allow pop-ups for this site and try again.', vWin:'Video',
   thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
-  insTag:'inserted in review',
+  insTag:'inserted in review', tDragS:'Drag the ball to where the play ended: the loupe shows the yard line and the yards are filled in. Into the end zone, the play becomes a TD.',
+  pkSave:'Save play', hPop:'Tap the <b>zone</b>: the play opens to pick the result and the receiver (and, if you like, where it ended and who pulled the flag).',
+  spotQ2:'Where is the ball now? Drag the ball', spotHint2:'The line of scrimmage was not known: mark where the ball is and yards count again', postSaved:'Saved',
+  skip:'Skip', spotQ:'Where did the play end? Drag the ball', spotHint:'Drag the ball or pick the yards',
+  postSave:'Save', postT:'After each play', postOnS:'the zone opens the play: result, receiver, ball spot and flag', postOffS:'off: zone, result and number on the screen', postOnT:'Asks for the ball spot and the flag after each play', postOffT:'No longer asks after each play',
+  qbLead:'Stays until you change it and is saved on each pass.', qbNone:'No QB',
   glTeam:'Team', glAllTeams:'All teams', glAllComps:'All competitions', glGroup:'Group by', glByDate:'Date', glByTeam:'Team', glByComp:'Competition', glScout:'Scouting (other teams)',
   glCount:(a,b)=>a===b?`${b} games`:`${a} of ${b} games`,
   ntBtn:'New team', ntT:'New team', ntLead:'Create a team sheet before there are games with it, to prepare the players and the game plan. When you track the first game with this name, it joins this sheet.',
@@ -353,13 +363,13 @@ const btn=(cls,txt)=>`<span class="pill ${cls}">${txt}</span>`;
 function helpData(){
   const pt=lang==='pt';
   const quick=pt?[
-    ['Passo 1','Toca na zona','Onde a bola foi lançada (ou onde acabou a corrida).'],
-    ['Passo 2','Escolhe o resultado','Completo já vem marcado. Muda para Incompleto, TD ou INT se for preciso.'],
-    ['Passo 3','Toca no número','O recetor. A jogada fica gravada e o down avança sozinho.']
+    ['Passo 1','Toca na zona','Onde a bola foi lançada (ou onde acabou a corrida). Abre a jogada.'],
+    ['Passo 2','Resultado e recetor','Completo já vem marcado. Toca no número do recetor. Se quiseres, arrasta a bola até onde acabou e marca quem tirou a flag.'],
+    ['Passo 3','Guardar jogada','A jogada fica gravada e o down avança sozinho.']
   ]:[
-    ['Step 1','Tap the zone','Where the ball was thrown (or where the run ended).'],
-    ['Step 2','Pick the result','Complete is already selected. Switch to Incomplete, TD or INT if needed.'],
-    ['Step 3','Tap the number','The receiver. The play is saved and the down moves on by itself.']
+    ['Step 1','Tap the zone','Where the ball was thrown (or where the run ended). The play opens.'],
+    ['Step 2','Result and receiver','Complete is already selected. Tap the receiver\'s number. If you like, drag the ball to where it ended and mark who pulled the flag.'],
+    ['Step 3','Save play','The play is saved and the down moves on by itself.']
   ];
   const S=pt?[
     {id:'start',t:'Antes do jogo',b:`<ol>
@@ -375,16 +385,23 @@ function helpData(){
       <li>Escolhe o <b>modo rápido</b> (só zona e resultado: tocas na zona e no resultado e a jogada fica gravada) ou o registo normal, com números de camisola. Podes mudar mais tarde em ${btn('',t('game'))}.</li></ol>
       <p>O registo, a tape review e a análise funcionam como num jogo dos Hammers, com o nome das duas equipas e outra cor. Estes jogos entram no <b>relatório de adversário</b> das duas equipas, juntos com os jogos contra nós, e na faixa de <b>scouting ao vivo</b>. Na lista de jogos do relatório aparecem marcados como scouting.</p>`},
     {id:'track',t:'Registar uma jogada',b:`<ol>
-      <li>Toca na <b>zona</b> para onde a bola foi lançada.</li>
-      <li>Escolhe o <b>resultado</b> na linha que aparece: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('td','TD')} ou ${btn('int','INT')}.</li>
-      <li>Toca no <b>número</b> do recetor. A jogada fica gravada.</li></ol>
+      <li>Toca na <b>zona</b> para onde a bola foi lançada. Abre a folha da jogada.</li>
+      <li>Escolhe o <b>resultado</b>: ${btn('','Completo')} (já vem marcado), ${btn('','Incompleto')}, ${btn('',t('tagR'))}, ${btn('td','TD')} ou ${btn('int','INT')}. Numa corrida, a zona é onde a corrida acabou.</li>
+      <li>Toca no <b>número</b> do recetor (o ponto laranja marca o último).</li>
+      <li>Se quiseres, num completo ou corrida: arrasta a bola até <b>onde acabou a jogada</b> (uma lupa mostra a jarda exata) ou toca nas jardas, e marca <b>quem tirou a flag</b>.</li>
+      <li>Toca em <b>Guardar jogada</b>. Tocar fora da folha ou em Cancelar não grava nada.</li></ol>
+      <p>Com o sítio da bola, a app calcula as jardas, o down e a distância, o 1º down ao passar o meio-campo e o "& Goal". Arrastar até à end zone passa a jogada a TD. Se a app não souber onde está a bola (uma jogada sem jardas, ou depois de um INT), pergunta <b>onde está a bola agora</b>.</p>
+      <p>Para corridas, escolhe <b>Corrida</b> na folha (ou toca primeiro em ${btn('',t('run'))} e depois na zona). No sack, toca em ${btn('int',t('sack'))} e no número de quem fez o sack; depois abre uma folha curta para o sítio da bola.</p>
+      <p>Para o registo mais simples (zona, resultado e número no ecrã, sem folha), desliga ${btn('',t('game'))} → <b>Depois de cada jogada</b>. Nos jogos em modo rápido vem desligado.</p>
       <dl class="hl">
-      <dt>${btn('int','INT')}</dt><dd>Depois do número do recetor, a app pede o número de <b>quem intercetou</b>. A posse muda e a barra pergunta se foi <b>pick-6</b>.</dd>
+      <dt>${btn('int','INT')}</dt><dd>Escolhe também <b>quem intercetou</b>. A posse muda e a barra pergunta se foi <b>pick-6</b>.</dd>
       <dt>${btn('','?')}</dt><dd>Grava sem número, quando não deu para ver quem foi.</dd>
       <dt>${btn('','+')}</dt><dd>Acrescenta um número novo ao plantel deste jogo.</dd></dl>
-      <p>Antes do número podes mudar de ideias: toca noutra zona ou noutro resultado. Tocar outra vez na mesma zona apaga a marca.</p>
+
       <p>Por cima do campo, os quadros <b>Zona</b>, <b>Resultado</b> e <b>Recetor</b> mostram o que já escolheste, e o contorno laranja diz o passo seguinte. O ponto laranja num número marca o último recetor. Por baixo dos botões fica a <b>drive</b> em curso, com a última jogada e o botão Desfazer ao lado, e as drives anteriores numa linha cada.</p>
       <p>No marcador, a bola mostra quem ataca. Toca na outra equipa para lhe dar a bola, ou no down ao centro para o corrigir.</p>
+      <p>A faixa de campo por baixo do marcador mostra sempre a bola (o ataque vai para a direita), a linha de scrimmage a azul e o meio-campo a amarelo.</p>
+      <p><b>QB</b>: o quadro QB, ao lado do recetor, fica até o mudares e é gravado em cada passe. Toca nele para escolher outro.</p>
       <p><b>Scouting ao vivo</b>: quando o adversário ataca e já há jogos registados contra ele, uma faixa por cima do campo mostra o que costuma fazer nesse down (passe ou corrida, zona e alvo preferidos) e, perto da end zone, a zona favorita. Por baixo aparecem avisos quando hoje está a fazer diferente: corre mais ou menos, procura outro alvo, ataca outro lado ou usa uma formação nova. Toca na faixa para abrir o relatório.</p>`},
     {id:'zones',t:'O campo',b:`<p>O ataque vai sempre para cima. São 12 zonas: 3 colunas e 4 faixas a partir da linha de scrimmage.</p>
       <ul><li><b>Fundo</b>: mais de 15 jardas</li><li><b>Médio</b>: 5 a 15 jardas</li><li><b>Curto</b>: 0 a 5 jardas</li><li><b>Atrás da linha</b>: passes atrás da linha de scrimmage (screens, laterais), completos ou incompletos</li></ul>
@@ -445,7 +462,8 @@ function helpData(){
       <li>Vê o clip da jogada e completa: <b>jardas</b>, <b>YAC</b> nos completos, <b>QB</b>, <b>formação</b> e <b>nome da jogada</b> (opcional) quando atacamos. Quando defendemos: QB e formação do adversário, <b>quem tirou a flag</b> e <b>PBU</b>.</li>
       <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou.</li>
       <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte. Na última jogada, o botão passa a <b>Nova jogada</b> e cria a seguinte, como no Registo: depois de um TD é a conversão (1 ou 2 pts, ou <b>Sem conversão</b>), senão um passe que podes mudar para corrida ou sack. Assim dá para registar o jogo todo a partir da tape.</li></ol>
-      <ul><li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (0-5, 5-10, 10-15, 15+).</li>
+      <ul><li><b>Jardas no campo</b>: por cima das jardas há uma faixa de campo com a linha de scrimmage (azul) e o meio-campo (amarelo). Arrasta a bola até onde acabou a jogada: uma lupa mostra a jarda exata e as jardas ficam preenchidas. Se a arrastares até à end zone, um completo ou uma corrida passa a TD. Serve também para corrigir o que foi marcado no live.</li>
+      <li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (0-5, 5-10, 10-15, 15+).</li>
       <li>QB e formação vêm preenchidos com os da jogada anterior (tracejado). Só tocas se mudarem.</li>
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>⚑ Falta</b> regista uma falta nesta jogada: escolhes a equipa e a falta, e a app aplica as jardas a partir do sítio certo, o efeito no down e o novo spot da bola.</li>
@@ -477,16 +495,23 @@ function helpData(){
       <li>Pick <b>quick mode</b> (zone and result only: tap the zone and the result and the play is saved) or normal tracking with jersey numbers. You can change it later in ${btn('',t('game'))}.</li></ol>
       <p>Tracking, the tape review and the analysis work like in a Hammers game, with both teams' names and another color. These games count in the <b>opponent report</b> of both teams, together with the games against us, and in the <b>live scouting</b> strip. In the report's game list they are marked as scouting.</p>`},
     {id:'track',t:'Track a play',b:`<ol>
-      <li>Tap the <b>zone</b> the ball was thrown to.</li>
-      <li>Pick the <b>result</b> on the row that appears: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('td','TD')} or ${btn('int','INT')}.</li>
-      <li>Tap the receiver's <b>number</b>. The play is saved.</li></ol>
+      <li>Tap the <b>zone</b> the ball was thrown to. The play sheet opens.</li>
+      <li>Pick the <b>result</b>: ${btn('','Complete')} (already selected), ${btn('','Incomplete')}, ${btn('',t('tagR'))}, ${btn('td','TD')} or ${btn('int','INT')}. For a run, the zone is where the run ended.</li>
+      <li>Tap the receiver's <b>number</b> (the orange dot marks the last one).</li>
+      <li>If you like, on a completion or a run: drag the ball to <b>where the play ended</b> (a loupe shows the exact yard line) or tap the yards, and mark <b>who pulled the flag</b>.</li>
+      <li>Tap <b>Save play</b>. Tapping outside the sheet or Cancel saves nothing.</li></ol>
+      <p>With the ball spot, the app works out the yards, the down and distance, the 1st down when crossing midfield and "& Goal". Dragging into the end zone turns the play into a TD. If the app does not know where the ball is (a play without yards, or after an INT), it asks <b>where the ball is now</b>.</p>
+      <p>For runs, pick <b>Run</b> in the sheet (or tap ${btn('',t('run'))} first and then the zone). For a sack, tap ${btn('int',t('sack'))} and the number of who made it; a short sheet then asks for the ball spot.</p>
+      <p>For the simplest tracking (zone, result and number on the screen, no sheet), turn off ${btn('',t('game'))} → <b>After each play</b>. It is off in quick mode games.</p>
       <dl class="hl">
-      <dt>${btn('int','INT')}</dt><dd>After the receiver's number, the app asks for the number of <b>who intercepted</b>. Possession changes and the bar asks whether it was a <b>pick-6</b>.</dd>
+      <dt>${btn('int','INT')}</dt><dd>Also pick <b>who intercepted</b>. Possession changes and the bar asks whether it was a <b>pick-6</b>.</dd>
       <dt>${btn('','?')}</dt><dd>Saves without a number, when you couldn't see who it was.</dd>
       <dt>${btn('','+')}</dt><dd>Adds a new number to this game's roster.</dd></dl>
-      <p>Before the number you can change your mind: tap another zone or another result. Tapping the same zone again clears the mark.</p>
+
       <p>Above the field, the <b>Zone</b>, <b>Result</b> and <b>Receiver</b> boxes show what you picked, and the orange outline shows the next step. The orange dot on a number marks the last receiver. Below the buttons is the current <b>drive</b>, with the last play and an Undo button next to it, and earlier drives one line each.</p>
       <p>On the scoreboard, the ball shows who is on offense. Tap the other team to give it the ball, or the down in the middle to fix it.</p>
+      <p>The field strip under the scoreboard always shows the ball (the offense goes to the right), the line of scrimmage in blue and midfield in yellow.</p>
+      <p><b>QB</b>: the QB box, next to the receiver, stays until you change it and is saved on each pass. Tap it to pick another.</p>
       <p><b>Live scouting</b>: when the opponent has the ball and there are earlier games against it, a strip above the field shows what it usually does on this down (pass or run, favorite zone and target) and, near the end zone, its favorite zone. Warnings show when today is different: more or fewer runs, another target, another side or a new formation. Tap the strip to open the report.</p>`},
     {id:'zones',t:'The field',b:`<p>Offense always goes up. There are 12 zones: 3 columns and 4 bands from the line of scrimmage.</p>
       <ul><li><b>Deep</b>: more than 15 yards</li><li><b>Mid</b>: 5 to 15 yards</li><li><b>Short</b>: 0 to 5 yards</li><li><b>Behind the line</b>: passes behind the line of scrimmage (screens, laterals), complete or incomplete</li></ul>
@@ -547,7 +572,8 @@ function helpData(){
       <li>Watch the play's clip and fill in: <b>yards</b>, <b>YAC</b> on completions, <b>QB</b>, <b>formation</b> and <b>play name</b> (optional) when we are on offense. On defense: opponent QB and formation, <b>who pulled the flag</b> and <b>PBU</b>.</li>
       <li>Fix the type, result, zone or receiver if the live tracking got it wrong.</li>
       <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play. On the last play the button becomes <b>New play</b> and creates the next one, like the Track tab: after a TD it is the conversion (1 or 2 pts, or <b>No conversion</b>), otherwise a pass you can switch to run or sack. So a whole game can be tracked from the tape.</li></ol>
-      <ul><li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (0-5, 5-10, 10-15, 15+).</li>
+      <ul><li><b>Yards on the field</b>: above the yards there is a field strip with the line of scrimmage (blue) and midfield (yellow). Drag the ball to where the play ended: a loupe shows the exact yard line and the yards are filled in. Dragging a completion or a run into the end zone turns it into a TD. It also fixes what was marked live.</li>
+      <li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (0-5, 5-10, 10-15, 15+).</li>
       <li>QB and formation come filled in from the previous play (dashed). Only tap if they change.</li>
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>⚑ Foul</b> records a foul on this play: pick the team and the foul, and the app applies the yards from the right spot, the effect on the down and the new ball spot.</li>
@@ -724,7 +750,7 @@ function refresh(){
   g={...clone({...cur,events:[]}),events:sortEv(ev)};
   g.roster=g.roster||{H:[],A:[]};g.roster.H=g.roster.H||[];g.roster.A=g.roster.A||[];
   g.formations=g.formations||{H:[],A:[]};g.formations.H=g.formations.H||[];g.formations.A=g.formations.A||[];
-  g.curForm=g.curForm||{H:null,A:null};
+  g.curForm=g.curForm||{H:null,A:null};g.curQb=g.curQb||{H:null,A:null};
   if(!rendering&&authed){if(cloud.db&&!cloud.ready)return splashView();render()}
 }
 function role(){if(!g||g.store==='demo')return 'both';const r=getRole(g.id);if(r)return r;return g.mode&&g.mode!=='both'?g.mode:'both'}
@@ -790,6 +816,7 @@ function replay(G){
       else if(e.eff==='loss'&&!e.cnt){down++;if(down>4){e._tod=true;flip()}}
       if(!e._tod&&e.eff!=='dec'&&!goal&&spot!=null&&spot>=MID){down=1;goal=true}
       e._after=spot;e._dd={down,goal};
+    }else if(e.t==='spot'){e._side=poss;spot=e.spot;if(!goal&&spot>=MID){down=1;goal=true}
     }else if(e.t==='down'){down=e.down}
     else if(e.t==='poss'){flip()}
     else if(e.t==='half'){half=2;if(!legacy)poss=other(G.start);down=1;drive++;spot=SPOT0;goal=false}
@@ -870,6 +897,7 @@ function tapZone(z){
   }else if(draft){draft.zone=z}
   else{draft={kind:runMode?'run':'pass',zone:z,res:runMode?'R':'C',fd:false};runMode=false}
   render();
+  if(draft&&(draft.kind==='pass'||draft.kind==='run')&&!draft.step&&postOn()){const st=replay();openSheet('play',{los:st.spot,side:st.poss})}
 }
 /* quick mode (games between other teams): the result saves the play, with no numbers */
 function tapRes(r){if(!draft)return;draft.res=r;if(g.quick){draft.rec=null;draft.by=null;return finalize()}render()}
@@ -877,12 +905,13 @@ function startSack(){draft={kind:'sack',zone:null,res:'SACK',step:'by'};runMode=
 function finalize(){
   const st=replay(),d=draft;draft=null;runMode=false;
   let e;
-  if(d.kind==='conv')e={t:'conv',side:d.side,pts:d.pts,zone:d.zone||null,rec:d.rec??null,res:d.res,...(d.res==='INT'?{dby:d.by??null}:{})};
+  const qbOf=sd=>g.curQb[sd]!=null?{qb:g.curQb[sd]}:{};
+  if(d.kind==='conv')e={t:'conv',side:d.side,pts:d.pts,zone:d.zone||null,rec:d.rec??null,res:d.res,...(d.res==='INT'?{dby:d.by??null}:{}),...qbOf(d.side)};
   else if(d.kind==='sack')e={t:'play',kind:'sack',zone:null,rec:null,res:'SACK',dby:d.by??null,fd:false,form:g.curForm[st.poss]||null,qb2:qbNext,annul:false};
   else e={t:'play',kind:d.kind,zone:d.zone,rec:d.rec??null,res:d.res,fd:!!d.fd,form:g.curForm[st.poss]||null,qb2:qbNext,annul:false,
-    ...(d.res==='INT'?{dby:d.by??null}:{})};
-  if(e.t==='play')qbNext=false;
-  act(grp=>addEv(e,grp));
+    ...(d.res==='INT'?{dby:d.by??null}:{}),...(d.kind==='pass'?qbOf(st.poss):{})};
+  if(e.t==='play'){qbNext=false;Object.assign(e,d.extra||{})}
+  act(grp=>{addEv(e,grp);if(d.spotEv!=null)addEv({t:'spot',spot:d.spotEv},grp)});
   const who=x=>x!=null?'#'+x:t('noNum');
   if(e.t==='conv')toast(`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]}`);
   else if(e.res==='SACK')toast(`${t('sack')} · ${who(e.dby)}`);
@@ -891,7 +920,10 @@ function finalize(){
   if(e.res==='TD')celebrate('TOUCHDOWN',st.poss);
   else if(e.t==='conv'&&e.res==='G')celebrate('+'+e.pts,e.side,true);
   else if(e.res==='INT'&&e.t==='play')celebrate('INT',other(st.poss),true);
+  // where the ball ended and who pulled the flag (optional, skipped with one tap)
+  if(!d.viaSheet&&e.t==='play'&&['C','R','SACK'].includes(e.res)&&postOn())openSheet('post',{id:e.id,los:st.spot,side:st.poss,v:null,f:null});
 }
+const postOn=()=>g.post!=null?!!g.post:!g.quick;
 function tapNum(n){
   if(!draft){
     if(runMode){draft={kind:'run',zone:null,res:'R',fd:false,rec:n};return finalize()}
@@ -1011,7 +1043,7 @@ function render(){
     ${['reg','tape','ana','log'].map(k=>`<button role="tab" data-act="view" data-v="${k}" aria-selected="${view===k}">${k==='tape'?t('tabsTape')+'<span class="beta">BETA</span>':t('tabs')[k]}</button>`).join('')}
   </nav>
   ${view==='reg'?regView(st):view==='tape'?tapeView():view==='ana'?anaView():logView()}`;
-  if(view==='tape')mountPlayer();
+  if(view==='tape'){mountPlayer();bindTapeSpot()}
   animateRender(st);
   if(pendingReload)setTimeout(reloadIfIdle,300);
 }
@@ -1111,6 +1143,7 @@ function homeView(st){
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
 function hintText(){
+  if(!g.quick&&postOn()&&!draft&&!runMode)return t('hPop');
   if(g.quick)return draft?t('hQuick2'):runMode?t('hRunQ'):t('hQuick');
   if(draft){
     if(draft.step==='by')return draft.kind==='sack'?t('hSack'):t('hIntBy');
@@ -1192,7 +1225,19 @@ function slotsHTML(s){
   const by=d&&d.step==='by', numL=d&&d.kind==='run'||runMode?t('tRunner'):t('receiver');
   return `<div class="slots">${slot(t('tZone'),d&&d.zone?zoneName(d.zone):null,!d)}
     ${slot(d&&d.kind==='conv'?t('conv')+' '+d.pts+' pt':t('result'),d&&d.res?RES[d.res]:runMode?t('tagR'):null,false,d&&d.res?'r-'+d.res:'')}
-    ${g.quick?'':slot(numL,by?(d.rec!=null?'#'+d.rec:t('noNumShort')):null,!!d&&!by)+(d&&d.res==='INT'&&d.kind!=='conv'?slot(t('whoInt'),null,by):'')}</div>`;
+    ${g.quick?'':slot(numL,by?(d.rec!=null?'#'+d.rec:t('noNumShort')):null,!!d&&!by)+(d&&d.res==='INT'&&d.kind!=='conv'?slot(t('whoInt'),null,by):'')}
+    ${g.quick||(d&&d.kind==='run')||runMode?'':`<button class="slot qbslot${g.curQb[s]!=null?' set':''}" data-act="qbpick" data-side="${s}"><small>QB</small><b>${g.curQb[s]!=null?numTxt(scKeyOf(g,s),g.curQb[s]):'—'}</b></button>`}</div>`;
+}
+/* the field from the offense's point of view (it always attacks to the right): own end zone, yard lines, midfield, the other end zone.
+   Spots are yards from the offense's own goal line (0 to 50). */
+const spX=v=>6+Math.max(0,Math.min(FIELD,v))/FIELD*88;
+function fieldLines(){let h='';for(let y=5;y<FIELD;y+=5)h+=`<i class="fs-yl${y===MID?' mid':''}" style="left:${spX(y)}%"></i>`;
+  return h+[5,10,15,20,MID,30,35,40,45].map(y=>`<span class="fs-yn" style="left:${spX(y)}%">${y===MID?'MID':y<MID?y:FIELD-y}</span>`).join('')}
+function fieldStripHTML(st){
+  if(st.spot==null)return '';
+  const s=st.poss, fdl=!st.goal?`<i class="fs-fd" style="left:${spX(MID)}%"></i>`:'';
+  return `<div class="fs-strip side-${s}" aria-label="${spotTxt(st.spot)}"><div class="fs-f"><b class="fs-ez own"></b><b class="fs-ez opp"></b>${fieldLines()}${fdl}<i class="fs-los" style="left:${spX(st.spot)}%"></i>
+    <span class="fs-ball" style="left:${spX(st.spot)}%">${BALL}</span></div></div>`;
 }
 /* one line per play for the drive card */
 function evLine(e){
@@ -1272,7 +1317,7 @@ function regView(st){
     +`<button class="f qb" data-act="qb" aria-pressed="${qbNext}">2 QB</button>`;
   return `<div class="reg side-${s}">
     <section class="fieldwrap">
-      ${conv?'':liveScoutHTML(st,s)}${planBox()}
+      ${conv?'':fieldStripHTML(st)}${conv?'':liveScoutHTML(st,s)}${planBox()}
       ${slotsHTML(s)}
       <div class="hint">${hintText()} ${qh('track')}</div>
       ${banner}
@@ -1287,7 +1332,7 @@ function regView(st){
     </section>
     <section class="controls">
       ${resRow}
-      ${g.quick?`<p class="note quicknote">⚡ ${t('quickNote')}</p>`:`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${numLbl}${qh('track')}</span><span>${numSub}</span></div><div class="nums">${nums}</div></div>`}
+      ${g.quick?`<p class="note quicknote">⚡ ${t('quickNote')}</p>`:postOn()&&!byStep&&!conv&&!(draft&&draft.kind==='sack')?'':`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${numLbl}${qh('track')}</span><span>${numSub}</span></div><div class="nums">${nums}</div></div>`}
       ${byStep||conv?'':`<div class="block"><div class="lbl"><span style="font:inherit;letter-spacing:inherit;text-transform:inherit">${t('formation')}${qh('buttons')}</span><span>${t('formSticky')}</span></div><div class="forms">${forms}</div></div>`}
       <div class="actions">
         <button class="a" data-act="fd" aria-pressed="${draft?!!draft.fd:false}">${t('fd')}</button>
@@ -1710,6 +1755,7 @@ function logView(){
   const sd=e=>`<span class="sd ${e._side}"></span>`;
   const items=[...g.events].reverse().map(e=>{
     if(e.t==='pen')return `<div class="ev">${sd(e)}<span class="dn">${ord(e._down)}</span><span class="tx"><b>${e.foul?t('fouls')[e.foul]:t('penalty')}</b>${e.team?`<span class="tag">${sideName(e.team)}</span>`:''}${e._pyds?`<span class="tag">${e._pyds>0?'+':'−'}${Math.abs(e._pyds)} ${t('yardsShort')}</span>`:''}<span class="tag">${e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]}</span>${e.annulId?`<span class="tag">${t('annulledPlay')}</span>`:''}</span><span class="ops">${delB(e)}</span></div>`;
+    if(e.t==='spot')return `<div class="ev">${sd(e)}<span class="dn">⌖</span><span class="tx"><b>${t('tBall')}: ${spotTxt(e.spot)}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='down')return `<div class="ev">${sd(e)}<span class="dn">→${ord(e.down)}</span><span class="tx">${t('downManual')}</span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='poss')return `<div class="ev"><span class="sd ${other(e._side)}"></span><span class="dn">⇄</span><span class="tx">${t('possManual')}</span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='half')return `<div class="ev"><span class="sd"></span><span class="dn">½</span><span class="tx"><b>${t('halfT')}</b></span><span class="ops">${delB(e)}</span></div>`;
@@ -1762,9 +1808,30 @@ function penLines(e){
     ${readOnly()?'':`<button class="linkbtn" data-act="tpenrm" data-id="${pe.id}">${t('penRemove')}</button>`}</div>`).join('')}</div>`;
 }
 function tapeView(){return `<div class="tape"><section class="vpane" id="vpane">${vpaneHTML()}</section><section class="tpanel" id="tpanel">${tapePanel()}</section></div>`}
+/* tape review: drag the ball to where the play ended (a loupe shows the yard line) and the yards are filled in */
+function tapeStrip(e){
+  if(e._spot==null||e.t!=='play')return '';
+  const los=e._spot, end=e.yds!=null?Math.max(0,Math.min(FIELD,los+e.yds)):null;
+  return `<div class="fs-spot side-${e._side}" id="tspotbar" data-los="${los}"><div class="fs-f"><b class="fs-ez own"></b><b class="fs-ez opp"></b>${fieldLines()}
+    ${e._goal?'':`<i class="fs-fd" style="left:${spX(MID)}%"></i>`}<i class="fs-los" style="left:${spX(los)}%"></i>
+    <span class="fs-ball${end==null?' ghost':''}" id="tspball" style="left:${spX(end??los)}%">${BALL}</span><span class="fs-loupe" id="tsploupe"></span></div>
+    <p class="note">${t('tDragS')}</p></div>`;
+}
+function bindTapeSpot(){
+  const bar=document.getElementById('tspotbar');if(!bar||readOnly())return;
+  const ff=bar.querySelector('.fs-f'), ball=document.getElementById('tspball'), lp=document.getElementById('tsploupe'), los=+bar.dataset.los;
+  const at=x=>{const r=ff.getBoundingClientRect();return Math.max(0,Math.min(FIELD,Math.round(((x-r.left)/r.width*100-6)/88*FIELD)))};
+  let on=false, v=null;
+  const show=x=>{v=at(x);ball.style.left=spX(v)+'%';ball.classList.remove('ghost');lp.style.left=spX(v)+'%';lp.textContent=v>=FIELD?'TD':`${spotTxt(v)} · ${v-los>0?'+':''}${v-los}`;lp.classList.add('on')};
+  ff.addEventListener('pointerdown',ev=>{on=true;ff.setPointerCapture(ev.pointerId);show(ev.clientX);ev.preventDefault()});
+  ff.addEventListener('pointermove',ev=>{if(on)show(ev.clientX)});
+  const end=()=>{if(!on)return;on=false;lp.classList.remove('on');const e=tapeCur().e;if(!e||v==null)return;
+    const patch=v>=FIELD&&(e.res==='C'||e.res==='R')?{res:'TD',yds:null}:{yds:v-los};act(grp=>chEv(e,patch,grp))};
+  ff.addEventListener('pointerup',end);ff.addEventListener('pointercancel',end);
+}
 function tapeUpdate(){
   const P=document.getElementById('tpanel'), a=document.activeElement, keep=a&&a.id==='t-note'?{v:a.value,s:a.selectionStart,id:tp.id}:null;
-  P.innerHTML=tapePanel();
+  P.innerHTML=tapePanel();bindTapeSpot();
   if(keep&&keep.id===tp.id){const n=document.getElementById('t-note');if(n){n.value=keep.v;n.focus();try{n.setSelectionRange(keep.s,keep.s)}catch(e){}}}
   mountPlayer();
 }
@@ -1823,7 +1890,7 @@ function tapePanel0(){
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
       <p class="note">${e._spot==null?t('tSpotQ'):e.spot!=null?t('tManualS'):t('tAutoS')}${e.spot!=null&&!readOnly()?` · <button class="linkbtn" data-act="tspotauto">${t('tSpotAuto')}</button>`:''}</p>`)}
-    ${conv?'':blk(t('tYds'),t('tYdsS'),yds('yds',e.yds??null))}
+    ${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
     ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
     ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
     ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
@@ -2089,6 +2156,35 @@ function renderSheet(){
       <div class="zlist">${L.map(e=>`<div class="zrow"><i class="zdot ${dotCls(e)}">${e.t==='conv'?e.pts:e._down||''}</i>
         <span><b>${R[e.res]||e.res}${e.rec!=null?' · '+numTxt(view==='scout'?sc.key:scKeyOf(g,e._side),e.rec):''}</b><small>${[e.t==='conv'?t('conv')+' '+e.pts+' pt':e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),e.form?esc(e.form):'',e.call?esc(e.call):'',e.yds!=null?e.yds+' '+t('yardsShort'):'',e._g||''].filter(Boolean).join(' · ')}</small></span>${e.vt!=null?`<button class="zplay" data-act="zvideo" data-g="${e._gid||g.id}" data-start="${e.id}" aria-label="${t('vPlayOne')}">▶</button>`:''}</div>`).join('')}</div>
       <button class="ghost" data-act="close">${t('close')}</button>`;
+  }else if(sheet.kind==='post'){
+    const e=g.events.find(x=>x.id===sheet.id);
+    if(!e){sheet=null;Lr.innerHTML='';return}
+    const los=sheet.los, v=sheet.v, R={C:t('tagC'),R:t('tagR'),SACK:t('sack')}, dside=other(sheet.side);
+    h=`<div class="help-head"><h2>${R[e.res]}${e.rec!=null?' · '+numTxt(scKeyOf(g,sheet.side),e.rec):''}</h2><button class="ghost" data-act="postskip">${t('skip')}</button></div>
+      ${spotBlock(los,v,sheet.side)}${e.res!=='SACK'?flagBlock(dside,sheet.f):''}
+      <button class="primary" data-act="postok">${t('postSave')}</button>`;
+  }else if(sheet.kind==='play'){
+    // the play in one sheet: result, receiver (or runner), interceptor, where it ended and who pulled the flag
+    const d=draft;if(!d){sheet=null;Lr.innerHTML='';return}
+    const sd=sheet.side, ds=other(sd), key=scKeyOf(g,sd), run=d.kind==='run', gain=d.res==='C'||d.res==='R';
+    const cnt={};g.events.forEach(x=>{if(x.t==='play'&&x._side===sd&&x.rec!=null)cnt[x.rec]=(cnt[x.rec]||0)+1});
+    let lastRec=null;for(let i=g.events.length-1;i>=0;i--){const x=g.events[i];if(x.t==='play'&&x._side===sd&&x.rec!=null&&!x.annul){lastRec=x.rec;break}}
+    // one row for passes and runs: Run turns the play into a run, Complete / Incomplete / INT into a pass, TD keeps the kind
+    const opts=[['C',t('tagC')],['X',t('tagX')],['R',t('tagR')],['TD','TD'],['INT','INT']];
+    const recs=[...g.roster[sd]].sort((a,b)=>(cnt[b]||0)-(cnt[a]||0)||a-b);
+    h=`<div class="help-head"><h2>${zoneName(d.zone)}<small class="pk-dd">${st.spot!=null?ddTxt({_down:st.down,_dist:st.goal?FIELD-st.spot:MID-st.spot,_goal:st.goal}):ord(st.down)+' '+t('down')}</small></h2><button class="ghost" data-act="pkcancel">${t('cancel')}</button></div>
+      <div class="resrow">${opts.map(([v,l])=>`<button class="rb rb-${v}" data-act="pkres" data-r="${v}" aria-pressed="${d.res===v}">${l}</button>`).join('')}</div>
+      <span class="lbl2">${run?t('tRunner'):t('receiver')} · ${sideName(sd)}</span>
+      <div class="tnums">${recs.map(n=>`<button class="tn num${n===lastRec?' last':''}" data-act="pkrec" data-n="${n}" aria-pressed="${d.rec===n}">${n}${pName(key,n)?`<small>${esc(pName(key,n))}</small>`:cnt[n]?`<small>${cnt[n]} ${t('targets')}</small>`:''}</button>`).join('')}</div>
+      <div class="tm-add"><input class="field-in" id="pk-rn" type="number" inputmode="numeric" min="0" max="99" placeholder="${t('tmNumPh')}"><button class="btn" data-act="pkaddrec">+ ${t('tmAddNum')}</button></div>
+      ${d.res==='INT'?numBlock(t('whoInt'),ds,'pkby',d.by,'pk-in','pkaddby'):''}
+      ${gain?spotBlock(sheet.los,d.v??null,sd)+flagBlock(ds,d.f):''}
+      <button class="primary" data-act="pksave">${t('pkSave')}${d.rec!=null?' · #'+d.rec:''}</button>`;
+  }else if(sheet.kind==='qbpick'){
+    const sd=sheet.side, key=scKeyOf(g,sd), cnt={};g.events.forEach(x=>{if(x.qb!=null&&x._side===sd)cnt[x.qb]=(cnt[x.qb]||0)+1});
+    const R=[...g.roster[sd]].sort((a,b)=>(cnt[b]||0)-(cnt[a]||0)||a-b);
+    h=`<h2>QB · ${sideName(sd)}</h2><p>${t('qbLead')}</p><div class="tnums">${R.map(n=>`<button class="tn num" data-act="qbset" data-n="${n}" aria-pressed="${g.curQb[sd]===n}">${n}${pName(key,n)?`<small>${esc(pName(key,n))}</small>`:''}</button>`).join('')}</div>
+      <button class="big" data-act="qbset" data-n="">${t('qbNone')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='newteam'){
     const cs=allComps();
     h=`<div class="help-head"><h2>${t('ntT')}</h2><button class="ghost" data-act="close">✕</button></div><p>${t('ntLead')}</p>
@@ -2151,6 +2247,7 @@ function renderSheet(){
         ${row('home','⌂',t('home'),t('homeS'))}
         ${row('games','▦',t('gamesMenu'),t('gamesS'))}
         ${g.scout&&!readOnly()?row('quick','⚡',t('ngQuick'),g.quick?t('quickOn'):t('quickOff')):''}
+        ${readOnly()?'':row('postt','📍',t('postT'),postOn()?t('postOnS'):t('postOffS'))}
         ${row('scout','◎',t('sc'),t('scS'))}
         ${isAdmin?row('members','👥',t('members'),t('membersS')):''}
         ${row('help','?',t('helpMenu'),t('helpS'))}
@@ -2287,6 +2384,36 @@ function renderSheet(){
   const f=Lr.querySelector('#form-name')||Lr.querySelector('#call-name');if(f)f.focus();
   const ta=Lr.querySelector('#csv-out');if(ta){ta.focus();ta.select()}
   if(sheet.kind==='help'&&sheet.sec)setTimeout(()=>goHelp(sheet.sec),30);
+  if(sheet.kind==='post'||sheet.kind==='play')bindSpot();
+}
+/* pieces of the play and after-the-play sheets */
+function spotBlock(los,v,side){
+  const info=v==null?(los!=null?t('spotHint'):t('spotHint2')):v>=FIELD?'TOUCHDOWN':los==null?spotTxt(v):`${spotTxt(v)} · ${v-los>0?'+':''}${Math.round((v-los)*2)/2} ${t('yardsShort')}`;
+  return `<span class="lbl2">${los!=null?t('spotQ'):t('spotQ2')}</span>
+    <div class="fs-spot side-${side}" id="spotbar" data-los="${los??''}"><div class="fs-f"><b class="fs-ez own"></b><b class="fs-ez opp"></b>${fieldLines()}${los!=null?`<i class="fs-los" style="left:${spX(los)}%"></i>`:''}
+      <span class="fs-ball drag${v==null?' ghost':''}" id="spball" style="left:${spX(v==null?(los??MID):v)}%">${BALL}</span><span class="fs-loupe" id="sploupe"></span></div></div>
+    <p class="fs-info" id="spinfo"><b>${info}</b></p>
+    ${los!=null?`<div class="fs-q">${[-5,-2,0,3,5,10,15,20].map(n=>`<button class="tn num" data-act="postv" data-n="${n}" aria-pressed="${v!=null&&v-los===n}">${n>0?'+'+n:n}</button>`).join('')}</div>`:''}`;
+}
+function numBlock(lbl,side,act,cur,inId,addAct){
+  const key=scKeyOf(g,side);
+  return `<span class="lbl2">${lbl} · ${sideName(side)}</span><div class="tnums">${[...g.roster[side]].sort((a,b)=>a-b).map(n=>`<button class="tn num" data-act="${act}" data-n="${n}" aria-pressed="${cur===n}">${n}${pName(key,n)?`<small>${esc(pName(key,n))}</small>`:''}</button>`).join('')}</div>
+    <div class="tm-add"><input class="field-in" id="${inId}" type="number" inputmode="numeric" min="0" max="99" placeholder="${t('tmNumPh')}"><button class="btn" data-act="${addAct}">+ ${t('tmAddNum')}</button></div>`;
+}
+const flagBlock=(side,cur)=>numBlock(t('tFlag'),side,'postf',cur,'post-fn','postfn');
+/* drag the ball along the field; a loupe above the finger shows the exact yard line */
+function bindSpot(){
+  const bar=document.getElementById('spotbar');if(!bar)return;
+  const ff=bar.querySelector('.fs-f'), ball=document.getElementById('spball'), lp=document.getElementById('sploupe'), info=document.getElementById('spinfo'), los=bar.dataset.los===''?null:+bar.dataset.los;
+  const at=x=>{const r=ff.getBoundingClientRect(), p=(x-r.left)/r.width*100;return Math.max(0,Math.min(FIELD,Math.round((p-6)/88*FIELD)))};
+  const show=v=>{ball.style.left=spX(v)+'%';ball.classList.remove('ghost');lp.style.left=spX(v)+'%';lp.textContent=v>=FIELD?'TD':spotTxt(v);lp.classList.add('on');
+    info.innerHTML=`<b>${v>=FIELD?'TOUCHDOWN':los==null?spotTxt(v):`${spotTxt(v)} · ${v-los>0?'+':''}${v-los} ${t('yardsShort')}`}</b>`};
+  let on=false;
+  const T=sheet.kind==='play'?draft:sheet;
+  ff.addEventListener('pointerdown',ev=>{on=true;ff.setPointerCapture(ev.pointerId);const v=at(ev.clientX);T.v=v;show(v);ev.preventDefault()});
+  ff.addEventListener('pointermove',ev=>{if(!on)return;const v=at(ev.clientX);T.v=v;show(v)});
+  const end=()=>{if(!on)return;on=false;lp.classList.remove('on');if(los!=null)document.querySelectorAll('[data-act="postv"]').forEach(b=>b.setAttribute('aria-pressed',String(T.v-los===+b.dataset.n)))};
+  ff.addEventListener('pointerup',end);ff.addEventListener('pointercancel',end);
 }
 function goHelp(sec){
   const el=document.getElementById('help-'+sec);if(!el)return;
@@ -2312,7 +2439,7 @@ document.addEventListener('click',ev=>{
   if(!authed)return;
   const b=ev.target.closest('[data-act]');if(!b)return;
   const a=b.dataset.act;
-  if(a==='scrim'){if(ev.target===b)closeSheet();return}
+  if(a==='scrim'){if(ev.target===b){if(sheet&&sheet.kind==='play'){draft=null;runMode=false;closeSheet();render()}else closeSheet()}return}
   if(a!=='del'&&confirmDel)confirmDel=null;
   const st=replay();
   switch(a){
@@ -2417,6 +2544,31 @@ document.addEventListener('click',ev=>{
     case 'tonlyx':tp.only=null;render();break;
     case 'zdet':{const L=zoneSrc[b.dataset.z];if(L)openSheet('zone',{z:b.dataset.z.split('|')[1],L});break}
     case 'teamedit':openSheet('teamedit',{key:b.dataset.key});break;
+    case 'postv':{const T=sheet.kind==='play'?draft:sheet;T.v=Math.max(0,Math.min(FIELD,sheet.los+(+b.dataset.n)));renderSheet();break}
+    case 'postf':{const T=sheet.kind==='play'?draft:sheet, n=+b.dataset.n;T.f=T.f===n?null:n;renderSheet();break}
+    case 'pkres':{const r=b.dataset.r;draft.res=r;if(r==='R')draft.kind='run';else if(r!=='TD')draft.kind='pass';if(r!=='INT')draft.by=null;renderSheet();break}
+    case 'pkrec':{const n=+b.dataset.n;draft.rec=draft.rec===n?null:n;renderSheet();break}
+    case 'pkby':{const n=+b.dataset.n;draft.by=draft.by===n?null:n;renderSheet();break}
+    case 'pkaddrec':case 'pkaddby':{const id=a==='pkaddrec'?'pk-rn':'pk-in', v=parseInt((document.getElementById(id)||{}).value,10);if(isNaN(v)){toast(t('typeNum'));break}
+      const sd=a==='pkaddrec'?sheet.side:other(sheet.side);if(!g.roster[sd].includes(v))updGame({roster:{[sd]:[...g.roster[sd],v]}});
+      if(a==='pkaddrec')draft.rec=v;else draft.by=v;setTimeout(renderSheet,30);break}
+    case 'pkcancel':draft=null;runMode=false;closeSheet();render();break;
+    case 'pksave':{const d=draft, P=sheet;if(!d)break;const x={};
+      if(d.v!=null&&(d.res==='C'||d.res==='R')){if(d.v>=FIELD)d.res='TD';else if(P.los!=null)x.yds=d.v-P.los;else d.spotEv=d.v}
+      if(d.f!=null&&(d.res==='C'||d.res==='R'))x.fby=d.f;
+      d.extra=x;d.viaSheet=true;sheet=null;document.getElementById('layer').innerHTML='';finalize();break}
+    case 'postskip':closeSheet();break;
+    case 'postfn':{const v=parseInt((document.getElementById('post-fn')||{}).value,10);if(isNaN(v)){toast(t('typeNum'));break}
+      const ds=other(sheet.side);if(!g.roster[ds].includes(v))updGame({roster:{[ds]:[...g.roster[ds],v]}});(sheet.kind==='play'?draft:sheet).f=v;setTimeout(renderSheet,30);break}
+    case 'postok':{const e=g.events.find(x=>x.id===sheet.id), P=sheet;closeSheet();if(!e)break;
+      const patch={};if(P.f!=null)patch.fby=P.f;
+      let spotEv=null;
+      if(P.v!=null){if(P.v>=FIELD&&e.res!=='SACK'){patch.res='TD';celebrate('TOUCHDOWN',P.side)}else if(P.los!=null)patch.yds=P.v-P.los;else spotEv={t:'spot',spot:P.v}}
+      if(Object.keys(patch).length||spotEv){act(grp=>{if(Object.keys(patch).length)chEv(e,patch,grp);if(spotEv)addEv(spotEv,grp)});
+        toast(patch.yds!=null?`${spotTxt(P.v)} · ${patch.yds>0?'+':''}${patch.yds} ${t('yardsShort')}`:spotEv?`${t('tBall')}: ${spotTxt(P.v)}`:t('postSaved'))}break}
+    case 'qbpick':openSheet('qbpick',{side:b.dataset.side});break;
+    case 'qbset':{const sd=sheet.side, n=b.dataset.n===''?null:+b.dataset.n;closeSheet();updGame({curQb:{[sd]:n}});toast(n==null?t('qbNone'):'QB #'+n);break}
+    case 'postt':{const v=!postOn();updGame({post:v});setTimeout(renderSheet,50);toast(v?t('postOnT'):t('postOffT'));break}
     case 'sccomp':sc.comp=b.dataset.v||null;render();break;
     case 'newteam':openSheet('newteam',{comp:'LFFF1'});break;
     case 'ntcomp':sheet.nm=(document.getElementById('nt-name')||{}).value||'';sheet.comp=b.dataset.v;sheet.compNew=b.dataset.v==='';renderSheet();break;
@@ -2526,7 +2678,7 @@ document.addEventListener('change',ev=>{
 });
 document.addEventListener('keydown',e=>{
   if(!authed&&e.key==='Enter'&&e.target&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){e.preventDefault();if(e.target.id==='lg-email'){const p=document.getElementById('lg-pw');if(p)p.focus()}else{const b=document.querySelector('[data-act="lgpw"]');if(b)b.click()}return}
-  if(e.key==='Escape'&&sheet)closeSheet();
+  if(e.key==='Escape'&&sheet){if(sheet.kind==='play'){draft=null;runMode=false;closeSheet();render()}else closeSheet()}
   if(e.key==='Enter'&&sheet&&sheet.kind==='tcall'){e.preventDefault();document.querySelector('[data-act="tcalladd"]').click();return}
   if(e.key==='Enter'&&e.target&&e.target.id==='t-note'){e.preventDefault();e.target.blur();return}
   const tag=e.target&&e.target.tagName;
