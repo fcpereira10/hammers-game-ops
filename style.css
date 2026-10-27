@@ -796,3 +796,8 @@ button.slot{text-align:left;cursor:pointer;font:inherit;color:inherit}
 @media (max-width:560px){.fs-q{grid-template-columns:repeat(4,minmax(0,1fr))}.slot.qbslot{min-width:64px}}
 .fs-spot .fs-f + .note{margin-top:4px}
 #tspotbar .fs-f{height:64px}
+/* play sheet */
+.pk-dd{display:block;margin-top:2px;font-family:var(--f-body);font-weight:600;font-size:14px;letter-spacing:0;text-transform:none;color:var(--muted)}
+.sheet .resrow .rb{font-size:15px;min-height:56px;letter-spacing:0}
+.tn.last{border-color:var(--accent)}
+@media (max-width:420px){.sheet .resrow .rb{font-size:13px}}
