@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.13.1';
+const APP_VERSION='1.14.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -41,7 +41,12 @@ pt:{
   annulledPlay:'anulou a jogada', downManual:'Down corrigido à mão', possManual:'Posse mudada à mão', confirm:'Confirmar', del:'Apagar',
   tagC:'Completo', tagX:'Incompleto', tagR:'Corrida', runLow:'corrida', fdLow:'1º down', convTag:p=>'conv. '+(p?'+'+p:'falhada'),
   tod:'turnover em downs', annulTag:'anulada', restore:'Repor', annul:'Anular',
-  logCount:n=>`${n} jogadas registadas. A mais recente aparece primeiro.`, copyCsv:'Copiar CSV',
+  logCount:(n,d)=>`${n===1?'1 jogada':n+' jogadas'} em ${d===1?'1 drive':d+' drives'}. A mais recente aparece primeiro, toca numa drive para ver as jogadas.`, copyCsv:'Copiar CSV',
+  openAll:'Abrir todas', closeAll:'Fechar todas', drvLive:'em curso', drvPoss:'mudança de posse', allDrives:n=>`Ver as ${n} drives na Lista`,
+  final:'Final', endGame:'Terminar jogo', endGameS:'Fecha o registo com o resultado final', endQ:'Terminar o jogo com este resultado?',
+  endNote:'O registo fecha e o jogo fica marcado como terminado. A tape review e a análise continuam abertas, e podes reabrir o jogo se for preciso.',
+  finalT:'Jogo terminado', reopen:'Reabrir jogo', reopenS:'Volta ao registo para corrigir ou continuar', reopened:'Jogo reaberto',
+  winBy:(s,d)=>`Vitória de ${s} por ${d}`, tieT:'Empate', fStats:['Jogadas','Drives','TDs','Jardas','INT'], ftLog:'Lista de jogadas',
   logEmpty:'Ainda sem jogadas. Vai ao Registo e toca numa zona.',
   penTitle:'Falta', penQ:'O que acontece ao down?', annulLast:(d,r,z)=>`Anular a última jogada (${d} down, ${r}, ${z})`,
   penRep:'Repetir down', penRepS:d=>'fica no '+d, penFd:'1º down auto', penFdS:'ex.: interferência', penLoss:'Perde o down',
@@ -211,7 +216,12 @@ en:{
   annulledPlay:'nullified the play', downManual:'Down corrected manually', possManual:'Possession changed manually', confirm:'Confirm', del:'Delete',
   tagC:'Complete', tagX:'Incomplete', tagR:'Run', runLow:'run', fdLow:'1st down', convTag:p=>'conv. '+(p?'+'+p:'failed'),
   tod:'turnover on downs', annulTag:'nullified', restore:'Restore', annul:'Nullify',
-  logCount:n=>`${n} plays recorded. Most recent first.`, copyCsv:'Copy CSV',
+  logCount:(n,d)=>`${n===1?'1 play':n+' plays'} in ${d===1?'1 drive':d+' drives'}. Most recent first, tap a drive to see its plays.`, copyCsv:'Copy CSV',
+  openAll:'Open all', closeAll:'Close all', drvLive:'ongoing', drvPoss:'change of possession', allDrives:n=>`See all ${n} drives in the List`,
+  final:'Final', endGame:'End game', endGameS:'Closes tracking with the final score', endQ:'End the game with this score?',
+  endNote:'Tracking closes and the game is marked as finished. Tape review and analysis stay open, and you can reopen the game if needed.',
+  finalT:'Game over', reopen:'Reopen game', reopenS:'Back to tracking to fix or continue', reopened:'Game reopened',
+  winBy:(s,d)=>`${s} win by ${d}`, tieT:'Tie', fStats:['Plays','Drives','TDs','Yards','INT'], ftLog:'Play list',
   logEmpty:'No plays yet. Go to Track and tap a zone.',
   penTitle:'Penalty', penQ:'What happens to the down?', annulLast:(d,r,z)=>`Nullify the last play (${d} down, ${r}, ${z})`,
   penRep:'Replay down', penRepS:d=>'stays on '+d, penFd:'Auto 1st down', penFdS:'e.g. pass interference', penLoss:'Loss of down',
@@ -398,7 +408,7 @@ function helpData(){
       <dt>${btn('','?')}</dt><dd>Grava sem número, quando não deu para ver quem foi.</dd>
       <dt>${btn('','+')}</dt><dd>Acrescenta um número novo ao plantel deste jogo.</dd></dl>
 
-      <p>Por cima do campo, os quadros <b>Zona</b>, <b>Resultado</b> e <b>Recetor</b> mostram o que já escolheste, e o contorno laranja diz o passo seguinte. O ponto laranja num número marca o último recetor. Por baixo dos botões fica a <b>drive</b> em curso, com a última jogada e o botão Desfazer ao lado, e as drives anteriores numa linha cada.</p>
+      <p>Por cima do campo, os quadros <b>Zona</b>, <b>Resultado</b> e <b>Recetor</b> mostram o que já escolheste, e o contorno laranja diz o passo seguinte. O ponto laranja num número marca o último recetor. Por baixo dos botões fica a <b>drive</b> em curso, com a última jogada e o botão Desfazer ao lado, e as drives anteriores numa linha cada, com as jogadas, as jardas e como acabaram. Toca numa delas para ver as jogadas.</p>
       <p>No marcador, a bola mostra quem ataca. Toca na outra equipa para lhe dar a bola, ou no down ao centro para o corrigir.</p>
       <p>A faixa de campo por baixo do marcador mostra sempre a bola (o ataque vai para a direita), a linha de scrimmage a azul e o meio-campo a amarelo.</p>
       <p><b>QB</b>: o quadro QB, ao lado do recetor, fica até o mudares e é gravado em cada passe. Toca nele para escolher outro.</p>
@@ -427,7 +437,8 @@ function helpData(){
       <li>${btn('',t('fd'))} volta ao 1º down.</li>
       <li>TD, INT ou falhar o 4º down mudam a posse e voltam ao 1º down.</li>
       <li>Se a app se enganar, toca no <b>down</b> ao centro do marcador para o corrigir ou para mudar a posse. Também podes tocar na equipa que não tem a bola para lha dar.</li>
-      <li>No <b>intervalo</b>, toca no down e depois em <b>Intervalo</b>: a 2ª parte começa no 1º down, a atacar quem não começou o jogo.</li></ul>`},
+      <li>No <b>intervalo</b>, toca no down e depois em <b>Intervalo</b>: a 2ª parte começa no 1º down, a atacar quem não começou o jogo.</li>
+      <li>No <b>fim do jogo</b>, toca no down e depois em <b>Terminar jogo</b> (ou em ${btn('',t('game'))} → <b>Terminar jogo</b>). O registo fecha e mostra o resultado final com as stats de cada equipa. A tape review e a análise continuam abertas, e nas listas o jogo aparece como <b>Final</b>. Se for preciso corrigir, <b>Reabrir jogo</b>.</li></ul>`},
     {id:'analysis',t:'Análise',b:`<ul>
       <li><b>Filtros</b>: Hammers ou adversário, passes ou corridas, down, formação e se as jogadas anuladas contam.</li>
       <li><b>Mapa</b> em três vistas: <b>Anéis</b> (o número é o total de bolas na zona e o anel enche com a % de sucesso), <b>Resumo</b> (quanto mais amarela, mais bolas, com o alvo mais usado) e <b>Pontos</b> (cada jogada é um ponto com a cor do resultado e o down lá dentro).</li>
@@ -454,7 +465,8 @@ function helpData(){
       <li><b>Ver no vídeo</b>: toca numa zona, ou no botão por baixo do mapa para as jogadas filtradas, e escolhe o jogo. A tape review abre só com essas jogadas e <b>Próxima</b> salta para a seguinte da lista. Só entram as jogadas que já têm tempo de vídeo.</li></ul>
       <p>A distância e a zona do campo precisam das jardas da tape review. <b>Imprimir</b> dá uma folha para levar para o jogo.</p>`},
     {id:'plays',t:'Lista de jogadas',b:`<ul>
-      <li>Todas as jogadas do jogo, a mais recente primeiro.</li>
+      <li>As jogadas ficam juntas por <b>drive</b>, a mais recente primeiro. Cada drive mostra a equipa, o número de jogadas, as jardas ganhas (jogadas e faltas) e como acabou: TD, INT, safety, turnover em downs, intervalo ou em curso.</li>
+      <li>Toca numa drive para abrir ou fechar as jogadas dela. <b>Abrir todas</b> e <b>Fechar todas</b> fazem o mesmo de uma vez. O intervalo aparece como uma linha entre as drives.</li>
       <li><b>Anular</b> tira a jogada das stats mas guarda-a. <b>Apagar</b> remove-a (pede confirmação).</li>
       <li><b>Copiar CSV</b> copia tudo para colar numa folha de Excel ou Google Sheets.</li></ul>`},
     {id:'tape',t:'Tape review',b:`<p>Depois do jogo, abre o separador <b>Tape</b>. Aparece uma jogada de cada vez, com o que foi registado no live, ao lado do vídeo.</p>
@@ -508,7 +520,7 @@ function helpData(){
       <dt>${btn('','?')}</dt><dd>Saves without a number, when you couldn't see who it was.</dd>
       <dt>${btn('','+')}</dt><dd>Adds a new number to this game's roster.</dd></dl>
 
-      <p>Above the field, the <b>Zone</b>, <b>Result</b> and <b>Receiver</b> boxes show what you picked, and the orange outline shows the next step. The orange dot on a number marks the last receiver. Below the buttons is the current <b>drive</b>, with the last play and an Undo button next to it, and earlier drives one line each.</p>
+      <p>Above the field, the <b>Zone</b>, <b>Result</b> and <b>Receiver</b> boxes show what you picked, and the orange outline shows the next step. The orange dot on a number marks the last receiver. Below the buttons is the current <b>drive</b>, with the last play and an Undo button next to it, and earlier drives one line each, with plays, yards and how they ended. Tap one to see its plays.</p>
       <p>On the scoreboard, the ball shows who is on offense. Tap the other team to give it the ball, or the down in the middle to fix it.</p>
       <p>The field strip under the scoreboard always shows the ball (the offense goes to the right), the line of scrimmage in blue and midfield in yellow.</p>
       <p><b>QB</b>: the QB box, next to the receiver, stays until you change it and is saved on each pass. Tap it to pick another.</p>
@@ -537,7 +549,8 @@ function helpData(){
       <li>${btn('',t('fd'))} goes back to 1st down.</li>
       <li>TD, INT or failing on 4th down change possession and reset to 1st down.</li>
       <li>If the app gets it wrong, tap the <b>down</b> in the middle of the scoreboard to fix it or to change possession. You can also tap the team without the ball to give it the ball.</li>
-      <li>At <b>halftime</b>, tap the down and then <b>Halftime</b>: the 2nd half starts on 1st down, with the team that did not start on offense.</li></ul>`},
+      <li>At <b>halftime</b>, tap the down and then <b>Halftime</b>: the 2nd half starts on 1st down, with the team that did not start on offense.</li>
+      <li>At the <b>end of the game</b>, tap the down and then <b>End game</b> (or ${btn('',t('game'))} → <b>End game</b>). Tracking closes and shows the final score with each team's stats. Tape review and analysis stay open, and lists show the game as <b>Final</b>. To fix something, <b>Reopen game</b>.</li></ul>`},
     {id:'analysis',t:'Analysis',b:`<ul>
       <li><b>Filters</b>: Hammers or opponent, passes or runs, down, formation and whether nullified plays count.</li>
       <li><b>Map</b> in three views: <b>Rings</b> (the number is the total of balls in the zone and the ring fills with the success %), <b>Summary</b> (the more yellow, the more balls, with the most used target) and <b>Dots</b> (each play is a dot with the result's color and its down inside).</li>
@@ -564,7 +577,8 @@ function helpData(){
       <li><b>Watch on video</b>: tap a zone, or the button under the map for the filtered plays, and pick the game. The tape review opens with just those plays and <b>Next</b> jumps to the next one in the list. Only plays that already have a video time are included.</li></ul>
       <p>Distance and field position need the yards from the tape review. <b>Print</b> gives a sheet to take to the game.</p>`},
     {id:'plays',t:'Play list',b:`<ul>
-      <li>Every play of the game, most recent first.</li>
+      <li>Plays are grouped by <b>drive</b>, most recent first. Each drive shows the team, the number of plays, the yards gained (plays and fouls) and how it ended: TD, INT, safety, turnover on downs, halftime or ongoing.</li>
+      <li>Tap a drive to open or close its plays. <b>Open all</b> and <b>Close all</b> do it at once. Halftime shows as a line between drives.</li>
       <li><b>Nullify</b> removes the play from stats but keeps it. <b>Delete</b> removes it (asks to confirm).</li>
       <li><b>Copy CSV</b> copies everything to paste into Excel or Google Sheets.</li></ul>`},
     {id:'tape',t:'Tape review',b:`<p>After the game, open the <b>Tape</b> tab. It shows one play at a time, with what was tracked live, next to the video.</p>
@@ -1027,7 +1041,7 @@ function teamForComp(c){const m={};games.forEach(x=>{if(!x.scout&&x.store!=='dem
   const top=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];return top?top[0]:{LFFF1:'Elite',LFFF2:'Academy',LFFFW:'Girls'}[c]||'Elite'}
 /* a game's title: our team (Elite, Academy, Girls) vs the opponent, or the two teams of a scouting game */
 const gTitle=x=>x.scout?`${esc(x.home||'')} vs ${esc(x.opp)}`:`${esc(x.team)} vs ${esc(x.opp)}`;
-const gSub=x=>x.scout?`${t('xTag')} · `:'';
+const gSub=x=>`${x.ended?`<span class="fin">${t('final')}${x.fscore?` ${x.fscore.H}-${x.fscore.A}`:''}</span> `:''}${x.scout?`${t('xTag')} · `:''}`;
 function sideName(s){return s==='H'?(g.scout?esc(g.home||''):'Hammers'):esc(g.opp)}
 
 function render(){
@@ -1053,6 +1067,7 @@ function render(){
 }
 /* down, distance and ball spot: the current situation in Track, the play on screen in the tape review */
 function downChip(st){
+  if(g.ended&&view!=='tape')return `<small>${t('h2')}</small><b>${t('final')}</b>`;
   const c=view==='tape'?tapeCur().e:null, e=c&&c.t==='play'?c:null;
   const d=e?e._down:st.down, sp=e?e._spot:st.spot, gl=e?e._goal:st.goal, h=e?e._half:st.half;
   return `<small>${h===2?t('h2'):t('h1')}</small><b>${ord(d)} ${sp!=null?`& ${gl?'Goal':MID-sp}`:t('down')}</b>${sp!=null?`<span class="dspot">${spotTxt(sp)}</span>`:''}`;
@@ -1074,7 +1089,7 @@ function topHTML(st){
       <button class="hlogo-btn" data-act="home" aria-label="${t('home')}"><img class="hlogo" src="icons/logo.png" alt="" width="52" height="50"></button>
       <button class="sb-game" data-act="opts" aria-label="${t('options')}"><span class="gt">${gTitle(g)} <small>${esc(g.comp)}</small></span>
         <span class="gs">${g.store!=='demo'?`${t('follows')}: <b>${roleTxt}</b> · `:''}${sync}</span></button>
-      <button class="chip undo" data-act="undo" aria-label="${t('undo')}">↶<span class="sb-lt"> ${t('undo')}</span></button>
+      ${g.ended?'':`<button class="chip undo" data-act="undo" aria-label="${t('undo')}">↶<span class="sb-lt"> ${t('undo')}</span></button>`}
       <button class="chip opts" data-act="opts" aria-label="${t('options')}"><span class="dots" aria-hidden="true">⋮</span><span class="sb-lt">${t('options')}</span></button>
     </div>
     <div class="sb-board score">${team('H')}
@@ -1128,7 +1143,7 @@ function homeView(st){
     ${cur?`<section class="hero">
       <span class="lbl2">${t('continueG')}</span>
       <div class="hero-row"><div class="gtxt"><b>${gTitle(cur)}</b><small>${esc(cur.comp)} · ${cur.date}${cur.owner?' · '+t('byOwner',esc(personName(cur.owner))):''}</small>${lock(cur)}</div>
-        <div class="hscore num"><span>${st.score.H}</span><small>:</small><span>${st.score.A}</span><em>${ord(st.down)} ${t('down')} · ${st.half===2?t('h2'):t('h1')}</em></div></div>
+        <div class="hscore num"><span>${st.score.H}</span><small>:</small><span>${st.score.A}</span><em>${cur.ended?t('final'):`${ord(st.down)} ${t('down')} · ${st.half===2?t('h2'):t('h1')}`}</em></div></div>
       <div class="gbtns big2"><button class="primary" data-act="openg" data-id="${cur.id}" data-v="reg">${t('track')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="tape">${t('tabsTape')}<span class="beta">BETA</span></button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="openg" data-id="${cur.id}" data-v="log">${t('tabs').log}</button></div>
     </section>`:''}
     <section class="htiles">
@@ -1254,22 +1269,77 @@ function evLine(e){
   const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):''].filter(Boolean);
   return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?'#'+e.rec:'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
 }
-/* the drive on the field, newest play first, with undo next to the last thing tracked; earlier drives in one line each */
+/* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime comes as its own item between two drives.
+   Yards add the plays and the fouls; a TD without yards counts up to the goal line. */
+function driveGroups(st){
+  st=st||replay();
+  const out=[], by=new Map();
+  for(const e of g.events){
+    if(e.t==='half'){out.push({half:e});continue}
+    let d=by.get(e._drive);
+    if(!d){d={n:e._drive,side:null,evs:[]};by.set(e._drive,d);out.push(d)}
+    if(d.side==null&&e.t!=='conv')d.side=e._side;
+    d.evs.push(e);
+  }
+  out.forEach((d,i)=>{
+    if(d.half)return;
+    if(d.side==null)d.side=d.evs[0]._side;
+    const p=d.evs.filter(e=>e.t==='play'&&!e.annul), end=p[p.length-1];
+    d.plays=p;
+    let y=null;const addY=v=>{if(v!=null)y=(y||0)+v};
+    p.forEach(e=>addY(e.yds!=null?e.yds:e.res==='TD'&&e.kind!=='sack'&&e._spot!=null?FIELD-e._spot:null));
+    d.evs.forEach(e=>{if(e.t==='pen'&&e._pyds)addY(e._pyds)});
+    d.yds=y;
+    const cv=d.evs.find(e=>e.t==='conv'&&e.side===d.side), nx=out[i+1];
+    d.out=end&&end.res==='TD'?{l:'TD'+(cv&&cv.res==='G'?' +'+cv.pts:''),c:'TD'}
+      :end&&end.res==='INT'?{l:end.pick6?'Pick-6':'INT',c:'bad'}
+      :end&&end.res==='SF'?{l:t('safety'),c:'bad'}
+      :d.evs.some(e=>e._tod)?{l:t('tod'),c:'bad'}
+      :d.evs.some(e=>e.t==='poss')?{l:t('drvPoss'),c:''}
+      :nx&&nx.half?{l:t('halfT'),c:''}
+      :d.n===st.drive?{l:g.ended?t('final'):t('drvLive'),c:g.ended?'':'live'}:{l:'',c:''};
+  });
+  return out;
+}
+const ydsTxt=y=>y==null?'':` · ${y>0?'+':''}${y} ${t('yardsShort')}`;
+/* which drives are open: the one on the field by default, then what was tapped (for this game only) */
+let drOpen={gid:null,m:{}};
+function drIsOpen(n,st){if(drOpen.gid!==g.id)drOpen={gid:g.id,m:{}};return n in drOpen.m?drOpen.m[n]:n===st.drive}
+/* the drive on the field, newest play first, with undo next to the last thing tracked; earlier drives in one line each, a tap shows their plays */
 function driveHTML(st){
-  const evs=g.events.filter(e=>e.t==='play'||e.t==='pen'||e.t==='conv'), cur=evs.filter(e=>e._drive===st.drive);
-  const plays=cur.filter(e=>e.t==='play'&&!e.annul), yds=plays.filter(e=>e.yds!=null);
-  const last=lastEv(), show=cur.length?cur:last&&(last.t==='play'||last.t==='pen'||last.t==='conv')?[last]:[];
-  const lines=show.slice().reverse().slice(0,6).map(e=>{const L=evLine(e), u=last&&e.id===last.id;
-    return `<li class="dl r-${L.cls||''}${L.annul?' annul':''}"><div><b>${L.h}</b><small>${L.s}</small></div>${L.tag?`<span class="dtag">${L.tag}</span>`:''}${u?`<button class="dundo" data-act="undo">↶<small>${t('undo')}</small></button>`:''}</li>`}).join('');
-  const prev=[...new Set(evs.filter(e=>e._drive<st.drive).map(e=>e._drive))].slice(-3).reverse().map(n=>{
-    const l=evs.filter(e=>e._drive===n), p=l.filter(e=>e.t==='play'&&!e.annul), end=p[p.length-1], s=p.length?p[0]._side:l[0]._side;
-    const out=!end?'':end.res==='TD'?'TD':end.res==='INT'?(end.pick6?'Pick-6':'INT'):end._tod?t('tod'):'';
-    return `<li class="dprev side-${s}"><span>${sideName(s)}</span><small>${t('scPlaysN',p.length)}</small>${out?`<span class="dtag ${out==='TD'||out==='Pick-6'?'TD':''}">${out}</span>`:''}</li>`}).join('');
+  const shown=e=>e.t==='play'||e.t==='pen'||e.t==='conv';
+  const D=driveGroups(st).filter(d=>!d.half), cd=D.find(d=>d.n===st.drive), cur=cd?cd.evs.filter(shown):[];
+  const plays=cd?cd.plays:[];
+  const last=lastEv(), show=cur.length?cur:last&&shown(last)?[last]:[];
+  const line=(e,u)=>{const L=evLine(e);
+    return `<li class="dl r-${L.cls||''}${L.annul?' annul':''}"><div><b>${L.h}</b><small>${L.s}</small></div>${L.tag?`<span class="dtag">${L.tag}</span>`:''}${u?`<button class="dundo" data-act="undo">↶<small>${t('undo')}</small></button>`:''}</li>`};
+  const lines=show.slice().reverse().slice(0,6).map(e=>line(e,last&&e.id===last.id)).join('');
+  const P=D.filter(d=>d.n<st.drive), prev=P.slice(-3).reverse().map(d=>{const op=drIsOpen(d.n,st), l=d.evs.filter(shown);
+    return `<li class="dprev side-${d.side}${op?' open':''}"><button class="dprev-h" data-act="drtog" data-n="${d.n}" aria-expanded="${op}"><span>${sideName(d.side)}</span><small>${t('scPlaysN',d.plays.length)}${ydsTxt(d.yds)}</small>${d.out.l?`<span class="dtag ${d.out.c}">${d.out.l}</span>`:''}<i class="chev" aria-hidden="true">›</i></button>
+      ${op&&l.length?`<ol class="dlist">${l.slice().reverse().map(e=>line(e,false)).join('')}</ol>`:''}</li>`}).join('');
   return `<section class="drive side-${st.poss}"><div class="dhead"><span class="dball">${BALL}</span><div><b>${sideName(st.poss)}</b>
-      <small>${t('driveN',st.drive+1)} · ${plays.length?t('scPlaysN',plays.length):t('noPlaysYet')}${yds.length?` · ${(()=>{const y=yds.reduce((a,e)=>a+e.yds,0);return (y>0?'+':'')+y})()} ${t('yardsShort')}`:''}</small></div></div>
-    ${lines?`${cur.length?'':`<span class="lbl2">${t('lastPlay1')}</span>`}<ol class="dlist">${lines}</ol>`:''}${prev?`<ol class="dprevs">${prev}</ol>`:''}</section>`;
+      <small>${t('driveN',st.drive+1)} · ${plays.length?t('scPlaysN',plays.length):t('noPlaysYet')}${cd?ydsTxt(cd.yds):''}</small></div></div>
+    ${lines?`${cur.length?'':`<span class="lbl2">${t('lastPlay1')}</span>`}<ol class="dlist">${lines}</ol>`:''}${prev?`<ol class="dprevs">${prev}</ol>`:''}
+    ${P.length>3?`<button class="linkbtn" data-act="view" data-v="log">${t('allDrives',P.length+1)}</button>`:''}</section>`;
+}
+/* a finished game: the final score, a line per team and the way to the analysis, the list and the tape */
+function finalHTML(st){
+  const D=driveGroups(st).filter(d=>!d.half), sc=st.score, dif=sc.H-sc.A;
+  const row=s=>{const p=g.events.filter(e=>e.t==='play'&&!e.annul&&e._side===s), my=D.filter(d=>d.side===s), y=my.reduce((a,d)=>a+(d.yds||0),0);
+    return [p.length,my.length,p.filter(e=>e.res==='TD').length+g.events.filter(e=>e.t==='play'&&!e.annul&&e.pick6&&e._side!==s).length,my.some(d=>d.yds!=null)?y:'–',p.filter(e=>e.res==='INT').length]};
+  const R={H:row('H'),A:row('A')};
+  return `<div class="final"><section class="fcard">
+      <span class="lbl2">${t('finalT')}</span>
+      <div class="fscore"><div class="fs-t side-H"><b>${sideName('H')}</b><span class="num">${sc.H}</span></div><small>${t('final')}</small><div class="fs-t side-A"><b>${sideName('A')}</b><span class="num">${sc.A}</span></div></div>
+      <p class="fwin">${dif?t('winBy',sideName(dif>0?'H':'A'),Math.abs(dif)):t('tieT')}</p>
+      <table class="ftab"><thead><tr><th>${sideName('H')}</th><th></th><th>${sideName('A')}</th></tr></thead><tbody>
+        ${t('fStats').map((l,i)=>`<tr><td class="num">${R.H[i]}</td><th>${l}</th><td class="num">${R.A[i]}</td></tr>`).join('')}</tbody></table>
+      <div class="gbtns"><button class="primary" data-act="view" data-v="ana">${t('viewAna')}</button><button class="btn" data-act="view" data-v="log">${t('ftLog')}</button><button class="btn" data-act="view" data-v="tape">${t('tabsTape')}</button></div>
+      ${readOnly()?'':`<button class="ghost" data-act="reopen">↺ ${t('reopen')}<small>${t('reopenS')}</small></button>`}
+    </section></div>`;
 }
 function regView(st){
+  if(g.ended&&!draft)return finalHTML(st);
   const r=role(), conv=draft&&draft.kind==='conv';
   const s=conv?draft.side:st.poss;
   const gl=conv||glOn===st.drive;
@@ -1754,10 +1824,10 @@ function scoutView(){
     <p class="appver">Hammers Game Ops · ${t('version')} ${APP_VERSION}${PREVIEW?' · '+t('previewTag'):''}</p>`;
 }
 function logView(){
-  replay();
+  const st=replay();
   const delB=e=>`<button class="del" data-act="del" data-id="${e.id}">${confirmDel===e.id?t('confirm'):t('del')}</button>`;
   const sd=e=>`<span class="sd ${e._side}"></span>`;
-  const items=[...g.events].reverse().map(e=>{
+  const row=e=>{
     if(e.t==='pen')return `<div class="ev">${sd(e)}<span class="dn">${ord(e._down)}</span><span class="tx"><b>${e.foul?t('fouls')[e.foul]:t('penalty')}</b>${e.team?`<span class="tag">${sideName(e.team)}</span>`:''}${e._pyds?`<span class="tag">${e._pyds>0?'+':'−'}${Math.abs(e._pyds)} ${t('yardsShort')}</span>`:''}<span class="tag">${e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]}</span>${e.annulId?`<span class="tag">${t('annulledPlay')}</span>`:''}</span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='spot')return `<div class="ev">${sd(e)}<span class="dn">⌖</span><span class="tx"><b>${t('tBall')}: ${spotTxt(e.spot)}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='down')return `<div class="ev">${sd(e)}<span class="dn">→${ord(e.down)}</span><span class="tx">${t('downManual')}</span><span class="ops">${delB(e)}</span></div>`;
@@ -1775,10 +1845,20 @@ function logView(){
       ${e.fd?`<span class="tag">${t('fdLow')}</span>`:''}${e.form?`<span class="tag">${esc(e.form)}</span>`:''}${e.qb2?'<span class="tag">2 QB</span>':''}
       ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}</span>
       <span class="ops"><button data-act="annul" data-id="${e.id}">${e.annul?t('restore'):t('annul')}</button>${delB(e)}</span></div>`;
-  }).join('');
-  return `<div class="toolbar"><p class="note">${t('logCount',g.events.filter(e=>e.t==='play').length)} ${qh('plays')}</p>
+  };
+  /* one card per drive, newest first: a tap opens its plays */
+  const G=driveGroups(st), D=G.filter(d=>!d.half), anyOpen=D.some(d=>drIsOpen(d.n,st));
+  const items=G.slice().reverse().map(d=>{
+    if(d.half)return `<div class="drv-sep"><span>${t('halfT')}</span><span class="ops">${delB(d.half)}</span></div>`;
+    const op=drIsOpen(d.n,st);
+    return `<section class="drv side-${d.side}${op?' open':''}"><button class="drv-h" data-act="drtog" data-n="${d.n}" aria-expanded="${op}">
+        <span class="drv-t"><b>${sideName(d.side)}</b><small>${t('driveN',d.n+1)} · ${t('scPlaysN',d.plays.length)}${ydsTxt(d.yds)}</small></span>
+        ${d.out.l?`<span class="dtag ${d.out.c}">${d.out.l}</span>`:''}<i class="chev" aria-hidden="true">›</i></button>
+      ${op?`<div class="log">${d.evs.slice().reverse().map(row).join('')}</div>`:''}</section>`}).join('');
+  return `<div class="toolbar"><p class="note lognote">${t('logCount',g.events.filter(e=>e.t==='play').length,D.length)} ${qh('plays')}</p>
+    ${D.length>1?`<button class="btn" data-act="drall" data-v="${anyOpen?0:1}">${anyOpen?t('closeAll'):t('openAll')}</button>`:''}
     <button class="btn" data-act="csv">${t('copyCsv')}</button></div>
-    <div class="log">${items||`<p class="note">${t('logEmpty')}</p>`}</div>`;
+    <div class="drvs">${items||`<p class="note">${t('logEmpty')}</p>`}</div>`;
 }
 
 
@@ -2150,6 +2230,13 @@ function renderSheet(){
     h=`<h2>${t('fixDown')}</h2><div class="grid4">${[1,2,3,4].map(d=>`<button class="big num" data-act="setdown" data-d="${d}" aria-pressed="${st.down===d}">${ord(d)}</button>`).join('')}</div>
       ${g.mode==='both'?`<button class="big" data-act="flipposs">${t('changePoss')}<small>${t('nowOff')}${sideName(other(st.poss))}</small></button>`:''}
       ${st.half===1&&!readOnly()?`<button class="big" data-act="half">${t('halfT')}<small>${t('halfS',sideName(g.mode&&g.mode!=='both'?g.mode:other(g.start)))}</small></button>`:''}
+      ${st.half===2&&!readOnly()?`<button class="big" data-act="endg">${t('endGame')}<small>${t('endGameS')}</small></button>`:''}
+      <button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='endg'){
+    h=`<h2>${t('endQ')}</h2>
+      <div class="fscore"><div class="fs-t side-H"><b>${sideName('H')}</b><span class="num">${st.score.H}</span></div><small>${t('final')}</small><div class="fs-t side-A"><b>${sideName('A')}</b><span class="num">${st.score.A}</span></div></div>
+      <p class="note">${t('endNote')}</p>
+      <button class="primary" data-act="endok">${t('endGame')}</button>
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='zone'){
     const L=sheet.L.slice().reverse(), ok=L.filter(okPlay).length, R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:t('convRes').G,NG:t('convRes').NG};
@@ -2252,6 +2339,7 @@ function renderSheet(){
         ${row('games','▦',t('gamesMenu'),t('gamesS'))}
         ${g.scout&&!readOnly()?row('quick','⚡',t('ngQuick'),g.quick?t('quickOn'):t('quickOff')):''}
         ${readOnly()?'':row('postt','📍',t('postT'),postOn()?t('postOnS'):t('postOffS'))}
+        ${readOnly()?'':g.ended?row('reopen','↺',t('reopen'),t('reopenS')):row('endg','🏁',t('endGame'),t('endGameS'))}
         ${row('scout','◎',t('sc'),t('scS'))}
         ${isAdmin?row('members','👥',t('members'),t('membersS')):''}
         ${row('help','?',t('helpMenu'),t('helpS'))}
@@ -2448,6 +2536,8 @@ document.addEventListener('click',ev=>{
   const st=replay();
   switch(a){
     case 'view':view=b.dataset.v;render();break;
+    case 'drtog':{const n=+b.dataset.n, st=replay();drIsOpen(n,st);drOpen.m[n]=!drIsOpen(n,st);render();break}
+    case 'drall':{const st=replay(), v=b.dataset.v==='1';drIsOpen(0,st);driveGroups(st).forEach(d=>{if(!d.half)drOpen.m[d.n]=v});render();break}
     case 'home':sheet=null;document.getElementById('layer').innerHTML='';draft=null;runMode=false;view='home';render();break;
     case 'openg':{const v=b.dataset.v||'reg';view=v;if(b.dataset.id!==g.id)selectGame(b.dataset.id);else{render();if(g.store!=='demo'&&!getRole(g.id)&&!readOnly()&&v==='reg')openSheet('role')}break}
     case 'zone':tapZone(b.dataset.z);break;
@@ -2491,7 +2581,10 @@ document.addEventListener('click',ev=>{
     case 'pick6':{const p=lastPlay();if(p&&p.res==='INT'){const y=b.dataset.v==='1';act(grp=>chEv(p,{pick6:y},grp));if(y){toast(t('pick6Done',sideName(other(p._side))));celebrate('PICK-6',other(p._side))}}break}
     case 'pat':{const p=lastPlay();if(p)act(grp=>chEv(p,{pat:+b.dataset.p},grp));break}
     case 'undo':undo();break;
-    case 'down':openSheet('down');break;
+    case 'down':if(g.ended){view='reg';closeSheet();render()}else openSheet('down');break;
+    case 'endg':draft=null;runMode=false;openSheet('endg');break;
+    case 'endok':{const st=replay();updGame({ended:true,fscore:{H:st.score.H,A:st.score.A}});closeSheet();view='reg';render();toast(t('finalT'));break}
+    case 'reopen':updGame({ended:false,fscore:null});closeSheet();view='reg';render();toast(t('reopened'));break;
     case 'poss':if(!readOnly()){act(grp=>addEv({t:'poss'},grp));toast(t('possChanged'))}break;
     case 'setdown':act(grp=>addEv({t:'down',down:+b.dataset.d},grp));closeSheet();break;
     case 'flipposs':act(grp=>addEv({t:'poss'},grp));closeSheet();break;

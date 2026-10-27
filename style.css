@@ -552,6 +552,7 @@ body.preview{padding-bottom:30px}
 .scg .res{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--surface-2);font-family:var(--f-display);font-weight:800;font-size:18px}
 .scg .res.r0{background:var(--good);color:var(--bg)}.scg .res.r2{background:var(--bad);color:var(--bg)}
 .toolbar .note{white-space:nowrap}
+.toolbar .note.lognote{white-space:normal;flex:1 1 100%}
 @media print{
   body{background:#fff;padding:0}
   .noprint,#layer,.hlogo-btn{display:none!important}
@@ -644,11 +645,57 @@ body.preview{padding-bottom:30px}
 .dtag.TD{border-color:var(--good);color:var(--good)}
 .dundo{flex:none;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:60px;border-left:1px solid var(--line);color:var(--bad);font-size:20px;font-weight:800}
 .dundo small{font-family:var(--f-display);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-.dprev{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);font-size:13px}
-.dprev span:first-child{font-family:var(--f-display);font-weight:700;font-size:15px;text-transform:uppercase}
-.dprev small{color:var(--muted);flex:1}
+.dprev{display:flex;flex-direction:column;gap:6px;border-radius:8px;border:1px solid var(--line);font-size:13px}
+.dprev-h{display:flex;align-items:center;gap:8px;padding:6px 10px;min-height:44px;width:100%;text-align:left;border-radius:8px}
+.dprev-h span:first-child{font-family:var(--f-display);font-weight:700;font-size:15px;text-transform:uppercase}
+.dprev-h small{color:var(--muted);flex:1}
 .dprev .dtag{margin:0}
-.dprev.side-H span:first-child{color:var(--accent-text)}
+.dprev.side-H .dprev-h span:first-child{color:var(--accent-text)}
+.dprev .dlist{padding:0 6px 6px}
+.dtag.bad{border-color:color-mix(in srgb,var(--bad) 55%,transparent);color:var(--bad)}
+.dtag.live{border-color:var(--accent);color:var(--accent-text)}
+.chev{flex:none;font-style:normal;font-size:20px;line-height:1;color:var(--muted);transition:transform .15s}
+[aria-expanded="true"]>.chev{transform:rotate(90deg)}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+
+/* ---------- play list grouped by drive ---------- */
+.drvs{display:flex;flex-direction:column;gap:8px}
+.drv{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--hammers);border-radius:var(--r);overflow:hidden}
+.drv.side-A{border-left-color:var(--opp)}
+.drv-h{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;min-height:56px;text-align:left}
+.drv-t{flex:1;min-width:0;display:flex;flex-direction:column}
+.drv-t b{font-family:var(--f-display);font-weight:800;font-size:19px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drv.side-H .drv-t b{color:var(--accent-text)}
+.drv-t small{color:var(--muted);font-size:13px}
+.drv .dtag{margin:0}
+.drv>.log{padding:0 8px 8px}
+.drv>.log .ev{background:var(--surface-2)}
+.drv-sep{display:flex;align-items:center;gap:10px;padding:2px 4px;font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.drv-sep::before,.drv-sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.drv-sep::after{order:1}
+.drv-sep .ops{order:2}
+.drv-sep .ops button{min-height:34px;padding:0 10px;border-radius:8px;background:var(--surface-2);font-size:12px;color:var(--bad);letter-spacing:0;text-transform:none}
+
+/* ---------- finished game ---------- */
+.final{display:flex;justify-content:center}
+.fcard{width:100%;max-width:620px;display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:16px;background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--accent)}
+.fscore{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;text-align:center}
+.fs-t{display:flex;flex-direction:column;align-items:center;min-width:0}
+.fs-t b{font-family:var(--f-display);font-weight:800;font-size:18px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.fs-t.side-H b{color:var(--accent-text)}
+.fs-t span{font-family:var(--f-display);font-weight:800;font-size:56px;line-height:1}
+.fscore>small{font-family:var(--f-display);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fwin{margin:0;text-align:center;font-weight:600}
+.ftab{width:100%;border-collapse:collapse;font-size:15px}
+.ftab th,.ftab td{padding:7px 6px;border-top:1px solid var(--line);text-align:center}
+.ftab thead th{border-top:0;font-family:var(--f-display);font-size:14px;text-transform:uppercase;color:var(--muted)}
+.ftab tbody th{font-weight:500;color:var(--muted);font-size:13px}
+.ftab td{font-family:var(--f-display);font-weight:700;font-size:20px;width:35%}
+.fcard .gbtns{display:flex;flex-wrap:wrap;gap:8px}
+.fcard .gbtns>*{flex:1 1 140px}
+.fcard .ghost{display:flex;flex-direction:column;align-items:center;gap:2px}
+.fcard .ghost small{color:var(--muted);font-weight:400}
+.fin{display:inline-block;padding:1px 7px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
 .rb{font-size:18px;line-height:1.05;white-space:normal;overflow-wrap:anywhere}
 @media (max-width:560px){.rb{font-size:15px;letter-spacing:0}}
 
