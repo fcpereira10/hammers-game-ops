@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.14.0';
+const APP_VERSION='1.15.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -121,7 +121,7 @@ pt:{
   vLocal:n=>`ficheiro neste aparelho: ${n}`, vNoneS:'sem vídeo', vAdd:'+ Acrescentar parte', vBadLink:'Esse link não parece do YouTube.', vSaved:'Vídeo guardado',
   vNote:'O ficheiro aberto só toca neste aparelho e não é enviado. O link do YouTube fica guardado no jogo para toda a equipa.',
   vPopBlocked:'O browser bloqueou a janela. Autoriza pop-ups para este site e tenta outra vez.', vWin:'Vídeo',
-  thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT'], byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
+  thQb:['QB','Passes','Comp','%','Jd','Jd ar','TD','INT','1º D','Rating'], qbNote:'1º D = 1º downs de passe. Rating = passer rating da NFL (0 a 158.3), só quando todos os completos têm jardas da tape review.', byQb:'Por QB', byCall:'Por jogada', thCall:['Jogada','Vezes','Comp %','Jd','Jd/jog','TD'],
   tilesY:['Jardas','Jd/jogada','Explosivas'], thDef2:['Nº','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`Defesa ${s}`, jdPlay:'Jd/jog',
   insTag:'inserida na review', tDragS:'Arrasta a bola até onde acabou a jogada: a lupa mostra a jarda e as jardas ficam preenchidas. Até à end zone, a jogada passa a TD.',
   pkSave:'Guardar jogada', hPop:'Toca na <b>zona</b>: abre a jogada para escolheres o resultado e o recetor (e, se quiseres, onde acabou e quem tirou a flag).',
@@ -181,7 +181,7 @@ pt:{
   scPosAll:'Todo o campo', scPosOwn:'Meio-campo próprio', scPosGoal:'Goal to go', scClear:'Limpar filtros', scNoForm:'sem formação',
   scByForm:'Por formação', scByDown:'Por down', scByDist:'Por distância', scTargets:'Alvos', scQbs:'QB',
   thScForm:['Formação','Jog.','% passe','Comp %','Zona +','Alvo +'], thScDown:['Down','Jog.','% passe','Comp %','Zona +','Alvo +','Formação +'],
-  thScDist:['Distância','Jog.','% passe','Comp %','Zona +','Alvo +','Formação +'], thScRec:['Nº','Alvos','% alvos','Comp %','TD','Corr','Zona +'], thScQb:['QB','Passes','Comp %','TD','INT'],
+  thScDist:['Distância','Jog.','% passe','Comp %','Zona +','Alvo +','Formação +'], thScRec:['Nº','Alvos','% alvos','Comp %','TD','Corr','Zona +'], thScQb:['QB','Passes','Comp','%','Jd','TD','INT','1º D','Rating'],
   scDefence:h=>h?'Como defendemos':'Como defendem', scDefMap:h=>h?'Para onde nos atiram':'Para onde se lhes atira', scDefMapNote:'Passes dos adversários contra esta defesa, no campo (sem GL).',
   scDefPl:'Defensores em destaque', thScDef:['Nº','Flags','PBU','INT','Pick-6','Sacks'], scGamesT:'Jogos incluídos', scGamesNote:'Toca num jogo para o tirar do relatório ou voltar a incluir.',
   scLoadingG:'a carregar', scLoadFail:'não foi possível carregar', scOff:'fora do relatório', scOpenA:'Abrir análise', scBtn:'Relatório de adversário',
@@ -296,7 +296,7 @@ en:{
   vLocal:n=>`file on this device: ${n}`, vNoneS:'no video', vAdd:'+ Add part', vBadLink:"That link doesn't look like YouTube.", vSaved:'Video saved',
   vNote:'An opened file only plays on this device and is not uploaded. The YouTube link is saved in the game for the whole team.',
   vPopBlocked:'The browser blocked the window. Allow pop-ups for this site and try again.', vWin:'Video',
-  thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT'], byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
+  thQb:['QB','Passes','Comp','%','Yds','Air','TD','INT','1st D','Rating'], qbNote:'1st D = passing 1st downs. Rating = NFL passer rating (0 to 158.3), only when every completion has yards from the tape review.', byQb:'By QB', byCall:'By play', thCall:['Play','Calls','Comp %','Yds','Yds/play','TD'],
   tilesY:['Yards','Yds/play','Explosive'], thDef2:['#','Flags','PBU','INT','Pick-6','Sacks'], defTable2:s=>`${s} defense`, jdPlay:'Yds/play',
   insTag:'inserted in review', tDragS:'Drag the ball to where the play ended: the loupe shows the yard line and the yards are filled in. Into the end zone, the play becomes a TD.',
   pkSave:'Save play', hPop:'Tap the <b>zone</b>: the play opens to pick the result and the receiver (and, if you like, where it ended and who pulled the flag).',
@@ -356,7 +356,7 @@ en:{
   scPosAll:'Whole field', scPosOwn:'Own half', scPosGoal:'Goal to go', scClear:'Clear filters', scNoForm:'no formation',
   scByForm:'By formation', scByDown:'By down', scByDist:'By distance', scTargets:'Targets', scQbs:'QB',
   thScForm:['Formation','Plays','% pass','Comp %','Zone +','Target +'], thScDown:['Down','Plays','% pass','Comp %','Zone +','Target +','Formation +'],
-  thScDist:['Distance','Plays','% pass','Comp %','Zone +','Target +','Formation +'], thScRec:['No.','Targets','% targets','Comp %','TD','Runs','Zone +'], thScQb:['QB','Passes','Comp %','TD','INT'],
+  thScDist:['Distance','Plays','% pass','Comp %','Zone +','Target +','Formation +'], thScRec:['No.','Targets','% targets','Comp %','TD','Runs','Zone +'], thScQb:['QB','Passes','Comp','%','Yds','TD','INT','1st D','Rating'],
   scDefence:h=>h?'How we defend':'How they defend', scDefMap:h=>h?'Where teams throw on us':'Where teams throw on them', scDefMapNote:'Opponent passes against this defense, on the field map (no GL).',
   scDefPl:'Defenders to watch', thScDef:['No.','Flags','PBU','INT','Pick-6','Sacks'], scGamesT:'Games included', scGamesNote:'Tap a game to leave it out of the report or bring it back.',
   scLoadingG:'loading', scLoadFail:'could not load', scOff:'left out', scOpenA:'Open analysis', scBtn:'Opponent report',
@@ -1424,6 +1424,14 @@ function regView(st){
 const isComp=e=>e.res==='C'||e.res==='TD'||e.res==='G';
 const isPassLike=e=>e.t==='conv'||e.kind==='pass';
 const pct=(a,b)=>b?Math.round(a/b*100)+'%':'-';
+/* passing line of one QB: attempts, completions, yards, TD, INT, 1st downs and the NFL passer rating
+   (the rating needs yards on every completion, so it only shows once the tape review has them) */
+function qbLine(l){
+  const n=l.length, c=l.filter(isComp), td=l.filter(e=>e.res==='TD').length, int=l.filter(e=>e.res==='INT').length,
+    yds=l.filter(e=>e.res!=='INT').reduce((a,e)=>a+(e.yds||0),0), hy=l.some(e=>e.yds!=null), cl=x=>Math.max(0,Math.min(2.375,x));
+  const rt=n&&c.every(e=>e.yds!=null)?((cl((c.length/n-.3)*5)+cl((yds/n-3)*.25)+cl(td/n*20)+cl(2.375-int/n*25))/6*100).toFixed(1):'-';
+  return {n,c:c.length,yds:hy?yds:'-',air:hy?c.filter(e=>e.yds!=null).reduce((a,e)=>a+e.yds-(e.yac||0),0):'-',td,int,fd:l.filter(e=>e.fd||e._autoFd).length,rt};
+}
 function inArea(e){
   if(an.area==='conv')return e.t==='conv';
   if(e.t!=='play')return false;
@@ -1460,8 +1468,8 @@ function anaView(){
   const thP2=hasY?[...t('thP').slice(0,4),lang==='pt'?'Jd':'Yds','YAC',...t('thP').slice(4)]:t('thP');
   // by QB and by play name (tape review fields)
   const qbs={};all.filter(e=>e.qb!=null&&isPassLike(e)).forEach(e=>{(qbs[e.qb]=qbs[e.qb]||[]).push(e)});
-  const qrows=Object.entries(qbs).map(([k,l])=>{const c=l.filter(isComp);return `<tr><td class="jn">#${k}</td><td>${l.length}</td><td>${c.length}</td><td>${pct(c.length,l.length)}</td>
-      <td>${sum(l.filter(e=>e.res!=='INT'),'yds')}</td><td>${c.filter(e=>e.yds!=null).reduce((a,e)=>a+e.yds-(e.yac||0),0)}</td><td>${l.filter(e=>e.res==='TD').length}</td><td>${l.filter(e=>e.res==='INT').length}</td></tr>`}).join('');
+  const qrows=Object.entries(qbs).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">#${k}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td>
+      <td>${q.yds}</td><td>${q.air}</td><td>${q.td}</td><td>${q.int}</td><td>${q.fd}</td><td>${q.rt}</td></tr>`}).join('');
   const calls={};all.filter(e=>e.call).forEach(e=>{(calls[e.call]=calls[e.call]||[]).push(e)});
   const crows=Object.entries(calls).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike),y=l.filter(e=>e.yds!=null);
       return `<tr><td>${esc(k)}</td><td>${l.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${sum(y,'yds')}</td><td>${avg(y)}</td><td>${l.filter(e=>e.res==='TD').length}</td></tr>`}).join('');
@@ -1515,7 +1523,7 @@ function anaView(){
           <p class="note">${t('tapPlayer')}</p>
         </section>
         ${qrows?`<section class="panel"><h3>${t('byQb')}</h3>
-          <div class="tablewrap"><table><thead><tr>${t('thQb').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${qrows}</tbody></table></div></section>`:''}
+          <div class="tablewrap"><table><thead><tr>${t('thQb').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${qrows}</tbody></table></div><p class="note">${t('qbNote')}</p></section>`:''}
         ${crows?`<section class="panel"><h3>${t('byCall')}</h3>
           <div class="tablewrap"><table class="nosel"><thead><tr>${t('thCall').map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${crows}</tbody></table></div></section>`:''}
         ${conv?'':`<section class="panel"><h3>${t('byDown')}</h3>
@@ -1792,7 +1800,7 @@ function scoutView(){
     const z=scTop(p.filter(e=>e.zone),e=>e.zone);
     return tr('rec',k==='?'?'':k,String(sc.rec)===k,[k==='?'?t('noNum'):'#'+k+(pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''),p.length,pct(p.length,nT),pct(p.filter(isComp).length,p.length),l.filter(e=>e.res==='TD').length,l.filter(e=>e.kind==='run').length,z?zoneName(z[0]):'-'])}).join(''));
   const qm={};P.filter(e=>isPassLike(e)&&e.qb!=null).forEach(e=>{(qm[e.qb]=qm[e.qb]||[]).push(e)});
-  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>`<tr><td class="jn">#${k}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${l.length}</td><td>${pct(l.filter(isComp).length,l.length)}</td><td>${l.filter(e=>e.res==='TD').length}</td><td>${l.filter(e=>e.res==='INT').length}</td></tr>`).join(''));
+  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">#${k}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td><td>${q.yds}</td><td>${q.td}</td><td>${q.int}</td><td>${q.fd}</td><td>${q.rt}</td></tr>`}).join(''));
   // the scouted team on defense: where opponents throw on them, and who makes the plays
   const dfp=dp.filter(e=>e.zone&&!isGL(e.zone));
   const dv={}, dk=k=>dv[k]=dv[k]||{f:0,b:0,i:0,p6:0,s:0};
