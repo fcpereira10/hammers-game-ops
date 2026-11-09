@@ -159,7 +159,7 @@ pt:{
   gap:'Jogadas em falta', gapS:'câmara sem bateria, vídeo cortado... acerta o jogo a seguir', gapShort:'Em falta', gapNext:'A seguir',
   gapLead:'Perdemos jogadas que não há forma de registar. Diz como ficou o jogo depois delas e o registo continua a partir daí. As stats só contam o que foi registado.',
   gapN:'Quantas jogadas (aprox.)', gapNUnk:'não sei', gapPoss:'Quem tem a bola a seguir', gapDist:'A bola está', gapFd:'antes do meio campo', gapGoal:'depois do meio campo (& Goal)',
-  gapPts:'Pontos marcados entretanto', gapHalf:'Se a falha apanhou o intervalo, marca primeiro o intervalo (botão do down).', gapSave:'Guardar', gapEdit:'Editar',
+  gapPts:'Pontos marcados entretanto', gapHalf:'Se a falha apanhou o intervalo, marca primeiro o intervalo (botão do down).', gapSave:'Guardar', gapEdit:'Editar', tGap:'Jogadas em falta a seguir', tGapS:'o vídeo cortou depois desta jogada?', gapBefore:'antes desta jogada',
   gapTag:n=>n?`${n} ${n===1?'jogada':'jogadas'} em falta`:'Jogadas em falta', gapNote:n=>`Este jogo tem ${n===1?'1 falha':n+' falhas'} no registo (jogadas em falta): as stats só contam o que foi registado.`,
   driveN:n=>`Drive ${n}`, lastPlay1:'Última jogada', noPlaysYet:'ainda sem jogadas', lastRec:'último recetor',
   sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números.', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
@@ -339,7 +339,7 @@ en:{
   gap:'Missing plays', gapS:'camera died, video cut... set the game after them', gapShort:'Missing', gapNext:'Next',
   gapLead:'We lost plays that cannot be tracked. Say how the game stood after them and tracking goes on from there. Stats only count what was tracked.',
   gapN:'How many plays (approx.)', gapNUnk:'unknown', gapPoss:'Who has the ball next', gapDist:'The ball is', gapFd:'before midfield', gapGoal:'past midfield (& Goal)',
-  gapPts:'Points scored meanwhile', gapHalf:'If the gap went over halftime, mark halftime first (down button).', gapSave:'Save', gapEdit:'Edit',
+  gapPts:'Points scored meanwhile', gapHalf:'If the gap went over halftime, mark halftime first (down button).', gapSave:'Save', gapEdit:'Edit', tGap:'Missing plays after this', tGapS:'did the video cut after this play?', gapBefore:'before this play',
   gapTag:n=>n?`${n} missing ${n===1?'play':'plays'}`:'Missing plays', gapNote:n=>`This game has ${n===1?'1 gap':n+' gaps'} in the tracking (missing plays): stats only count what was tracked.`,
   driveN:n=>`Drive ${n}`, lastPlay1:'Last play', noPlaysYet:'no plays yet', lastRec:'last receiver',
   sumT:'Summary', sumNote:'Written automatically from the numbers.', sumFew:'Too few plays for a summary yet (it needs at least 5).',
@@ -490,6 +490,7 @@ function helpData(){
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>⚑ Falta</b> regista uma falta nesta jogada: escolhes a equipa e a falta, e a app aplica as jardas a partir do sítio certo, o efeito no down e o novo spot da bola.</li>
       <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
+      <li><b>Jogadas em falta a seguir</b>: se o vídeo cortou (câmara sem bateria, desligou) e há jogadas que não dá para ver, marca a falha depois da última jogada vista. Diz quem tem a bola a seguir, o down e os pontos marcados entretanto: o resultado e o down continuam certos e as stats contam só o que se viu.</li>
       <li><b>Vídeo noutra janela</b> abre o vídeo numa janela à parte, para pôr noutro ecrã. Os botões e as teclas continuam a comandá-lo.</li>
       <li>No computador: <b>← →</b> muda de jogada, <b>espaço</b> faz play/pausa, <b>Enter</b> é Próxima.</li></ul>
       <p>As jardas, o YAC, os QB, os nomes das jogadas, as flags e os PBU aparecem na <b>Análise</b>.</p>`},
@@ -602,6 +603,7 @@ function helpData(){
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>⚑ Foul</b> records a foul on this play: pick the team and the foul, and the app applies the yards from the right spot, the effect on the down and the new ball spot.</li>
       <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
+      <li><b>Missing plays after this</b>: if the video cut (camera died, switched off) and some plays cannot be seen, mark the gap after the last play seen. Say who has the ball next, the down and the points scored meanwhile: score and down stay right and stats only count what was seen.</li>
       <li><b>Video in another window</b> opens the video in a separate window, to put on another screen. The buttons and keys still control it.</li>
       <li>On a computer: <b>← →</b> change play, <b>space</b> play/pause, <b>Enter</b> is Next.</li></ul>
       <p>Yards, YAC, QBs, play names, flags and PBUs show in <b>Analysis</b>.</p>`},
@@ -1981,14 +1983,20 @@ function tapePanel0(){
   const forms=g.formations[s].map(f=>[f,f]);
   const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
   const vt=e.vt!=null?`${fmtT(e.vt)}${vs.length>1?' · '+partName(e.vi):''}`:'—';
-  const L2=L.map((x,j)=>`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
+  /* gaps (missing plays) sit between plays: the one right before this play shows above it, all of them in the list */
+  const gapsTo=x=>{const k=g.events.indexOf(x), out=[];for(let j=k-1;j>=0&&g.events[j]!==L[L.indexOf(x)-1];j--)if(g.events[j].t==='gap')out.unshift(g.events[j]);return out};
+  const gapRow=x=>`<button class="trow tgaprow" data-act="gapedit" data-id="${x.id}"><span class="sd ${x.poss||x._side}"></span><span class="num">⋯</span><span>${t('gapShort')}</span><span class="trx">${t('gapTag',x.n)}${gapPts(x)?' · '+gapPts(x):''}</span><span></span><span></span></button>`;
+  const tailGaps=L.length?g.events.slice(g.events.indexOf(L[L.length-1])+1).filter(x=>x.t==='gap'):[];
+  const gapHere=gapsTo(e);
+  const L2=L.map((x,j)=>gapsTo(x).map(gapRow).join('')+`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
       <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}</span>
-      <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('');
+      <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('')+tailGaps.map(gapRow).join('');
   return `<div class="tprog"><div class="tbar"><i style="width:${L.length?Math.round(done/L.length*100):0}%"></i></div><span class="num">${t('tDone',done,L.length)}</span><button class="linkbtn" data-act="tlist">${tp.list?t('tHideList'):t('tShowList')}</button></div>
     ${tp.list?`<div class="tlist">${L2}</div>`:''}
     <div class="tnav side-${s}"><button class="btn" data-act="tnav" data-d="-1" ${i?'':'disabled'} aria-label="${t('tPrev')}">‹</button>
       <div class="tttl"><b>${t('tPlay',i+1,L.length)}</b><small>${conv?t('conv')+' '+e.pts+' pt':`<b class="dd">${ddTxt(e)} · ${spotTxt(e._spot)}</b>`} · <span class="pside ${s}">${sideName(s)}</span> · ${e._half===2?t('h2'):t('h1')}${e.annul?' · '+t('annulTag'):''}${e.ins?' · '+t('insTag'):''}${e.rv?' · ✓ '+t('tReviewed'):''}</small></div>
       <button class="btn" data-act="tnav" data-d="1" ${i<L.length-1?'':'disabled'} aria-label="${t('tNext')}">›</button></div>
+    ${gapHere.map(x=>`<div class="tgap"><span>⋯ <b>${t('gapTag',x.n)}</b> ${t('gapBefore')}${gapPts(x)?' · '+gapPts(x):''}</span>${readOnly()?'':`<button class="linkbtn" data-act="gapedit" data-id="${x.id}">${t('gapEdit')}</button>`}</div>`).join('')}
     <div class="vctl">
       ${vs.length>1?`<div class="seg">${vs.map((v,j)=>`<button data-act="vuse" data-n="${j}" aria-pressed="${vid.slot===j}">${partName(j)}</button>`).join('')}</div>`:''}
       <button class="btn" data-act="tplay" aria-label="${t('tPlayCtl')}">▶ ❚❚</button><button class="btn" data-act="tback">${t('tBack5')}</button>
@@ -2011,7 +2019,7 @@ function tapePanel0(){
     ${blk(t('tNote'),'',`<input class="field-in" id="t-note" maxlength="140" placeholder="${t('tNotePh')}" value="${esc(e.note||'')}" autocomplete="off">`)}
     <div class="tfoot">
       <button class="primary" data-act="tnext">${i<L.length-1||readOnly()?t('tNext'):t('tNewPlay')} ›</button>
-      <div class="row"><button class="btn" data-act="tpen">${t('penAdd')}</button><button class="btn" data-act="tins">${t('tIns')}</button><button class="btn" data-act="tdel" style="color:var(--bad)">${tp.del===e.id?t('tDelC'):t('tDel')}</button></div>
+      <div class="row"><button class="btn" data-act="tpen">${t('penAdd')}</button><button class="btn" data-act="tins">${t('tIns')}</button><button class="btn" data-act="tgap" title="${t('tGapS')}">⋯ ${t('tGap')}</button><button class="btn" data-act="tdel" style="color:var(--bad)">${tp.del===e.id?t('tDelC'):t('tDel')}</button></div>
       <p class="note tkeys">${t('tKeys')}</p>
     </div>`;
 }
@@ -2663,12 +2671,19 @@ document.addEventListener('click',ev=>{
     case 'quick':{const q=!g.quick;updGame({quick:q});setTimeout(renderSheet,50);toast(q?t('quickOn'):t('quickOff'));break}
     case 'other':if(!readOnly()){draft=null;runMode=false;openSheet('other')}break;
     case 'gapnew':if(!readOnly()){draft=null;runMode=false;openSheet('gap',{n:0,poss:st.poss,down:1,goal:false,pts:{H:0,A:0}})}break;
+    case 'tgap':{if(readOnly())break;if(tp.only){toast(t('vOnlyNo'));break}const e=tapeCur().e;if(!e)break;const nx=g.events[g.events.indexOf(e)+1], ns=nx&&nx.t==='play'?nx:null;
+      openSheet('gap',{after:e.id,n:0,poss:ns?ns._side:st.poss,down:ns?ns._down:st.down,goal:ns?!!ns._goal:!!st.goal,pts:{H:0,A:0}});break}
     case 'gapedit':{const e=g.events.find(x=>x.id===b.dataset.id);if(!e||readOnly())break;openSheet('gap',{id:e.id,n:e.n||0,poss:e.poss||e._side,down:e.down||1,goal:!!e.goal,pts:{H:0,A:0,...(e.pts||{})}});break}
     case 'gapset':{const [k,v]=b.dataset.v.split(':');sheet[k]=k==='poss'?v:k==='goal'?v==='1':+v;renderSheet();break}
     case 'gapn':sheet.n=Math.max(0,Math.min(99,(sheet.n||0)+(+b.dataset.d)));renderSheet();break;
     case 'gappts':{const k=b.dataset.k;sheet.pts[k]=Math.max(0,Math.min(99,(sheet.pts[k]||0)+(+b.dataset.d)));renderSheet();break}
     case 'gapsave':{if(readOnly())break;const P=sheet, x={n:P.n||null,poss:P.poss,down:P.down,goal:!!P.goal,pts:{H:P.pts.H||0,A:P.pts.A||0}}, old=P.id&&g.events.find(e=>e.id===P.id);closeSheet();
-      if(old)act(grp=>chEv(old,x,grp));else act(grp=>addEv({t:'gap',...x},grp));toast(t('gapTag',x.n));break}
+      const af=P.after&&g.events.find(e=>e.id===P.after);
+      if(old)act(grp=>chEv(old,x,grp));
+      else if(af){const nx=g.events[g.events.indexOf(af)+1], ne={t:'gap',...x,id:Date.now().toString(36)+uid(),ts:nx?(af.ts+nx.ts)/2:Math.max(Date.now(),af.ts+1),by:DEV};
+        act(grp=>{S().put(g.id,ne);grp.push({k:'add',id:ne.id})})}
+      else act(grp=>addEv({t:'gap',...x},grp));
+      toast(t('gapTag',x.n));render();break}
     case 'safety':case 'badsnap':{closeSheet();const sf=a==='safety';
       act(grp=>addEv({t:'play',kind:sf?'safety':'snap',zone:null,rec:null,res:sf?'SF':'BS',fd:false,form:g.curForm[st.poss]||null,qb2:false,annul:false},grp));
       toast(sf?`${t('safety')} · +2 ${sideName(other(st.poss))}`:`${t('badSnap')} · ${ord(st.down)} ${t('down')}`);if(sf)celebrate('SAFETY',other(st.poss),true);break}
