@@ -850,6 +850,6 @@ button.slot{text-align:left;cursor:pointer;font:inherit;color:inherit}
 @media (max-width:420px){.sheet .resrow .rb{font-size:13px}}
 
 /* a play that was not recorded (camera died, video cut) */
-.rb.nrb{width:100%;margin-bottom:8px;border-style:dashed}
+.rb.nrb{width:fit-content;max-width:100%;align-self:flex-start;justify-self:start;background:transparent;display:inline-flex;align-items:center;min-height:30px;padding:0 12px;margin-bottom:8px;border:1px dashed var(--muted);border-radius:999px;font-family:var(--f-body);font-weight:600;font-size:13px;text-transform:none;letter-spacing:0;color:var(--muted)}
 .rb.nrb[aria-pressed="true"]{border-style:solid;background:var(--ink);color:var(--bg)}
 .tag.nr{border-style:dashed}
