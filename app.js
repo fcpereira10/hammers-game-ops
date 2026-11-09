@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.15.0';
+const APP_VERSION='1.15.1';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -1287,7 +1287,7 @@ function driveGroups(st){
     const p=d.evs.filter(e=>e.t==='play'&&!e.annul), end=p[p.length-1];
     d.plays=p;
     let y=null;const addY=v=>{if(v!=null)y=(y||0)+v};
-    p.forEach(e=>addY(e.yds!=null?e.yds:e.res==='TD'&&e.kind!=='sack'&&e._spot!=null?FIELD-e._spot:null));
+    p.forEach(e=>addY(ydsOf(e)));
     d.evs.forEach(e=>{if(e.t==='pen'&&e._pyds)addY(e._pyds)});
     d.yds=y;
     const cv=d.evs.find(e=>e.t==='conv'&&e.side===d.side), nx=out[i+1];
@@ -1422,15 +1422,17 @@ function regView(st){
 
 /* analysis */
 const isComp=e=>e.res==='C'||e.res==='TD'||e.res==='G';
+/* yards of a play: a TD saved without yards (ball dragged into the end zone) gained the rest of the field from its spot */
+const ydsOf=e=>e.yds!=null?e.yds:e.res==='TD'&&e.kind!=='sack'&&e._spot!=null?FIELD-e._spot:null;
 const isPassLike=e=>e.t==='conv'||e.kind==='pass';
 const pct=(a,b)=>b?Math.round(a/b*100)+'%':'-';
 /* passing line of one QB: attempts, completions, yards, TD, INT, 1st downs and the NFL passer rating
    (the rating needs yards on every completion, so it only shows once the tape review has them) */
 function qbLine(l){
   const n=l.length, c=l.filter(isComp), td=l.filter(e=>e.res==='TD').length, int=l.filter(e=>e.res==='INT').length,
-    yds=l.filter(e=>e.res!=='INT').reduce((a,e)=>a+(e.yds||0),0), hy=l.some(e=>e.yds!=null), cl=x=>Math.max(0,Math.min(2.375,x));
-  const rt=n&&c.every(e=>e.yds!=null)?((cl((c.length/n-.3)*5)+cl((yds/n-3)*.25)+cl(td/n*20)+cl(2.375-int/n*25))/6*100).toFixed(1):'-';
-  return {n,c:c.length,yds:hy?yds:'-',air:hy?c.filter(e=>e.yds!=null).reduce((a,e)=>a+e.yds-(e.yac||0),0):'-',td,int,fd:l.filter(e=>e.fd||e._autoFd).length,rt};
+    yds=l.filter(e=>e.res!=='INT').reduce((a,e)=>a+(ydsOf(e)||0),0), hy=l.some(e=>ydsOf(e)!=null), cl=x=>Math.max(0,Math.min(2.375,x));
+  const rt=n&&c.every(e=>ydsOf(e)!=null)?((cl((c.length/n-.3)*5)+cl((yds/n-3)*.25)+cl(td/n*20)+cl(2.375-int/n*25))/6*100).toFixed(1):'-';
+  return {n,c:c.length,yds:hy?yds:'-',air:hy?c.filter(e=>ydsOf(e)!=null).reduce((a,e)=>a+ydsOf(e)-(e.yac||0),0):'-',td,int,fd:l.filter(e=>e.fd||e._autoFd).length,rt};
 }
 function inArea(e){
   if(an.area==='conv')return e.t==='conv';
@@ -1457,12 +1459,12 @@ function anaView(){
     :[[passes.length,TL[0]],[pct(comp,passes.length),TL[1]],[P.filter(e=>e.res==='TD').length,TL[2]],
       [passes.filter(e=>e.res==='INT').length,TL[3]],[runs.length,TL[4]],[base.filter(e=>e.kind==='sack').length,t('sacks')],[P.filter(e=>e.fd||e._autoFd).length,TL[5]],[P.filter(e=>e.qb2).length,TL[6]]];
   // yards come from the tape review
-  const Y=P.filter(e=>e.t==='play'&&e.yds!=null), hasY=!conv&&Y.length>0, sum=(l,k)=>l.reduce((a,e)=>a+(e[k]||0),0), avg=l=>l.length?(sum(l,'yds')/l.length).toFixed(1):'-';
-  if(hasY){const TY=t('tilesY');tiles.push([sum(Y,'yds'),TY[0]],[avg(Y),TY[1]],[Y.filter(e=>e.yds>=15).length,TY[2]])}
+  const Y=P.filter(e=>e.t==='play'&&ydsOf(e)!=null), hasY=!conv&&Y.length>0, sum=(l,k)=>l.reduce((a,e)=>a+((k==='yds'?ydsOf(e):e[k])||0),0), avg=l=>l.length?(sum(l,'yds')/l.length).toFixed(1):'-';
+  if(hasY){const TY=t('tilesY');tiles.push([sum(Y,'yds'),TY[0]],[avg(Y),TY[1]],[Y.filter(e=>ydsOf(e)>=15).length,TY[2]])}
   zoneSrc={};
   const by={};all.filter(e=>e.kind!=='sack').forEach(e=>{const k=e.rec==null?'?':e.rec;(by[k]=by[k]||[]).push(e)});
   const rows=Object.entries(by).map(([k,l])=>{const p=l.filter(isPassLike);return{k,t:p.length,c:p.filter(isComp).length,td:l.filter(e=>e.res==='TD').length,int:p.filter(e=>e.res==='INT').length,r:l.filter(e=>e.kind==='run').length,
-      y:sum(l.filter(e=>e.res!=='INT'),'yds'),yac:sum(l,'yac'),hy:l.some(e=>e.yds!=null)}})
+      y:sum(l.filter(e=>e.res!=='INT'),'yds'),yac:sum(l,'yac'),hy:l.some(e=>ydsOf(e)!=null)}})
     .sort((a,b)=>b.t-a.t||b.r-a.r);
   const tbody=rows.map(r=>`<tr data-act="anrec" data-r="${r.k}" aria-selected="${String(an.rec)===r.k}"><td class="jn">${r.k==='?'?t('noNum'):'#'+r.k}</td><td>${r.t}</td><td>${r.c}</td><td>${pct(r.c,r.t)}</td>${hasY?`<td>${r.hy?r.y:'-'}</td><td>${r.hy?r.yac:'-'}</td>`:''}<td>${r.td}</td><td>${r.int}</td><td>${r.r}</td></tr>`).join('');
   const thP2=hasY?[...t('thP').slice(0,4),lang==='pt'?'Jd':'Yds','YAC',...t('thP').slice(4)]:t('thP');
@@ -1471,7 +1473,7 @@ function anaView(){
   const qrows=Object.entries(qbs).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">#${k}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td>
       <td>${q.yds}</td><td>${q.air}</td><td>${q.td}</td><td>${q.int}</td><td>${q.fd}</td><td>${q.rt}</td></tr>`}).join('');
   const calls={};all.filter(e=>e.call).forEach(e=>{(calls[e.call]=calls[e.call]||[]).push(e)});
-  const crows=Object.entries(calls).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike),y=l.filter(e=>e.yds!=null);
+  const crows=Object.entries(calls).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike),y=l.filter(e=>ydsOf(e)!=null);
       return `<tr><td>${esc(k)}</td><td>${l.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${sum(y,'yds')}</td><td>${avg(y)}</td><td>${l.filter(e=>e.res==='TD').length}</td></tr>`}).join('');
   const top=(arr,f)=>{const m={};arr.forEach(e=>{const k=f(e);if(k!=null)m[k]=(m[k]||0)+1});const s=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];return s||null};
   const dn=conv?'':[1,2,3,4].map(d=>{
@@ -1595,8 +1597,8 @@ function sumHTML(off,def,nG,us,D,key){
     L.push(t('sumConv',[[1,one],[2,two]].filter(([,l])=>l.length).map(([p,l])=>[p,l.length,gd(l)])))}
   if(D&&D.length>=3){const lost=D.filter(d=>['INT','P6','DN','SF'].includes(d.res)).length;
     L.push(t('sumDrv',D.length,(D.reduce((a,d)=>a+d.pts,0)/D.length).toFixed(1),pct(D.filter(d=>d.res==='TD').length,D.length),pct(lost,D.length)))}
-  const Y=pl.filter(e=>e.yds!=null);
-  if(Y.length>=5&&Y.some(e=>e.yds>=15))L.push(t('sumBig',Y.filter(e=>e.yds>=15).length,pct(Y.filter(e=>e.yds>=15).length,Y.length)));
+  const Y=pl.filter(e=>ydsOf(e)!=null), big=Y.filter(e=>ydsOf(e)>=15);
+  if(Y.length>=5&&big.length)L.push(t('sumBig',big.length,pct(big.length,Y.length)));
   const dp=def.filter(e=>e.t==='play'&&e.kind==='pass');
   if(dp.length>=5){let x=t('sumDef',us,pct(dp.filter(isComp).length,dp.length));
     const zs=Object.entries(dp.filter(e=>e.zone&&!isGL(e.zone)).reduce((m,e)=>{(m[e.zone]=m[e.zone]||[]).push(e);return m},{})).filter(([,l])=>l.length>=3)
@@ -1614,8 +1616,8 @@ function drivesOf(events,side){
   const m={};events.forEach(e=>{if((e.t==='play'||e.t==='conv')&&!e.annul&&e._drive!=null)(m[e._drive]=m[e._drive]||[]).push(e)});
   return Object.values(m).map(l=>{const p=l.filter(e=>e.t==='play');if(!p.length||p[0]._side!==side)return null;
     const end=p[p.length-1], cv=l.filter(e=>e.t==='conv'&&e.side===side&&e.res==='G').reduce((a,e)=>a+(e.pts||0),0);
-    const res=end.res==='TD'?'TD':end.res==='INT'?(end.pick6?'P6':'INT'):end.res==='SF'?'SF':end._tod?'DN':'END', y=p.filter(e=>e.yds!=null);
-    return {n:p.length,res,pts:res==='TD'?6+cv:0,yds:y.length?y.reduce((a,e)=>a+e.yds,0):null,first:p[0],half:p[0]._half}}).filter(Boolean);
+    const res=end.res==='TD'?'TD':end.res==='INT'?(end.pick6?'P6':'INT'):end.res==='SF'?'SF':end._tod?'DN':'END', y=p.filter(e=>ydsOf(e)!=null);
+    return {n:p.length,res,pts:res==='TD'?6+cv:0,yds:y.length?y.reduce((a,e)=>a+ydsOf(e),0):null,first:p[0],half:p[0]._half}}).filter(Boolean);
 }
 function drivePanel(D,title){
   if(!D.length)return '';
@@ -1791,8 +1793,8 @@ function scoutView(){
   }
   // our playbook: how often each play is called, on which downs, and how it goes (play names come from the tape review)
   const CL=fil(off,'call').filter(e=>e.call), cm={};CL.forEach(e=>{(cm[e.call]=cm[e.call]||[]).push(e)});
-  tables+=tbl(t('scByCall'),t('thScCall'),Object.entries(cm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike), y=l.filter(e=>e.yds!=null);
-    return tr('call',k,sc.call===k,[esc(k),l.length,pct(p.length,l.filter(e=>e.kind!=='sack').length),pct(p.filter(isComp).length,p.length),y.length?(y.reduce((a,e)=>a+e.yds,0)/y.length).toFixed(1):'-',l.filter(e=>e.res==='TD').length,
+  tables+=tbl(t('scByCall'),t('thScCall'),Object.entries(cm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike), y=l.filter(e=>ydsOf(e)!=null);
+    return tr('call',k,sc.call===k,[esc(k),l.length,pct(p.length,l.filter(e=>e.kind!=='sack').length),pct(p.filter(isComp).length,p.length),y.length?(y.reduce((a,e)=>a+ydsOf(e),0)/y.length).toFixed(1):'-',l.filter(e=>e.res==='TD').length,
       [1,2,3,4].map(d=>{const n=l.filter(e=>e._down===d).length;return n?ord(d)+' '+n:''}).filter(Boolean).join(' · ')])}).join(''));
   const RL=fil(off,'rec').filter(e=>e.kind!=='sack'), rm={};RL.forEach(e=>{const k=e.rec==null?'?':e.rec;(rm[k]=rm[k]||[]).push(e)});
   const nT=RL.filter(isPassLike).length;
