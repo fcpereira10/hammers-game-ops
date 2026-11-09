@@ -479,6 +479,7 @@ body.preview{padding-bottom:30px}
 .tn{min-height:46px;border-radius:var(--r);background:var(--surface-2);border:2px solid var(--line);font-family:var(--f-display);font-weight:800;font-size:21px}
 .tn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .tn.add,.tn.kp{color:var(--muted);border-style:dashed;font-size:18px}
+.tn.tname{grid-column:span 2;font-family:var(--f-body);font-size:15px;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tn[data-sug],.f[data-sug]{background:var(--surface);color:var(--ink);border:2px dashed var(--accent)}
 .tzhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .tzhead .seg button{min-height:32px}
