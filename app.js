@@ -107,7 +107,7 @@ pt:{
   tDone:(a,b)=>`${a} / ${b} revistas`, tShowList:'Ver lista', tHideList:'Esconder lista', tPlay:(i,n)=>`Jogada ${i} / ${n}`, tReviewed:'revista',
   tStart:'Início', tMark:'Marcar agora', tMarked:'Tempo marcado', tNoVideo:'Sem vídeo aberto', tVideos:'Vídeos', vPop:'Vídeo noutra janela', vBack:'Trazer vídeo',
   vAway:'O vídeo está noutra janela', vAwayS:'Arrasta essa janela para o outro ecrã. Os botões e as teclas daqui continuam a comandar o vídeo.',
-  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
+  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', nrBtn:'Não ficou gravada', nrTag:'não gravada', nrNote:'Conta como down mas não entra nas stats. Se souberes o resultado pelo marcador (TD, INT), marca-o.', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
   tNewPlay:'Nova jogada', fouls:{fs:'Falsa partida',dg:'Atraso de jogo',sh:'Shift ou motion ilegal',os:'Offside',ip:'Participação ou substituição ilegal',pi:'Interferência de passe',ic:'Contacto ilegal',ir:'Rush ilegal',fl:'Flag puxada ilegalmente',sd:'Shielding',fg:'Flag guarding',jd:'Saltar ou mergulhar',fp:'Passe para a frente ilegal',rn:'Corrida ilegal (no-running zone)',dp:'Atraso de passe (7 s)',us:'Antidesportivo'},
   penWho:'Quem fez a falta?', penOff:'Ataque', penDef:'Defesa', penPre:'Antes do snap', penPlay:'Na jogada', penDead:'Depois da jogada', penOther:'Outra falta', penOtherS:'escolhes as jardas e o down',
   penYds:n=>n?`${n} jd`:'sem jardas', penSpot:{los:'a partir da linha de scrimmage',bs:'a partir da linha (ou do fim da jogada, se a defesa falhou numa jogada que ganhou terreno)',sf:'a partir do sítio da falta: põe nas jardas da jogada até onde foi a falta',next:'depois da jogada, que conta'},
@@ -156,11 +156,6 @@ pt:{
   drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'Fim de parte ou em curso'}, drvFirst:(p,z)=>`1ª jogada da drive: ${p} passe${z?`, sobretudo para ${z}`:''}.`,
   sumDrv:(n,pp,td,l)=>`Em ${n} drives: ${pp} pontos por drive, ${td} acabam em TD e ${l} perdem a bola (INT, downs ou safety).`,
   autoFd:'AUTO 1º DOWN', otherBtn:'Outro ⋯', otherT:'Outros resultados', safety:'Safety', safetyS:s=>`+2 para ${s}, que fica com a bola`, badSnap:'Bad snap', badSnapS:'a bola tocou no chão no snap · conta como down',
-  gap:'Jogadas em falta', gapS:'câmara sem bateria, vídeo cortado... acerta o jogo a seguir', gapShort:'Em falta', gapNext:'A seguir',
-  gapLead:'Perdemos jogadas que não há forma de registar. Diz como ficou o jogo depois delas e o registo continua a partir daí. As stats só contam o que foi registado.',
-  gapN:'Quantas jogadas (aprox.)', gapNUnk:'não sei', gapPoss:'Quem tem a bola a seguir', gapDist:'A bola está', gapFd:'antes do meio campo', gapGoal:'depois do meio campo (& Goal)',
-  gapPts:'Pontos marcados entretanto', gapHalf:'Se a falha apanhou o intervalo, marca primeiro o intervalo (botão do down).', gapSave:'Guardar', gapEdit:'Editar', tGap:'Jogadas em falta a seguir', tGapS:'o vídeo cortou depois desta jogada?', gapBefore:'antes desta jogada',
-  gapTag:n=>n?`${n} ${n===1?'jogada':'jogadas'} em falta`:'Jogadas em falta', gapNote:n=>`Este jogo tem ${n===1?'1 falha':n+' falhas'} no registo (jogadas em falta): as stats só contam o que foi registado.`,
   driveN:n=>`Drive ${n}`, lastPlay1:'Última jogada', noPlaysYet:'ainda sem jogadas', lastRec:'último recetor',
   sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números.', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
   sumGames:g=>g>1?`Em ${g} jogos: `:'', sumPass:(pp,np,nr,cp)=>`${pp} das jogadas são passes (${np} passes e ${nr} corridas), com ${cp} de completos.`,
@@ -287,7 +282,7 @@ en:{
   tDone:(a,b)=>`${a} / ${b} reviewed`, tShowList:'Show list', tHideList:'Hide list', tPlay:(i,n)=>`Play ${i} / ${n}`, tReviewed:'reviewed',
   tStart:'Start', tMark:'Mark now', tMarked:'Time marked', tNoVideo:'No video open', tVideos:'Videos', vPop:'Video in another window', vBack:'Bring video back',
   vAway:'The video is in another window', vAwayS:'Drag that window to the other screen. The buttons and keys here still control the video.',
-  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', tDel:'Delete play', tDelC:'Confirm: delete',
+  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', nrBtn:'Not recorded', nrTag:'not recorded', nrNote:'Counts as a down but stays out of the stats. If you know the result from the score (TD, INT), mark it.', tDel:'Delete play', tDelC:'Confirm: delete',
   tNewPlay:'New play', fouls:{fs:'False start',dg:'Delay of game',sh:'Illegal shift or motion',os:'Offside',ip:'Illegal participation or substitution',pi:'Pass interference',ic:'Illegal contact',ir:'Illegal rush',fl:'Illegal flag pull',sd:'Shielding',fg:'Flag guarding',jd:'Jumping or diving',fp:'Illegal forward pass',rn:'Illegal run (no-running zone)',dp:'Delay of pass (7 s)',us:'Unsportsmanlike'},
   penWho:'Who committed the foul?', penOff:'Offense', penDef:'Defense', penPre:'Before the snap', penPlay:'During the play', penDead:'After the play', penOther:'Other foul', penOtherS:'you pick the yards and the down',
   penYds:n=>n?`${n} yds`:'no yards', penSpot:{los:'from the line of scrimmage',bs:'from the line (or from the end of the play, when the defense fouled on a play that gained)',sf:'from the spot of the foul: put the yards of the play up to the foul',next:'after the play, which counts'},
@@ -336,11 +331,6 @@ en:{
   drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'End of half or ongoing'}, drvFirst:(p,z)=>`1st play of the drive: ${p} pass${z?`, mostly to ${z}`:''}.`,
   sumDrv:(n,pp,td,l)=>`Over ${n} drives: ${pp} points per drive, ${td} end in a TD and ${l} lose the ball (INT, downs or safety).`,
   autoFd:'AUTO 1ST DOWN', otherBtn:'Other ⋯', otherT:'Other outcomes', safety:'Safety', safetyS:s=>`+2 for ${s}, who get the ball`, badSnap:'Bad snap', badSnapS:'the snap hit the ground · counts as a down',
-  gap:'Missing plays', gapS:'camera died, video cut... set the game after them', gapShort:'Missing', gapNext:'Next',
-  gapLead:'We lost plays that cannot be tracked. Say how the game stood after them and tracking goes on from there. Stats only count what was tracked.',
-  gapN:'How many plays (approx.)', gapNUnk:'unknown', gapPoss:'Who has the ball next', gapDist:'The ball is', gapFd:'before midfield', gapGoal:'past midfield (& Goal)',
-  gapPts:'Points scored meanwhile', gapHalf:'If the gap went over halftime, mark halftime first (down button).', gapSave:'Save', gapEdit:'Edit', tGap:'Missing plays after this', tGapS:'did the video cut after this play?', gapBefore:'before this play',
-  gapTag:n=>n?`${n} missing ${n===1?'play':'plays'}`:'Missing plays', gapNote:n=>`This game has ${n===1?'1 gap':n+' gaps'} in the tracking (missing plays): stats only count what was tracked.`,
   driveN:n=>`Drive ${n}`, lastPlay1:'Last play', noPlaysYet:'no plays yet', lastRec:'last receiver',
   sumT:'Summary', sumNote:'Written automatically from the numbers.', sumFew:'Too few plays for a summary yet (it needs at least 5).',
   sumGames:g=>g>1?`Over ${g} games: `:'', sumPass:(pp,np,nr,cp)=>`${pp} of plays are passes (${np} passes and ${nr} runs), with ${cp} completed.`,
@@ -440,7 +430,7 @@ function helpData(){
       <dt>${btn('','GL')}</dt><dd>Troca o campo pelo mapa de goal line.</dd>
       <dt>${btn('','Double')}</dt><dd>Formação. Fica selecionada até mudares. Toca outra vez para tirar.</dd>
       <dt>${btn('','2 QB')}</dt><dd>Marca a próxima jogada como Double QB.</dd>
-      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 para a defesa, que fica com a bola) ou <b>bad snap</b> (a bola tocou no chão no snap; conta como down). <b>Jogadas em falta</b>: quando se perdem jogadas (câmara sem bateria, vídeo cortado), diz quem ficou com a bola, o down e os pontos marcados entretanto, e o registo continua certo a partir daí.</dd>
+      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 para a defesa, que fica com a bola) ou <b>bad snap</b> (a bola tocou no chão no snap; conta como down).</dd>
       <dt>${btn('','↶ '+t('undo'))}</dt><dd>Apaga o último toque ou a última jogada.</dd></dl>`},
     {id:'downs',t:'Down e posse automáticos',b:`<ul>
       <li>Cada jogada avança 1 down.</li>
@@ -490,7 +480,7 @@ function helpData(){
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>⚑ Falta</b> regista uma falta nesta jogada: escolhes a equipa e a falta, e a app aplica as jardas a partir do sítio certo, o efeito no down e o novo spot da bola.</li>
       <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
-      <li><b>Jogadas em falta a seguir</b>: se o vídeo cortou (câmara sem bateria, desligou) e há jogadas que não dá para ver, marca a falha depois da última jogada vista. Diz quem tem a bola a seguir, o down e os pontos marcados entretanto: o resultado e o down continuam certos e as stats contam só o que se viu.</li>
+      <li><b>Não ficou gravada</b>: se a câmara ficou sem bateria ou o vídeo cortou, acrescenta a jogada e marca-a assim. Conta como down (e o TD ou INT, se o souberes) mas não entra nas stats.</li>
       <li><b>Vídeo noutra janela</b> abre o vídeo numa janela à parte, para pôr noutro ecrã. Os botões e as teclas continuam a comandá-lo.</li>
       <li>No computador: <b>← →</b> muda de jogada, <b>espaço</b> faz play/pausa, <b>Enter</b> é Próxima.</li></ul>
       <p>As jardas, o YAC, os QB, os nomes das jogadas, as flags e os PBU aparecem na <b>Análise</b>.</p>`},
@@ -553,7 +543,7 @@ function helpData(){
       <dt>${btn('','GL')}</dt><dd>Switches the field to the goal line map.</dd>
       <dt>${btn('','Double')}</dt><dd>Formation. Stays selected until you change it. Tap again to clear.</dd>
       <dt>${btn('','2 QB')}</dt><dd>Marks the next play as Double QB.</dd>
-      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 for the defense, who get the ball) or <b>bad snap</b> (the snap hit the ground; counts as a down). <b>Missing plays</b>: when plays are lost (camera died, video cut), say who has the ball, the down and the points scored meanwhile, and tracking stays right from there.</dd>
+      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 for the defense, who get the ball) or <b>bad snap</b> (the snap hit the ground; counts as a down).</dd>
       <dt>${btn('','↶ '+t('undo'))}</dt><dd>Removes the last tap or the last play.</dd></dl>`},
     {id:'downs',t:'Automatic down and possession',b:`<ul>
       <li>Each play moves the down forward by 1.</li>
@@ -603,7 +593,7 @@ function helpData(){
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>⚑ Foul</b> records a foul on this play: pick the team and the foul, and the app applies the yards from the right spot, the effect on the down and the new ball spot.</li>
       <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
-      <li><b>Missing plays after this</b>: if the video cut (camera died, switched off) and some plays cannot be seen, mark the gap after the last play seen. Say who has the ball next, the down and the points scored meanwhile: score and down stay right and stats only count what was seen.</li>
+      <li><b>Not recorded</b>: if the camera died or the video cut, add the play and mark it like this. It counts as a down (and the TD or INT, if you know it) but stays out of the stats.</li>
       <li><b>Video in another window</b> opens the video in a separate window, to put on another screen. The buttons and keys still control it.</li>
       <li>On a computer: <b>← →</b> change play, <b>space</b> play/pause, <b>Enter</b> is Next.</li></ul>
       <p>Yards, YAC, QBs, play names, flags and PBUs show in <b>Analysis</b>.</p>`},
@@ -821,7 +811,7 @@ function replay(G){
       const los=e.spot!=null?e.spot:spot;
       e._spot=los;e._goal=goal||(los!=null&&los>=MID);e._dist=los==null?null:e._goal?FIELD-los:MID-los;pd=drive;
       if(e.annul) continue;
-      const gain=e.yds!=null?e.yds:(e.res==='X'?0:null), next=los!=null&&gain!=null?Math.max(0,Math.min(FIELD,los+gain)):null;
+      const gain=e.yds!=null?e.yds:(e.res==='X'&&!e.nr?0:null), next=los!=null&&gain!=null?Math.max(0,Math.min(FIELD,los+gain)):null;
       if(e.res==='TD'){score[poss]+=6+(e.pat||0);flip()}
       else if(e.res==='SF'){score[other(poss)]+=2;flip()}
       else if(e.res==='INT'){flip();spot=null;if(e.pick6){score[poss]+=6+(e.pat||0);flip()}}
@@ -846,8 +836,6 @@ function replay(G){
     }else if(e.t==='down'){down=e.down}
     else if(e.t==='poss'){flip()}
     else if(e.t==='half'){half=2;if(!legacy)poss=other(G.start);down=1;drive++;spot=SPOT0;goal=false}
-    /* plays that could not be tracked: the game goes on from the state given (ball, down, points scored meanwhile), the spot is unknown, a new drive starts */
-    else if(e.t==='gap'){const P=e.pts||{};score.H+=P.H||0;score.A+=P.A||0;if(!legacy&&e.poss)poss=e.poss;down=e.down||1;drive++;spot=null;goal=!!e.goal}
   }
   return {poss,down,score,drive,half,spot,goal};
 }
@@ -1084,7 +1072,7 @@ function downChip(st){
   if(g.ended&&view!=='tape')return `<small>${t('h2')}</small><b>${t('final')}</b>`;
   const c=view==='tape'?tapeCur().e:null, e=c&&c.t==='play'?c:null;
   const d=e?e._down:st.down, sp=e?e._spot:st.spot, gl=e?e._goal:st.goal, h=e?e._half:st.half;
-  return `<small>${h===2?t('h2'):t('h1')}</small><b>${ord(d)} ${sp!=null?`& ${gl?'Goal':MID-sp}`:gl?'& Goal':t('down')}</b>${sp!=null?`<span class="dspot">${spotTxt(sp)}</span>`:''}`;
+  return `<small>${h===2?t('h2'):t('h1')}</small><b>${ord(d)} ${sp!=null?`& ${gl?'Goal':MID-sp}`:t('down')}</b>${sp!=null?`<span class="dspot">${spotTxt(sp)}</span>`:''}`;
 }
 const BALL='<svg class="ball" viewBox="0 0 24 14" aria-hidden="true"><ellipse cx="12" cy="7" rx="11" ry="6"/><path d="M7 7h10M9.5 5v4M12 5v4M14.5 5v4"/></svg>';
 /* scoreboard: the team on offense carries the ball; tapping the other team hands it the ball (change of possession) */
@@ -1223,7 +1211,7 @@ function liveScoutHTML(st,s){
   const key=scKeyOf(g,s);if(key.startsWith('H|'))return '';
   const team=scoutTeams().find(x=>x.key===key);if(!team)return '';
   const others=team.games.filter(G=>G.id!==g.id);others.forEach(scoutFetch);
-  const ready=others.filter(scoutReady), plays=(x,sd)=>x.filter(e=>e.t==='play'&&e._side===sd&&!e.annul&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
+  const ready=others.filter(scoutReady), plays=(x,sd)=>x.filter(e=>e.t==='play'&&e._side===sd&&!e.annul&&!e.nr&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
   const H=ready.map(scoutGame).flatMap(x=>plays(x.events,team.sideIn[x.id]));if(H.length<8)return '';
   const hd=H.filter(e=>e._down===st.down), hp=hd.filter(e=>e.kind==='pass'), z=scTop(hp.filter(e=>e.zone),e=>e.zone), r=scTop(hp,e=>e.rec);
   let line=hd.length?t('lsDown',ord(st.down),pct(hp.length,hd.length),z?zoneName(z[0]):'',r?r[0]:''):t('lsNoDown',ord(st.down));
@@ -1272,26 +1260,24 @@ function fieldStripHTML(st){
   return `<div class="fs-strip side-${s}" aria-label="${spotTxt(st.spot)}"><div class="fs-f"><b class="fs-ez own"></b><b class="fs-ez opp"></b>${fieldLines()}${fdl}<i class="fs-los" style="left:${spX(st.spot)}%"></i>
     <span class="fs-ball" style="left:${spX(st.spot)}%">${BALL}</span></div></div>`;
 }
-const gapPts=e=>{const P=e.pts||{};return ['H','A'].filter(k=>P[k]).map(k=>'+'+P[k]+' '+sideName(k)).join(' · ')};
 /* one line per play for the drive card */
 function evLine(e){
   const R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),SF:t('safety'),BS:t('badSnap')};
   if(e.t==='pen')return {cls:'pen',h:e.foul?t('fouls')[e.foul]:t('penalty'),s:(e.team?sideName(e.team)+' · ':'')+(e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]||'')};
-  if(e.t==='gap')return {cls:'gap',h:t('gapTag',e.n),s:`${t('gapNext')}: ${sideName(e.poss||e._side)} · ${ord(e.down||1)} ${t('down')}${e.goal?' & Goal':''}`,tag:gapPts(e)};
   if(e.t==='conv')return {cls:e.res==='G'?'C':'X',h:`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]||e.res}`,s:[e.rec!=null?'#'+e.rec:'',e.zone?zoneName(e.zone):''].filter(Boolean).join(' · '),tag:e.res==='G'?'+'+e.pts:''};
-  const h=e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
+  const h=e.nr&&e.res!=='TD'&&e.res!=='INT'?t('nrBtn'):e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
   if(e.res==='SF'||e.res==='BS')return {cls:e.res==='SF'?'SACK':'X',h,s:e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),tag:e.res==='SF'?'+2 '+sideName(other(e._side)):'',annul:e.annul};
   const dd=e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down');
-  const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):''].filter(Boolean);
+  const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):'',e.nr?t('nrTag'):''].filter(Boolean);
   return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?'#'+e.rec:'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
 }
-/* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime and the missing plays (gap) come as their own item between two drives.
+/* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime comes as its own item between two drives.
    Yards add the plays and the fouls; a TD without yards counts up to the goal line. */
 function driveGroups(st){
   st=st||replay();
   const out=[], by=new Map();
   for(const e of g.events){
-    if(e.t==='half'||e.t==='gap'){out.push({half:e});continue}
+    if(e.t==='half'){out.push({half:e});continue}
     let d=by.get(e._drive);
     if(!d){d={n:e._drive,side:null,evs:[]};by.set(e._drive,d);out.push(d)}
     if(d.side==null&&e.t!=='conv')d.side=e._side;
@@ -1312,7 +1298,7 @@ function driveGroups(st){
       :end&&end.res==='SF'?{l:t('safety'),c:'bad'}
       :d.evs.some(e=>e._tod)?{l:t('tod'),c:'bad'}
       :d.evs.some(e=>e.t==='poss')?{l:t('drvPoss'),c:''}
-      :nx&&nx.half?{l:nx.half.t==='gap'?t('gapShort'):t('halfT'),c:''}
+      :nx&&nx.half?{l:t('halfT'),c:''}
       :d.n===st.drive?{l:g.ended?t('final'):t('drvLive'),c:g.ended?'':'live'}:{l:'',c:''};
   });
   return out;
@@ -1323,7 +1309,7 @@ let drOpen={gid:null,m:{}};
 function drIsOpen(n,st){if(drOpen.gid!==g.id)drOpen={gid:g.id,m:{}};return n in drOpen.m?drOpen.m[n]:n===st.drive}
 /* the drive on the field, newest play first, with undo next to the last thing tracked; earlier drives in one line each, a tap shows their plays */
 function driveHTML(st){
-  const shown=e=>e.t==='play'||e.t==='pen'||e.t==='conv'||e.t==='gap';
+  const shown=e=>e.t==='play'||e.t==='pen'||e.t==='conv';
   const D=driveGroups(st).filter(d=>!d.half), cd=D.find(d=>d.n===st.drive), cur=cd?cd.evs.filter(shown):[];
   const plays=cd?cd.plays:[];
   const last=lastEv(), show=cur.length?cur:last&&shown(last)?[last]:[];
@@ -1341,7 +1327,7 @@ function driveHTML(st){
 /* a finished game: the final score, a line per team and the way to the analysis, the list and the tape */
 function finalHTML(st){
   const D=driveGroups(st).filter(d=>!d.half), sc=st.score, dif=sc.H-sc.A;
-  const row=s=>{const p=g.events.filter(e=>e.t==='play'&&!e.annul&&e._side===s), my=D.filter(d=>d.side===s), y=my.reduce((a,d)=>a+(d.yds||0),0);
+  const row=s=>{const p=g.events.filter(e=>e.t==='play'&&!e.annul&&!e.nr&&e._side===s), my=D.filter(d=>d.side===s), y=my.reduce((a,d)=>a+(d.yds||0),0);
     return [p.length,my.length,p.filter(e=>e.res==='TD').length+g.events.filter(e=>e.t==='play'&&!e.annul&&e.pick6&&e._side!==s).length,my.some(d=>d.yds!=null)?y:'–',p.filter(e=>e.res==='INT').length]};
   const R={H:row('H'),A:row('A')};
   return `<div class="final"><section class="fcard">
@@ -1361,7 +1347,7 @@ function regView(st){
   const gl=conv||glOn===st.drive;
   const cl=t('colsLong');
   const def=!conv&&(readOnly()||(r!=='both'&&r!==s&&override!==st.drive));
-  const plays=conv?g.events.filter(e=>e.t==='conv'&&e.side===s):g.events.filter(e=>e.t==='play'&&!e.annul&&e._side===s);
+  const plays=conv?g.events.filter(e=>e.t==='conv'&&e.side===s):g.events.filter(e=>e.t==='play'&&!e.annul&&!e.nr&&e._side===s);
   const banner=bannerHTML(r);
   if(def){
     const recent=g.events.filter(e=>e.t==='play'&&e._side===s).slice(-4).reverse();
@@ -1457,7 +1443,7 @@ function inArea(e){
   return an.area==='gl'?isGL(e.zone):!isGL(e.zone);
 }
 function anaBase(){
-  return g.events.filter(e=>inArea(e)&&e._side===an.side&&(an.annul||!e.annul)&&(!an.half||e._half===an.half)&&(!an.form||e.form===an.form));
+  return g.events.filter(e=>inArea(e)&&!e.nr&&e._side===an.side&&(an.annul||!e.annul)&&(!an.half||e._half===an.half)&&(!an.form||e.form===an.form));
 }
 function anaPlays(ignoreRec){
   return anaBase().filter(e=>(e.t==='conv'||an.kind==='all'||(an.kind==='run'?e.kind==='run':e.kind==='pass'))
@@ -1501,7 +1487,7 @@ function anaView(){
   // defensive plays made against this offense: interceptions and sacks by number
   // flags and PBU from the tape review
   const dv={}, dk=k=>dv[k]=dv[k]||{i:0,s:0,p6:0,f:0,b:0};
-  g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===an.side&&!e.annul&&(!an.half||e._half===an.half)).forEach(e=>{
+  g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===an.side&&!e.annul&&!e.nr&&(!an.half||e._half===an.half)).forEach(e=>{
     if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
     if(e.fby!=null)dk(e.fby).f++;
     if(e.pbu!=null)dk(e.pbu).b++;
@@ -1511,8 +1497,7 @@ function anaView(){
   const forms=[...new Set(g.events.filter(e=>e.t==='play'&&e._side===an.side&&e.form).map(e=>e.form))];
   const seg=(key,opts,cls='')=>`<div class="seg ${cls}">${opts.map(([v,l,c])=>`<button class="${c||''}" data-act="an" data-k="${key}" data-v="${v}" aria-pressed="${String(an[key])===String(v)}">${l}</button>`).join('')}</div>`;
   const D=t('downs'), thP=t('thP'), thD=t('thD');
-  const gaps=g.events.filter(e=>e.t==='gap').length;
-  return `${gaps?`<p class="note gapnote">⋯ ${t('gapNote',gaps)}</p>`:''}<div class="filters">
+  return `<div class="filters">
       ${seg('side',[['H',sideName('H'),'H'],['A',sideName('A'),'A']],'side')}
       ${seg('area',[['field',t('mapField')],['gl','GL'],['conv',t('convs')]])}
       ${conv?'':seg('kind',[['pass',t('passes')],['run',t('runs')],['all',t('all')]])}
@@ -1525,7 +1510,7 @@ function anaView(){
       ${qh('analysis')}
     </div>
     <div class="tiles">${tiles.map(([v,l])=>`<div class="tile"><b class="num">${v}</b><span>${l}</span></div>`).join('')}</div>
-    ${(()=>{const ev=x=>g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x&&!e.annul&&(!an.half||e._half===an.half));
+    ${(()=>{const ev=x=>g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x&&!e.annul&&!e.nr&&(!an.half||e._half===an.half));
       return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half),scKeyOf(g,an.side))}</section>`})()}
     <div class="ana"><div class="sc-tables">
       <section class="panel">
@@ -1743,7 +1728,7 @@ function scoutView(){
       </div></section>`;
   const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select><button class="btn" data-act="newteam">+ ${t('ntBtn')}</button></div>
     ${comps.length>1?`<div class="filters noprint"><span class="lbl2">${t('competition')}</span><div class="seg">${[['',t('allF')],...comps.map(c=>[c,esc(c)])].map(([v,l])=>`<button data-act="sccomp" data-v="${esc(v)}" aria-pressed="${(sc.comp||'')===v}">${l}</button>`).join('')}</div></div>`:''}`;
-  const evs=k=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x[k]&&!e.annul));
+  const evs=k=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x[k]&&!e.annul&&!e.nr));
   const off=evs('S'), def=evs('O'), DO=X.flatMap(x=>drivesOf(x.events,x.S)), DD=X.flatMap(x=>drivesOf(x.events,x.O));
   // key tendencies: plain numbers a coach can read before the game
   const plays=off.filter(e=>e.t==='play'), pas=plays.filter(e=>e.kind==='pass'), runs=plays.filter(e=>e.kind==='run');
@@ -1859,7 +1844,6 @@ function logView(){
     if(e.t==='spot')return `<div class="ev">${sd(e)}<span class="dn">⌖</span><span class="tx"><b>${t('tBall')}: ${spotTxt(e.spot)}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='down')return `<div class="ev">${sd(e)}<span class="dn">→${ord(e.down)}</span><span class="tx">${t('downManual')}</span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='poss')return `<div class="ev"><span class="sd ${other(e._side)}"></span><span class="dn">⇄</span><span class="tx">${t('possManual')}</span><span class="ops">${delB(e)}</span></div>`;
-    if(e.t==='gap')return `<div class="ev gap">${sd(e)}<span class="dn">⋯</span><span class="tx"><b>${t('gapTag',e.n)}</b><span class="tag">${t('gapNext')}: ${sideName(e.poss||e._side)} · ${ord(e.down||1)}${e.goal?' & Goal':''}</span>${gapPts(e)?`<span class="tag">${gapPts(e)}</span>`:''}</span><span class="ops">${readOnly()?'':`<button data-act="gapedit" data-id="${e.id}">${t('gapEdit')}</button>`}${delB(e)}</span></div>`;
     if(e.t==='half')return `<div class="ev"><span class="sd"></span><span class="dn">½</span><span class="tx"><b>${t('halfT')}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='conv'){
       const rt={G:`<span class="tag C">${t('convRes').G}</span>`,NG:`<span class="tag X">${t('convRes').NG}</span>`,INT:'<span class="tag INT">INT</span>'}[e.res];
@@ -1871,13 +1855,13 @@ function logView(){
       <span class="tx">${e.kind==='sack'||e.kind==='safety'||e.kind==='snap'?'':`<b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>`}${resTag}${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}${e.kind==='run'&&e.res==='TD'?`<span class="tag">${t('runLow')}</span>`:''}
       ${(e.res==='INT'||e.res==='SACK')?`<span class="tag">${t('byTag',e.dby)}</span>`:''}
       ${e.fd?`<span class="tag">${t('fdLow')}</span>`:''}${e.form?`<span class="tag">${esc(e.form)}</span>`:''}${e.qb2?'<span class="tag">2 QB</span>':''}
-      ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}</span>
+      ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}${e.nr?`<span class="tag nr">${t('nrTag')}</span>`:''}</span>
       <span class="ops"><button data-act="annul" data-id="${e.id}">${e.annul?t('restore'):t('annul')}</button>${delB(e)}</span></div>`;
   };
   /* one card per drive, newest first: a tap opens its plays */
   const G=driveGroups(st), D=G.filter(d=>!d.half), anyOpen=D.some(d=>drIsOpen(d.n,st));
   const items=G.slice().reverse().map(d=>{
-    if(d.half)return d.half.t==='gap'?`<div class="log">${row(d.half)}</div>`:`<div class="drv-sep"><span>${t('halfT')}</span><span class="ops">${delB(d.half)}</span></div>`;
+    if(d.half)return `<div class="drv-sep"><span>${t('halfT')}</span><span class="ops">${delB(d.half)}</span></div>`;
     const op=drIsOpen(d.n,st);
     return `<section class="drv side-${d.side}${op?' open':''}"><button class="drv-h" data-act="drtog" data-n="${d.n}" aria-expanded="${op}">
         <span class="drv-t"><b>${sideName(d.side)}</b><small>${t('driveN',d.n+1)} · ${t('scPlaysN',d.plays.length)}${ydsTxt(d.yds)}</small></span>
@@ -1969,7 +1953,7 @@ function tapePanel0(){
   let zones='';const ROWS=gl?t('glRows'):t('rows'),COLS=t('cols');
   for(let r=0;r<4;r++)for(let c=0;c<3;c++){const z=(gl?'g':'')+r+c;
     zones+=`<button class="tz${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}" data-act="tset" data-k="zone" data-s="${z}" aria-pressed="${e.zone===z}">${ROWS[r]} ${COLS[c]}</button>`}
-  const play=`${conv?`<div class="tzhead"><div class="seg">${[1,2].map(n=>`<button data-act="tset" data-k="pts" data-n="${n}" aria-pressed="${e.pts===n}">${n} pt${n>1?'s':''}</button>`).join('')}</div>
+  const play0=`${conv?`<div class="tzhead"><div class="seg">${[1,2].map(n=>`<button data-act="tset" data-k="pts" data-n="${n}" aria-pressed="${e.pts===n}">${n} pt${n>1?'s':''}</button>`).join('')}</div>
       ${readOnly()?'':`<button class="btn" data-act="tnoconv">${t('tNoConv')}</button>`}</div>`
     :`<div class="seg">${[['pass',t('tPass')],['run',t('tRun')],['sack',t('tSackK')]].map(([v,l])=>`<button data-act="tset" data-k="kind" data-s="${v}" aria-pressed="${e.kind===v}">${l}</button>`).join('')}</div>`}
     ${resOpts.length?`<div class="resrow">${resOpts.map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${!conv&&(e.res==='C'||e.res==='R')?`<button class="rb" data-act="tbool" data-k="fd" aria-pressed="${!!(e.fd||e._autoFd)}">${t('fd')}${e._autoFd&&!e.fd?' <small>'+t('fdAuto')+'</small>':''}</button>`:''}
@@ -1979,24 +1963,21 @@ function tapePanel0(){
     <div class="tzones">${zones}</div>
     <span class="lbl2">${e.kind==='run'?t('tRunner'):t('receiver')}</span>${nums('rec',s,e.rec??null)}`}
     ${e.res==='INT'||e.res==='SACK'?`<span class="lbl2">${e.res==='SACK'?t('whoSack'):t('whoInt')} · ${sideName(other(s))}</span>${nums('dby',other(s),e.dby??null)}`:''}`;
+  /* a play the camera did not record: it counts as a down (and its result, if known from the score) but stays out of the stats */
+  const nr=!conv&&!!e.nr, nrB=conv?'':`<button class="rb nrb" data-act="tbool" data-k="nr" aria-pressed="${nr}">${nr?'✓ ':''}${t('nrBtn')}</button>`;
+  const play=nr?`${nrB}<p class="note">${t('nrNote')}</p><div class="resrow">${[['TD','TD'],['INT','INT']].map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${e.res===v?'X':v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}</div>`:nrB+play0;
   const qbV=e.qb!=null?e.qb:tSugg(e,'qb'), fmV=e.form||(conv?null:tSugg(e,'form'));
   const forms=g.formations[s].map(f=>[f,f]);
   const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
   const vt=e.vt!=null?`${fmtT(e.vt)}${vs.length>1?' · '+partName(e.vi):''}`:'—';
-  /* gaps (missing plays) sit between plays: the one right before this play shows above it, all of them in the list */
-  const gapsTo=x=>{const k=g.events.indexOf(x), out=[];for(let j=k-1;j>=0&&g.events[j]!==L[L.indexOf(x)-1];j--)if(g.events[j].t==='gap')out.unshift(g.events[j]);return out};
-  const gapRow=x=>`<button class="trow tgaprow" data-act="gapedit" data-id="${x.id}"><span class="sd ${x.poss||x._side}"></span><span class="num">⋯</span><span>${t('gapShort')}</span><span class="trx">${t('gapTag',x.n)}${gapPts(x)?' · '+gapPts(x):''}</span><span></span><span></span></button>`;
-  const tailGaps=L.length?g.events.slice(g.events.indexOf(L[L.length-1])+1).filter(x=>x.t==='gap'):[];
-  const gapHere=gapsTo(e);
-  const L2=L.map((x,j)=>gapsTo(x).map(gapRow).join('')+`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
-      <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}</span>
-      <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('')+tailGaps.map(gapRow).join('');
+  const L2=L.map((x,j)=>`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
+      <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.nr&&x.res!=='TD'&&x.res!=='INT'?t('nrBtn'):`${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}${x.nr?' · '+t('nrTag'):''}`}</span>
+      <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('');
   return `<div class="tprog"><div class="tbar"><i style="width:${L.length?Math.round(done/L.length*100):0}%"></i></div><span class="num">${t('tDone',done,L.length)}</span><button class="linkbtn" data-act="tlist">${tp.list?t('tHideList'):t('tShowList')}</button></div>
     ${tp.list?`<div class="tlist">${L2}</div>`:''}
     <div class="tnav side-${s}"><button class="btn" data-act="tnav" data-d="-1" ${i?'':'disabled'} aria-label="${t('tPrev')}">‹</button>
-      <div class="tttl"><b>${t('tPlay',i+1,L.length)}</b><small>${conv?t('conv')+' '+e.pts+' pt':`<b class="dd">${ddTxt(e)} · ${spotTxt(e._spot)}</b>`} · <span class="pside ${s}">${sideName(s)}</span> · ${e._half===2?t('h2'):t('h1')}${e.annul?' · '+t('annulTag'):''}${e.ins?' · '+t('insTag'):''}${e.rv?' · ✓ '+t('tReviewed'):''}</small></div>
+      <div class="tttl"><b>${t('tPlay',i+1,L.length)}</b><small>${conv?t('conv')+' '+e.pts+' pt':`<b class="dd">${ddTxt(e)} · ${spotTxt(e._spot)}</b>`} · <span class="pside ${s}">${sideName(s)}</span> · ${e._half===2?t('h2'):t('h1')}${e.annul?' · '+t('annulTag'):''}${e.ins?' · '+t('insTag'):''}${e.nr?' · '+t('nrTag'):''}${e.rv?' · ✓ '+t('tReviewed'):''}</small></div>
       <button class="btn" data-act="tnav" data-d="1" ${i<L.length-1?'':'disabled'} aria-label="${t('tNext')}">›</button></div>
-    ${gapHere.map(x=>`<div class="tgap"><span>⋯ <b>${t('gapTag',x.n)}</b> ${t('gapBefore')}${gapPts(x)?' · '+gapPts(x):''}</span>${readOnly()?'':`<button class="linkbtn" data-act="gapedit" data-id="${x.id}">${t('gapEdit')}</button>`}</div>`).join('')}
     <div class="vctl">
       ${vs.length>1?`<div class="seg">${vs.map((v,j)=>`<button data-act="vuse" data-n="${j}" aria-pressed="${vid.slot===j}">${partName(j)}</button>`).join('')}</div>`:''}
       <button class="btn" data-act="tplay" aria-label="${t('tPlayCtl')}">▶ ❚❚</button><button class="btn" data-act="tback">${t('tBack5')}</button>
@@ -2008,18 +1989,18 @@ function tapePanel0(){
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
       <p class="note">${e._spot==null?t('tSpotQ'):e.spot!=null?t('tManualS'):t('tAutoS')}${e.spot!=null&&!readOnly()?` · <button class="linkbtn" data-act="tspotauto">${t('tSpotAuto')}</button>`:''}</p>`)}
-    ${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
+    ${nr?'':`${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
     ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
     ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
     ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${ours?blk(t('tCall'),t('tCallS'),chips('call',playbook().map(c=>[c,c]),e.call||null,false)+`<button class="f" data-act="tcall">${t('newForm')}</button></div>`):''}
     ${!ours&&!conv&&(e.res==='C'||e.res==='R')?blk(t('tFlag'),t('tOurs'),nums('fby','H',e.fby??null)):''}
-    ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}
+    ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}`}
     ${penLines(e)}
     ${blk(t('tNote'),'',`<input class="field-in" id="t-note" maxlength="140" placeholder="${t('tNotePh')}" value="${esc(e.note||'')}" autocomplete="off">`)}
     <div class="tfoot">
       <button class="primary" data-act="tnext">${i<L.length-1||readOnly()?t('tNext'):t('tNewPlay')} ›</button>
-      <div class="row"><button class="btn" data-act="tpen">${t('penAdd')}</button><button class="btn" data-act="tins">${t('tIns')}</button><button class="btn" data-act="tgap" title="${t('tGapS')}">⋯ ${t('tGap')}</button><button class="btn" data-act="tdel" style="color:var(--bad)">${tp.del===e.id?t('tDelC'):t('tDel')}</button></div>
+      <div class="row"><button class="btn" data-act="tpen">${t('penAdd')}</button><button class="btn" data-act="tins">${t('tIns')}</button><button class="btn" data-act="tdel" style="color:var(--bad)">${tp.del===e.id?t('tDelC'):t('tDel')}</button></div>
       <p class="note tkeys">${t('tKeys')}</p>
     </div>`;
 }
@@ -2166,8 +2147,8 @@ function tapeNext(){
   const nx=L[i+1], now=vTime();
   if(!readOnly())act(grp=>{
     const p={rv:true};
-    if(e.qb==null){const v=tSugg(e,'qb');if(v!=null)p.qb=v}
-    if(e.t==='play'&&!e.form){const v=tSugg(e,'form');if(v)p.form=v}
+    if(e.qb==null&&!e.nr){const v=tSugg(e,'qb');if(v!=null)p.qb=v}
+    if(e.t==='play'&&!e.form&&!e.nr){const v=tSugg(e,'form');if(v)p.form=v}
     if(i===0&&e.vt==null&&now!=null){p.vt=0;p.vi=vid.slot}
     const n=document.getElementById('t-note');if(n&&n.value.trim()!==(e.note||''))p.note=n.value.trim();
     chEv(e,p,grp);
@@ -2192,6 +2173,7 @@ function tapeSet(k,v){
   const e=tapeCur().e;if(!e||readOnly())return;
   if(e[k]===v&&k!=='res'&&k!=='kind'&&k!=='pts'&&k!=='spot')v=null;
   const patch={[k]:v};
+  if(k==='nr'&&v&&e.t==='play'&&e.res!=='TD'&&e.res!=='INT')Object.assign(patch,{kind:'pass',res:'X',fd:false});
   if(k==='kind'){
     if(v==='sack')Object.assign(patch,{res:'SACK',zone:null,rec:null,fd:false,yac:null});
     else if(e.kind==='sack')Object.assign(patch,{res:v==='run'?'R':'C',dby:null});
@@ -2342,19 +2324,7 @@ function renderSheet(){
     h=`<h2>${t('otherT')}</h2><p>${t('offense')}: <b>${sideName(st.poss)}</b> · ${ord(st.down)} ${t('down')}</p>
       <div class="grid2"><button class="big" data-act="safety">${t('safety')}<small>${t('safetyS',sideName(other(st.poss)))}</small></button>
       <button class="big" data-act="badsnap">${t('badSnap')}<small>${t('badSnapS')}</small></button></div>
-      <button class="big gapbtn" data-act="gapnew">${t('gap')}<small>${t('gapS')}</small></button>
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
-  }else if(sheet.kind==='gap'){
-    const sb=(act,v,l,on,cls='')=>`<button class="${cls}" data-act="${act}" data-v="${v}" aria-pressed="${on}">${l}</button>`, P=sheet.pts;
-    const ptsRow=k=>`<div class="gap-pts side-${k}"><b>${sideName(k)}</b><button class="btn" data-act="gappts" data-k="${k}" data-d="-1" aria-label="−1">−</button><span class="num">+${P[k]}</span><button class="btn" data-act="gappts" data-k="${k}" data-d="1" aria-label="+1">+</button></div>`;
-    h=`<div class="help-head"><h2>${t('gap')}</h2><button class="ghost" data-act="close">✕</button></div><p>${t('gapLead')}</p>
-      <span class="lbl2">${t('gapN')}</span><div class="gap-n"><button class="btn" data-act="gapn" data-d="-1" aria-label="−1">−</button><span class="num">${sheet.n||t('gapNUnk')}</span><button class="btn" data-act="gapn" data-d="1" aria-label="+1">+</button></div>
-      ${g.mode&&g.mode!=='both'?'':`<span class="lbl2">${t('gapPoss')}</span><div class="seg side gapseg">${sb('gapset','poss:H',sideName('H'),sheet.poss==='H','H')}${sb('gapset','poss:A',sideName('A'),sheet.poss==='A','A')}</div>`}
-      <span class="lbl2">${t('down')}</span><div class="grid4">${[1,2,3,4].map(d=>`<button class="big num" data-act="gapset" data-v="down:${d}" aria-pressed="${sheet.down===d}">${ord(d)}</button>`).join('')}</div>
-      <span class="lbl2">${t('gapDist')}</span><div class="seg gapseg">${sb('gapset','goal:0',t('gapFd'),!sheet.goal)}${sb('gapset','goal:1',t('gapGoal'),!!sheet.goal)}</div>
-      <span class="lbl2">${t('gapPts')}</span>${ptsRow('H')}${ptsRow('A')}
-      ${sheet.id?'':`<p class="note">${t('gapHalf')}</p>`}
-      <button class="primary" data-act="gapsave">${t('gapSave')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='addnum'){
     const v=sheet.v||'';
     h=`<h2>${t('newNumT')} · ${sideName(numSide(st))}</h2><div class="kp-out num">${v||'&nbsp;'}</div>
@@ -2670,20 +2640,6 @@ document.addEventListener('click',ev=>{
     case 'members':openSheet('members');break;
     case 'quick':{const q=!g.quick;updGame({quick:q});setTimeout(renderSheet,50);toast(q?t('quickOn'):t('quickOff'));break}
     case 'other':if(!readOnly()){draft=null;runMode=false;openSheet('other')}break;
-    case 'gapnew':if(!readOnly()){draft=null;runMode=false;openSheet('gap',{n:0,poss:st.poss,down:1,goal:false,pts:{H:0,A:0}})}break;
-    case 'tgap':{if(readOnly())break;if(tp.only){toast(t('vOnlyNo'));break}const e=tapeCur().e;if(!e)break;const nx=g.events[g.events.indexOf(e)+1], ns=nx&&nx.t==='play'?nx:null;
-      openSheet('gap',{after:e.id,n:0,poss:ns?ns._side:st.poss,down:ns?ns._down:st.down,goal:ns?!!ns._goal:!!st.goal,pts:{H:0,A:0}});break}
-    case 'gapedit':{const e=g.events.find(x=>x.id===b.dataset.id);if(!e||readOnly())break;openSheet('gap',{id:e.id,n:e.n||0,poss:e.poss||e._side,down:e.down||1,goal:!!e.goal,pts:{H:0,A:0,...(e.pts||{})}});break}
-    case 'gapset':{const [k,v]=b.dataset.v.split(':');sheet[k]=k==='poss'?v:k==='goal'?v==='1':+v;renderSheet();break}
-    case 'gapn':sheet.n=Math.max(0,Math.min(99,(sheet.n||0)+(+b.dataset.d)));renderSheet();break;
-    case 'gappts':{const k=b.dataset.k;sheet.pts[k]=Math.max(0,Math.min(99,(sheet.pts[k]||0)+(+b.dataset.d)));renderSheet();break}
-    case 'gapsave':{if(readOnly())break;const P=sheet, x={n:P.n||null,poss:P.poss,down:P.down,goal:!!P.goal,pts:{H:P.pts.H||0,A:P.pts.A||0}}, old=P.id&&g.events.find(e=>e.id===P.id);closeSheet();
-      const af=P.after&&g.events.find(e=>e.id===P.after);
-      if(old)act(grp=>chEv(old,x,grp));
-      else if(af){const nx=g.events[g.events.indexOf(af)+1], ne={t:'gap',...x,id:Date.now().toString(36)+uid(),ts:nx?(af.ts+nx.ts)/2:Math.max(Date.now(),af.ts+1),by:DEV};
-        act(grp=>{S().put(g.id,ne);grp.push({k:'add',id:ne.id})})}
-      else act(grp=>addEv({t:'gap',...x},grp));
-      toast(t('gapTag',x.n));render();break}
     case 'safety':case 'badsnap':{closeSheet();const sf=a==='safety';
       act(grp=>addEv({t:'play',kind:sf?'safety':'snap',zone:null,rec:null,res:sf?'SF':'BS',fd:false,form:g.curForm[st.poss]||null,qb2:false,annul:false},grp));
       toast(sf?`${t('safety')} · +2 ${sideName(other(st.poss))}`:`${t('badSnap')} · ${ord(st.down)} ${t('down')}`);if(sf)celebrate('SAFETY',other(st.poss),true);break}
