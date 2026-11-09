@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.15.1';
+const APP_VERSION='1.16.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -107,7 +107,7 @@ pt:{
   tDone:(a,b)=>`${a} / ${b} revistas`, tShowList:'Ver lista', tHideList:'Esconder lista', tPlay:(i,n)=>`Jogada ${i} / ${n}`, tReviewed:'revista',
   tStart:'Início', tMark:'Marcar agora', tMarked:'Tempo marcado', tNoVideo:'Sem vídeo aberto', tVideos:'Vídeos', vPop:'Vídeo noutra janela', vBack:'Trazer vídeo',
   vAway:'O vídeo está noutra janela', vAwayS:'Arrasta essa janela para o outro ecrã. Os botões e as teclas daqui continuam a comandar o vídeo.',
-  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
+  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', nrBtn:'Não ficou gravada', nrTag:'não gravada', nrNote:'Conta como down mas não entra nas stats. Se souberes o resultado pelo marcador (TD, INT), marca-o.', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
   tNewPlay:'Nova jogada', fouls:{fs:'Falsa partida',dg:'Atraso de jogo',sh:'Shift ou motion ilegal',os:'Offside',ip:'Participação ou substituição ilegal',pi:'Interferência de passe',ic:'Contacto ilegal',ir:'Rush ilegal',fl:'Flag puxada ilegalmente',sd:'Shielding',fg:'Flag guarding',jd:'Saltar ou mergulhar',fp:'Passe para a frente ilegal',rn:'Corrida ilegal (no-running zone)',dp:'Atraso de passe (7 s)',us:'Antidesportivo'},
   penWho:'Quem fez a falta?', penOff:'Ataque', penDef:'Defesa', penPre:'Antes do snap', penPlay:'Na jogada', penDead:'Depois da jogada', penOther:'Outra falta', penOtherS:'escolhes as jardas e o down',
   penYds:n=>n?`${n} jd`:'sem jardas', penSpot:{los:'a partir da linha de scrimmage',bs:'a partir da linha (ou do fim da jogada, se a defesa falhou numa jogada que ganhou terreno)',sf:'a partir do sítio da falta: põe nas jardas da jogada até onde foi a falta',next:'depois da jogada, que conta'},
@@ -282,7 +282,7 @@ en:{
   tDone:(a,b)=>`${a} / ${b} reviewed`, tShowList:'Show list', tHideList:'Hide list', tPlay:(i,n)=>`Play ${i} / ${n}`, tReviewed:'reviewed',
   tStart:'Start', tMark:'Mark now', tMarked:'Time marked', tNoVideo:'No video open', tVideos:'Videos', vPop:'Video in another window', vBack:'Bring video back',
   vAway:'The video is in another window', vAwayS:'Drag that window to the other screen. The buttons and keys here still control the video.',
-  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', tDel:'Delete play', tDelC:'Confirm: delete',
+  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', nrBtn:'Not recorded', nrTag:'not recorded', nrNote:'Counts as a down but stays out of the stats. If you know the result from the score (TD, INT), mark it.', tDel:'Delete play', tDelC:'Confirm: delete',
   tNewPlay:'New play', fouls:{fs:'False start',dg:'Delay of game',sh:'Illegal shift or motion',os:'Offside',ip:'Illegal participation or substitution',pi:'Pass interference',ic:'Illegal contact',ir:'Illegal rush',fl:'Illegal flag pull',sd:'Shielding',fg:'Flag guarding',jd:'Jumping or diving',fp:'Illegal forward pass',rn:'Illegal run (no-running zone)',dp:'Delay of pass (7 s)',us:'Unsportsmanlike'},
   penWho:'Who committed the foul?', penOff:'Offense', penDef:'Defense', penPre:'Before the snap', penPlay:'During the play', penDead:'After the play', penOther:'Other foul', penOtherS:'you pick the yards and the down',
   penYds:n=>n?`${n} yds`:'no yards', penSpot:{los:'from the line of scrimmage',bs:'from the line (or from the end of the play, when the defense fouled on a play that gained)',sf:'from the spot of the foul: put the yards of the play up to the foul',next:'after the play, which counts'},
@@ -480,6 +480,7 @@ function helpData(){
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>⚑ Falta</b> regista uma falta nesta jogada: escolhes a equipa e a falta, e a app aplica as jardas a partir do sítio certo, o efeito no down e o novo spot da bola.</li>
       <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
+      <li><b>Não ficou gravada</b>: se a câmara ficou sem bateria ou o vídeo cortou, acrescenta a jogada e marca-a assim. Conta como down (e o TD ou INT, se o souberes) mas não entra nas stats.</li>
       <li><b>Vídeo noutra janela</b> abre o vídeo numa janela à parte, para pôr noutro ecrã. Os botões e as teclas continuam a comandá-lo.</li>
       <li>No computador: <b>← →</b> muda de jogada, <b>espaço</b> faz play/pausa, <b>Enter</b> é Próxima.</li></ul>
       <p>As jardas, o YAC, os QB, os nomes das jogadas, as flags e os PBU aparecem na <b>Análise</b>.</p>`},
@@ -592,6 +593,7 @@ function helpData(){
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>⚑ Foul</b> records a foul on this play: pick the team and the foul, and the app applies the yards from the right spot, the effect on the down and the new ball spot.</li>
       <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
+      <li><b>Not recorded</b>: if the camera died or the video cut, add the play and mark it like this. It counts as a down (and the TD or INT, if you know it) but stays out of the stats.</li>
       <li><b>Video in another window</b> opens the video in a separate window, to put on another screen. The buttons and keys still control it.</li>
       <li>On a computer: <b>← →</b> change play, <b>space</b> play/pause, <b>Enter</b> is Next.</li></ul>
       <p>Yards, YAC, QBs, play names, flags and PBUs show in <b>Analysis</b>.</p>`},
@@ -809,7 +811,7 @@ function replay(G){
       const los=e.spot!=null?e.spot:spot;
       e._spot=los;e._goal=goal||(los!=null&&los>=MID);e._dist=los==null?null:e._goal?FIELD-los:MID-los;pd=drive;
       if(e.annul) continue;
-      const gain=e.yds!=null?e.yds:(e.res==='X'?0:null), next=los!=null&&gain!=null?Math.max(0,Math.min(FIELD,los+gain)):null;
+      const gain=e.yds!=null?e.yds:(e.res==='X'&&!e.nr?0:null), next=los!=null&&gain!=null?Math.max(0,Math.min(FIELD,los+gain)):null;
       if(e.res==='TD'){score[poss]+=6+(e.pat||0);flip()}
       else if(e.res==='SF'){score[other(poss)]+=2;flip()}
       else if(e.res==='INT'){flip();spot=null;if(e.pick6){score[poss]+=6+(e.pat||0);flip()}}
@@ -1209,7 +1211,7 @@ function liveScoutHTML(st,s){
   const key=scKeyOf(g,s);if(key.startsWith('H|'))return '';
   const team=scoutTeams().find(x=>x.key===key);if(!team)return '';
   const others=team.games.filter(G=>G.id!==g.id);others.forEach(scoutFetch);
-  const ready=others.filter(scoutReady), plays=(x,sd)=>x.filter(e=>e.t==='play'&&e._side===sd&&!e.annul&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
+  const ready=others.filter(scoutReady), plays=(x,sd)=>x.filter(e=>e.t==='play'&&e._side===sd&&!e.annul&&!e.nr&&e.kind!=='sack'&&e.kind!=='safety'&&e.kind!=='snap');
   const H=ready.map(scoutGame).flatMap(x=>plays(x.events,team.sideIn[x.id]));if(H.length<8)return '';
   const hd=H.filter(e=>e._down===st.down), hp=hd.filter(e=>e.kind==='pass'), z=scTop(hp.filter(e=>e.zone),e=>e.zone), r=scTop(hp,e=>e.rec);
   let line=hd.length?t('lsDown',ord(st.down),pct(hp.length,hd.length),z?zoneName(z[0]):'',r?r[0]:''):t('lsNoDown',ord(st.down));
@@ -1263,10 +1265,10 @@ function evLine(e){
   const R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),SF:t('safety'),BS:t('badSnap')};
   if(e.t==='pen')return {cls:'pen',h:e.foul?t('fouls')[e.foul]:t('penalty'),s:(e.team?sideName(e.team)+' · ':'')+(e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]||'')};
   if(e.t==='conv')return {cls:e.res==='G'?'C':'X',h:`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]||e.res}`,s:[e.rec!=null?'#'+e.rec:'',e.zone?zoneName(e.zone):''].filter(Boolean).join(' · '),tag:e.res==='G'?'+'+e.pts:''};
-  const h=e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
+  const h=e.nr&&e.res!=='TD'&&e.res!=='INT'?t('nrBtn'):e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
   if(e.res==='SF'||e.res==='BS')return {cls:e.res==='SF'?'SACK':'X',h,s:e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),tag:e.res==='SF'?'+2 '+sideName(other(e._side)):'',annul:e.annul};
   const dd=e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down');
-  const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):''].filter(Boolean);
+  const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):'',e.nr?t('nrTag'):''].filter(Boolean);
   return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?'#'+e.rec:'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
 }
 /* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime comes as its own item between two drives.
@@ -1325,7 +1327,7 @@ function driveHTML(st){
 /* a finished game: the final score, a line per team and the way to the analysis, the list and the tape */
 function finalHTML(st){
   const D=driveGroups(st).filter(d=>!d.half), sc=st.score, dif=sc.H-sc.A;
-  const row=s=>{const p=g.events.filter(e=>e.t==='play'&&!e.annul&&e._side===s), my=D.filter(d=>d.side===s), y=my.reduce((a,d)=>a+(d.yds||0),0);
+  const row=s=>{const p=g.events.filter(e=>e.t==='play'&&!e.annul&&!e.nr&&e._side===s), my=D.filter(d=>d.side===s), y=my.reduce((a,d)=>a+(d.yds||0),0);
     return [p.length,my.length,p.filter(e=>e.res==='TD').length+g.events.filter(e=>e.t==='play'&&!e.annul&&e.pick6&&e._side!==s).length,my.some(d=>d.yds!=null)?y:'–',p.filter(e=>e.res==='INT').length]};
   const R={H:row('H'),A:row('A')};
   return `<div class="final"><section class="fcard">
@@ -1345,7 +1347,7 @@ function regView(st){
   const gl=conv||glOn===st.drive;
   const cl=t('colsLong');
   const def=!conv&&(readOnly()||(r!=='both'&&r!==s&&override!==st.drive));
-  const plays=conv?g.events.filter(e=>e.t==='conv'&&e.side===s):g.events.filter(e=>e.t==='play'&&!e.annul&&e._side===s);
+  const plays=conv?g.events.filter(e=>e.t==='conv'&&e.side===s):g.events.filter(e=>e.t==='play'&&!e.annul&&!e.nr&&e._side===s);
   const banner=bannerHTML(r);
   if(def){
     const recent=g.events.filter(e=>e.t==='play'&&e._side===s).slice(-4).reverse();
@@ -1441,7 +1443,7 @@ function inArea(e){
   return an.area==='gl'?isGL(e.zone):!isGL(e.zone);
 }
 function anaBase(){
-  return g.events.filter(e=>inArea(e)&&e._side===an.side&&(an.annul||!e.annul)&&(!an.half||e._half===an.half)&&(!an.form||e.form===an.form));
+  return g.events.filter(e=>inArea(e)&&!e.nr&&e._side===an.side&&(an.annul||!e.annul)&&(!an.half||e._half===an.half)&&(!an.form||e.form===an.form));
 }
 function anaPlays(ignoreRec){
   return anaBase().filter(e=>(e.t==='conv'||an.kind==='all'||(an.kind==='run'?e.kind==='run':e.kind==='pass'))
@@ -1485,7 +1487,7 @@ function anaView(){
   // defensive plays made against this offense: interceptions and sacks by number
   // flags and PBU from the tape review
   const dv={}, dk=k=>dv[k]=dv[k]||{i:0,s:0,p6:0,f:0,b:0};
-  g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===an.side&&!e.annul&&(!an.half||e._half===an.half)).forEach(e=>{
+  g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===an.side&&!e.annul&&!e.nr&&(!an.half||e._half===an.half)).forEach(e=>{
     if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
     if(e.fby!=null)dk(e.fby).f++;
     if(e.pbu!=null)dk(e.pbu).b++;
@@ -1508,7 +1510,7 @@ function anaView(){
       ${qh('analysis')}
     </div>
     <div class="tiles">${tiles.map(([v,l])=>`<div class="tile"><b class="num">${v}</b><span>${l}</span></div>`).join('')}</div>
-    ${(()=>{const ev=x=>g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x&&!e.annul&&(!an.half||e._half===an.half));
+    ${(()=>{const ev=x=>g.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x&&!e.annul&&!e.nr&&(!an.half||e._half===an.half));
       return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half),scKeyOf(g,an.side))}</section>`})()}
     <div class="ana"><div class="sc-tables">
       <section class="panel">
@@ -1726,7 +1728,7 @@ function scoutView(){
       </div></section>`;
   const pickRow=`<div class="sc-pick noprint"><label class="lbl2" for="sc-team">${t('scTeam')}</label><select id="sc-team">${opts}</select><button class="btn" data-act="newteam">+ ${t('ntBtn')}</button></div>
     ${comps.length>1?`<div class="filters noprint"><span class="lbl2">${t('competition')}</span><div class="seg">${[['',t('allF')],...comps.map(c=>[c,esc(c)])].map(([v,l])=>`<button data-act="sccomp" data-v="${esc(v)}" aria-pressed="${(sc.comp||'')===v}">${l}</button>`).join('')}</div></div>`:''}`;
-  const evs=k=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x[k]&&!e.annul));
+  const evs=k=>X.flatMap(x=>x.events.filter(e=>(e.t==='play'||e.t==='conv')&&e._side===x[k]&&!e.annul&&!e.nr));
   const off=evs('S'), def=evs('O'), DO=X.flatMap(x=>drivesOf(x.events,x.S)), DD=X.flatMap(x=>drivesOf(x.events,x.O));
   // key tendencies: plain numbers a coach can read before the game
   const plays=off.filter(e=>e.t==='play'), pas=plays.filter(e=>e.kind==='pass'), runs=plays.filter(e=>e.kind==='run');
@@ -1853,7 +1855,7 @@ function logView(){
       <span class="tx">${e.kind==='sack'||e.kind==='safety'||e.kind==='snap'?'':`<b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>`}${resTag}${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}${e.kind==='run'&&e.res==='TD'?`<span class="tag">${t('runLow')}</span>`:''}
       ${(e.res==='INT'||e.res==='SACK')?`<span class="tag">${t('byTag',e.dby)}</span>`:''}
       ${e.fd?`<span class="tag">${t('fdLow')}</span>`:''}${e.form?`<span class="tag">${esc(e.form)}</span>`:''}${e.qb2?'<span class="tag">2 QB</span>':''}
-      ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}</span>
+      ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}${e.nr?`<span class="tag nr">${t('nrTag')}</span>`:''}</span>
       <span class="ops"><button data-act="annul" data-id="${e.id}">${e.annul?t('restore'):t('annul')}</button>${delB(e)}</span></div>`;
   };
   /* one card per drive, newest first: a tap opens its plays */
@@ -1951,7 +1953,7 @@ function tapePanel0(){
   let zones='';const ROWS=gl?t('glRows'):t('rows'),COLS=t('cols');
   for(let r=0;r<4;r++)for(let c=0;c<3;c++){const z=(gl?'g':'')+r+c;
     zones+=`<button class="tz${gl&&r<2?' ez':''}${!gl&&r===3?' behind':''}" data-act="tset" data-k="zone" data-s="${z}" aria-pressed="${e.zone===z}">${ROWS[r]} ${COLS[c]}</button>`}
-  const play=`${conv?`<div class="tzhead"><div class="seg">${[1,2].map(n=>`<button data-act="tset" data-k="pts" data-n="${n}" aria-pressed="${e.pts===n}">${n} pt${n>1?'s':''}</button>`).join('')}</div>
+  const play0=`${conv?`<div class="tzhead"><div class="seg">${[1,2].map(n=>`<button data-act="tset" data-k="pts" data-n="${n}" aria-pressed="${e.pts===n}">${n} pt${n>1?'s':''}</button>`).join('')}</div>
       ${readOnly()?'':`<button class="btn" data-act="tnoconv">${t('tNoConv')}</button>`}</div>`
     :`<div class="seg">${[['pass',t('tPass')],['run',t('tRun')],['sack',t('tSackK')]].map(([v,l])=>`<button data-act="tset" data-k="kind" data-s="${v}" aria-pressed="${e.kind===v}">${l}</button>`).join('')}</div>`}
     ${resOpts.length?`<div class="resrow">${resOpts.map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${!conv&&(e.res==='C'||e.res==='R')?`<button class="rb" data-act="tbool" data-k="fd" aria-pressed="${!!(e.fd||e._autoFd)}">${t('fd')}${e._autoFd&&!e.fd?' <small>'+t('fdAuto')+'</small>':''}</button>`:''}
@@ -1961,17 +1963,20 @@ function tapePanel0(){
     <div class="tzones">${zones}</div>
     <span class="lbl2">${e.kind==='run'?t('tRunner'):t('receiver')}</span>${nums('rec',s,e.rec??null)}`}
     ${e.res==='INT'||e.res==='SACK'?`<span class="lbl2">${e.res==='SACK'?t('whoSack'):t('whoInt')} · ${sideName(other(s))}</span>${nums('dby',other(s),e.dby??null)}`:''}`;
+  /* a play the camera did not record: it counts as a down (and its result, if known from the score) but stays out of the stats */
+  const nr=!conv&&!!e.nr, nrB=conv?'':`<button class="rb nrb" data-act="tbool" data-k="nr" aria-pressed="${nr}">${nr?'✓ ':''}${t('nrBtn')}</button>`;
+  const play=nr?`${nrB}<p class="note">${t('nrNote')}</p><div class="resrow">${[['TD','TD'],['INT','INT']].map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${e.res===v?'X':v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}</div>`:nrB+play0;
   const qbV=e.qb!=null?e.qb:tSugg(e,'qb'), fmV=e.form||(conv?null:tSugg(e,'form'));
   const forms=g.formations[s].map(f=>[f,f]);
   const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
   const vt=e.vt!=null?`${fmtT(e.vt)}${vs.length>1?' · '+partName(e.vi):''}`:'—';
   const L2=L.map((x,j)=>`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
-      <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}</span>
+      <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.nr&&x.res!=='TD'&&x.res!=='INT'?t('nrBtn'):`${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}${x.nr?' · '+t('nrTag'):''}`}</span>
       <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('');
   return `<div class="tprog"><div class="tbar"><i style="width:${L.length?Math.round(done/L.length*100):0}%"></i></div><span class="num">${t('tDone',done,L.length)}</span><button class="linkbtn" data-act="tlist">${tp.list?t('tHideList'):t('tShowList')}</button></div>
     ${tp.list?`<div class="tlist">${L2}</div>`:''}
     <div class="tnav side-${s}"><button class="btn" data-act="tnav" data-d="-1" ${i?'':'disabled'} aria-label="${t('tPrev')}">‹</button>
-      <div class="tttl"><b>${t('tPlay',i+1,L.length)}</b><small>${conv?t('conv')+' '+e.pts+' pt':`<b class="dd">${ddTxt(e)} · ${spotTxt(e._spot)}</b>`} · <span class="pside ${s}">${sideName(s)}</span> · ${e._half===2?t('h2'):t('h1')}${e.annul?' · '+t('annulTag'):''}${e.ins?' · '+t('insTag'):''}${e.rv?' · ✓ '+t('tReviewed'):''}</small></div>
+      <div class="tttl"><b>${t('tPlay',i+1,L.length)}</b><small>${conv?t('conv')+' '+e.pts+' pt':`<b class="dd">${ddTxt(e)} · ${spotTxt(e._spot)}</b>`} · <span class="pside ${s}">${sideName(s)}</span> · ${e._half===2?t('h2'):t('h1')}${e.annul?' · '+t('annulTag'):''}${e.ins?' · '+t('insTag'):''}${e.nr?' · '+t('nrTag'):''}${e.rv?' · ✓ '+t('tReviewed'):''}</small></div>
       <button class="btn" data-act="tnav" data-d="1" ${i<L.length-1?'':'disabled'} aria-label="${t('tNext')}">›</button></div>
     <div class="vctl">
       ${vs.length>1?`<div class="seg">${vs.map((v,j)=>`<button data-act="vuse" data-n="${j}" aria-pressed="${vid.slot===j}">${partName(j)}</button>`).join('')}</div>`:''}
@@ -1984,13 +1989,13 @@ function tapePanel0(){
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
       <p class="note">${e._spot==null?t('tSpotQ'):e.spot!=null?t('tManualS'):t('tAutoS')}${e.spot!=null&&!readOnly()?` · <button class="linkbtn" data-act="tspotauto">${t('tSpotAuto')}</button>`:''}</p>`)}
-    ${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
+    ${nr?'':`${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
     ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
     ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
     ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${ours?blk(t('tCall'),t('tCallS'),chips('call',playbook().map(c=>[c,c]),e.call||null,false)+`<button class="f" data-act="tcall">${t('newForm')}</button></div>`):''}
     ${!ours&&!conv&&(e.res==='C'||e.res==='R')?blk(t('tFlag'),t('tOurs'),nums('fby','H',e.fby??null)):''}
-    ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}
+    ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}`}
     ${penLines(e)}
     ${blk(t('tNote'),'',`<input class="field-in" id="t-note" maxlength="140" placeholder="${t('tNotePh')}" value="${esc(e.note||'')}" autocomplete="off">`)}
     <div class="tfoot">
@@ -2142,8 +2147,8 @@ function tapeNext(){
   const nx=L[i+1], now=vTime();
   if(!readOnly())act(grp=>{
     const p={rv:true};
-    if(e.qb==null){const v=tSugg(e,'qb');if(v!=null)p.qb=v}
-    if(e.t==='play'&&!e.form){const v=tSugg(e,'form');if(v)p.form=v}
+    if(e.qb==null&&!e.nr){const v=tSugg(e,'qb');if(v!=null)p.qb=v}
+    if(e.t==='play'&&!e.form&&!e.nr){const v=tSugg(e,'form');if(v)p.form=v}
     if(i===0&&e.vt==null&&now!=null){p.vt=0;p.vi=vid.slot}
     const n=document.getElementById('t-note');if(n&&n.value.trim()!==(e.note||''))p.note=n.value.trim();
     chEv(e,p,grp);
@@ -2168,6 +2173,7 @@ function tapeSet(k,v){
   const e=tapeCur().e;if(!e||readOnly())return;
   if(e[k]===v&&k!=='res'&&k!=='kind'&&k!=='pts'&&k!=='spot')v=null;
   const patch={[k]:v};
+  if(k==='nr'&&v&&e.t==='play'&&e.res!=='TD'&&e.res!=='INT')Object.assign(patch,{kind:'pass',res:'X',fd:false});
   if(k==='kind'){
     if(v==='sack')Object.assign(patch,{res:'SACK',zone:null,rec:null,fd:false,yac:null});
     else if(e.kind==='sack')Object.assign(patch,{res:v==='run'?'R':'C',dby:null});
