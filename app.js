@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.15.1';
+const APP_VERSION='1.16.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -156,6 +156,11 @@ pt:{
   drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'Fim de parte ou em curso'}, drvFirst:(p,z)=>`1ª jogada da drive: ${p} passe${z?`, sobretudo para ${z}`:''}.`,
   sumDrv:(n,pp,td,l)=>`Em ${n} drives: ${pp} pontos por drive, ${td} acabam em TD e ${l} perdem a bola (INT, downs ou safety).`,
   autoFd:'AUTO 1º DOWN', otherBtn:'Outro ⋯', otherT:'Outros resultados', safety:'Safety', safetyS:s=>`+2 para ${s}, que fica com a bola`, badSnap:'Bad snap', badSnapS:'a bola tocou no chão no snap · conta como down',
+  gap:'Jogadas em falta', gapS:'câmara sem bateria, vídeo cortado... acerta o jogo a seguir', gapShort:'Em falta', gapNext:'A seguir',
+  gapLead:'Perdemos jogadas que não há forma de registar. Diz como ficou o jogo depois delas e o registo continua a partir daí. As stats só contam o que foi registado.',
+  gapN:'Quantas jogadas (aprox.)', gapNUnk:'não sei', gapPoss:'Quem tem a bola a seguir', gapDist:'A bola está', gapFd:'antes do meio campo', gapGoal:'depois do meio campo (& Goal)',
+  gapPts:'Pontos marcados entretanto', gapHalf:'Se a falha apanhou o intervalo, marca primeiro o intervalo (botão do down).', gapSave:'Guardar', gapEdit:'Editar',
+  gapTag:n=>n?`${n} ${n===1?'jogada':'jogadas'} em falta`:'Jogadas em falta', gapNote:n=>`Este jogo tem ${n===1?'1 falha':n+' falhas'} no registo (jogadas em falta): as stats só contam o que foi registado.`,
   driveN:n=>`Drive ${n}`, lastPlay1:'Última jogada', noPlaysYet:'ainda sem jogadas', lastRec:'último recetor',
   sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números.', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
   sumGames:g=>g>1?`Em ${g} jogos: `:'', sumPass:(pp,np,nr,cp)=>`${pp} das jogadas são passes (${np} passes e ${nr} corridas), com ${cp} de completos.`,
@@ -331,6 +336,11 @@ en:{
   drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'End of half or ongoing'}, drvFirst:(p,z)=>`1st play of the drive: ${p} pass${z?`, mostly to ${z}`:''}.`,
   sumDrv:(n,pp,td,l)=>`Over ${n} drives: ${pp} points per drive, ${td} end in a TD and ${l} lose the ball (INT, downs or safety).`,
   autoFd:'AUTO 1ST DOWN', otherBtn:'Other ⋯', otherT:'Other outcomes', safety:'Safety', safetyS:s=>`+2 for ${s}, who get the ball`, badSnap:'Bad snap', badSnapS:'the snap hit the ground · counts as a down',
+  gap:'Missing plays', gapS:'camera died, video cut... set the game after them', gapShort:'Missing', gapNext:'Next',
+  gapLead:'We lost plays that cannot be tracked. Say how the game stood after them and tracking goes on from there. Stats only count what was tracked.',
+  gapN:'How many plays (approx.)', gapNUnk:'unknown', gapPoss:'Who has the ball next', gapDist:'The ball is', gapFd:'before midfield', gapGoal:'past midfield (& Goal)',
+  gapPts:'Points scored meanwhile', gapHalf:'If the gap went over halftime, mark halftime first (down button).', gapSave:'Save', gapEdit:'Edit',
+  gapTag:n=>n?`${n} missing ${n===1?'play':'plays'}`:'Missing plays', gapNote:n=>`This game has ${n===1?'1 gap':n+' gaps'} in the tracking (missing plays): stats only count what was tracked.`,
   driveN:n=>`Drive ${n}`, lastPlay1:'Last play', noPlaysYet:'no plays yet', lastRec:'last receiver',
   sumT:'Summary', sumNote:'Written automatically from the numbers.', sumFew:'Too few plays for a summary yet (it needs at least 5).',
   sumGames:g=>g>1?`Over ${g} games: `:'', sumPass:(pp,np,nr,cp)=>`${pp} of plays are passes (${np} passes and ${nr} runs), with ${cp} completed.`,
@@ -430,7 +440,7 @@ function helpData(){
       <dt>${btn('','GL')}</dt><dd>Troca o campo pelo mapa de goal line.</dd>
       <dt>${btn('','Double')}</dt><dd>Formação. Fica selecionada até mudares. Toca outra vez para tirar.</dd>
       <dt>${btn('','2 QB')}</dt><dd>Marca a próxima jogada como Double QB.</dd>
-      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 para a defesa, que fica com a bola) ou <b>bad snap</b> (a bola tocou no chão no snap; conta como down).</dd>
+      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 para a defesa, que fica com a bola) ou <b>bad snap</b> (a bola tocou no chão no snap; conta como down). <b>Jogadas em falta</b>: quando se perdem jogadas (câmara sem bateria, vídeo cortado), diz quem ficou com a bola, o down e os pontos marcados entretanto, e o registo continua certo a partir daí.</dd>
       <dt>${btn('','↶ '+t('undo'))}</dt><dd>Apaga o último toque ou a última jogada.</dd></dl>`},
     {id:'downs',t:'Down e posse automáticos',b:`<ul>
       <li>Cada jogada avança 1 down.</li>
@@ -542,7 +552,7 @@ function helpData(){
       <dt>${btn('','GL')}</dt><dd>Switches the field to the goal line map.</dd>
       <dt>${btn('','Double')}</dt><dd>Formation. Stays selected until you change it. Tap again to clear.</dd>
       <dt>${btn('','2 QB')}</dt><dd>Marks the next play as Double QB.</dd>
-      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 for the defense, who get the ball) or <b>bad snap</b> (the snap hit the ground; counts as a down).</dd>
+      <dt>${btn('',t('otherBtn'))}</dt><dd><b>Safety</b> (+2 for the defense, who get the ball) or <b>bad snap</b> (the snap hit the ground; counts as a down). <b>Missing plays</b>: when plays are lost (camera died, video cut), say who has the ball, the down and the points scored meanwhile, and tracking stays right from there.</dd>
       <dt>${btn('','↶ '+t('undo'))}</dt><dd>Removes the last tap or the last play.</dd></dl>`},
     {id:'downs',t:'Automatic down and possession',b:`<ul>
       <li>Each play moves the down forward by 1.</li>
@@ -834,6 +844,8 @@ function replay(G){
     }else if(e.t==='down'){down=e.down}
     else if(e.t==='poss'){flip()}
     else if(e.t==='half'){half=2;if(!legacy)poss=other(G.start);down=1;drive++;spot=SPOT0;goal=false}
+    /* plays that could not be tracked: the game goes on from the state given (ball, down, points scored meanwhile), the spot is unknown, a new drive starts */
+    else if(e.t==='gap'){const P=e.pts||{};score.H+=P.H||0;score.A+=P.A||0;if(!legacy&&e.poss)poss=e.poss;down=e.down||1;drive++;spot=null;goal=!!e.goal}
   }
   return {poss,down,score,drive,half,spot,goal};
 }
@@ -1070,7 +1082,7 @@ function downChip(st){
   if(g.ended&&view!=='tape')return `<small>${t('h2')}</small><b>${t('final')}</b>`;
   const c=view==='tape'?tapeCur().e:null, e=c&&c.t==='play'?c:null;
   const d=e?e._down:st.down, sp=e?e._spot:st.spot, gl=e?e._goal:st.goal, h=e?e._half:st.half;
-  return `<small>${h===2?t('h2'):t('h1')}</small><b>${ord(d)} ${sp!=null?`& ${gl?'Goal':MID-sp}`:t('down')}</b>${sp!=null?`<span class="dspot">${spotTxt(sp)}</span>`:''}`;
+  return `<small>${h===2?t('h2'):t('h1')}</small><b>${ord(d)} ${sp!=null?`& ${gl?'Goal':MID-sp}`:gl?'& Goal':t('down')}</b>${sp!=null?`<span class="dspot">${spotTxt(sp)}</span>`:''}`;
 }
 const BALL='<svg class="ball" viewBox="0 0 24 14" aria-hidden="true"><ellipse cx="12" cy="7" rx="11" ry="6"/><path d="M7 7h10M9.5 5v4M12 5v4M14.5 5v4"/></svg>';
 /* scoreboard: the team on offense carries the ball; tapping the other team hands it the ball (change of possession) */
@@ -1258,10 +1270,12 @@ function fieldStripHTML(st){
   return `<div class="fs-strip side-${s}" aria-label="${spotTxt(st.spot)}"><div class="fs-f"><b class="fs-ez own"></b><b class="fs-ez opp"></b>${fieldLines()}${fdl}<i class="fs-los" style="left:${spX(st.spot)}%"></i>
     <span class="fs-ball" style="left:${spX(st.spot)}%">${BALL}</span></div></div>`;
 }
+const gapPts=e=>{const P=e.pts||{};return ['H','A'].filter(k=>P[k]).map(k=>'+'+P[k]+' '+sideName(k)).join(' · ')};
 /* one line per play for the drive card */
 function evLine(e){
   const R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),SF:t('safety'),BS:t('badSnap')};
   if(e.t==='pen')return {cls:'pen',h:e.foul?t('fouls')[e.foul]:t('penalty'),s:(e.team?sideName(e.team)+' · ':'')+(e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]||'')};
+  if(e.t==='gap')return {cls:'gap',h:t('gapTag',e.n),s:`${t('gapNext')}: ${sideName(e.poss||e._side)} · ${ord(e.down||1)} ${t('down')}${e.goal?' & Goal':''}`,tag:gapPts(e)};
   if(e.t==='conv')return {cls:e.res==='G'?'C':'X',h:`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]||e.res}`,s:[e.rec!=null?'#'+e.rec:'',e.zone?zoneName(e.zone):''].filter(Boolean).join(' · '),tag:e.res==='G'?'+'+e.pts:''};
   const h=e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
   if(e.res==='SF'||e.res==='BS')return {cls:e.res==='SF'?'SACK':'X',h,s:e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),tag:e.res==='SF'?'+2 '+sideName(other(e._side)):'',annul:e.annul};
@@ -1269,13 +1283,13 @@ function evLine(e){
   const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):''].filter(Boolean);
   return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?'#'+e.rec:'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
 }
-/* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime comes as its own item between two drives.
+/* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime and the missing plays (gap) come as their own item between two drives.
    Yards add the plays and the fouls; a TD without yards counts up to the goal line. */
 function driveGroups(st){
   st=st||replay();
   const out=[], by=new Map();
   for(const e of g.events){
-    if(e.t==='half'){out.push({half:e});continue}
+    if(e.t==='half'||e.t==='gap'){out.push({half:e});continue}
     let d=by.get(e._drive);
     if(!d){d={n:e._drive,side:null,evs:[]};by.set(e._drive,d);out.push(d)}
     if(d.side==null&&e.t!=='conv')d.side=e._side;
@@ -1296,7 +1310,7 @@ function driveGroups(st){
       :end&&end.res==='SF'?{l:t('safety'),c:'bad'}
       :d.evs.some(e=>e._tod)?{l:t('tod'),c:'bad'}
       :d.evs.some(e=>e.t==='poss')?{l:t('drvPoss'),c:''}
-      :nx&&nx.half?{l:t('halfT'),c:''}
+      :nx&&nx.half?{l:nx.half.t==='gap'?t('gapShort'):t('halfT'),c:''}
       :d.n===st.drive?{l:g.ended?t('final'):t('drvLive'),c:g.ended?'':'live'}:{l:'',c:''};
   });
   return out;
@@ -1307,7 +1321,7 @@ let drOpen={gid:null,m:{}};
 function drIsOpen(n,st){if(drOpen.gid!==g.id)drOpen={gid:g.id,m:{}};return n in drOpen.m?drOpen.m[n]:n===st.drive}
 /* the drive on the field, newest play first, with undo next to the last thing tracked; earlier drives in one line each, a tap shows their plays */
 function driveHTML(st){
-  const shown=e=>e.t==='play'||e.t==='pen'||e.t==='conv';
+  const shown=e=>e.t==='play'||e.t==='pen'||e.t==='conv'||e.t==='gap';
   const D=driveGroups(st).filter(d=>!d.half), cd=D.find(d=>d.n===st.drive), cur=cd?cd.evs.filter(shown):[];
   const plays=cd?cd.plays:[];
   const last=lastEv(), show=cur.length?cur:last&&shown(last)?[last]:[];
@@ -1495,7 +1509,8 @@ function anaView(){
   const forms=[...new Set(g.events.filter(e=>e.t==='play'&&e._side===an.side&&e.form).map(e=>e.form))];
   const seg=(key,opts,cls='')=>`<div class="seg ${cls}">${opts.map(([v,l,c])=>`<button class="${c||''}" data-act="an" data-k="${key}" data-v="${v}" aria-pressed="${String(an[key])===String(v)}">${l}</button>`).join('')}</div>`;
   const D=t('downs'), thP=t('thP'), thD=t('thD');
-  return `<div class="filters">
+  const gaps=g.events.filter(e=>e.t==='gap').length;
+  return `${gaps?`<p class="note gapnote">⋯ ${t('gapNote',gaps)}</p>`:''}<div class="filters">
       ${seg('side',[['H',sideName('H'),'H'],['A',sideName('A'),'A']],'side')}
       ${seg('area',[['field',t('mapField')],['gl','GL'],['conv',t('convs')]])}
       ${conv?'':seg('kind',[['pass',t('passes')],['run',t('runs')],['all',t('all')]])}
@@ -1842,6 +1857,7 @@ function logView(){
     if(e.t==='spot')return `<div class="ev">${sd(e)}<span class="dn">⌖</span><span class="tx"><b>${t('tBall')}: ${spotTxt(e.spot)}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='down')return `<div class="ev">${sd(e)}<span class="dn">→${ord(e.down)}</span><span class="tx">${t('downManual')}</span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='poss')return `<div class="ev"><span class="sd ${other(e._side)}"></span><span class="dn">⇄</span><span class="tx">${t('possManual')}</span><span class="ops">${delB(e)}</span></div>`;
+    if(e.t==='gap')return `<div class="ev gap">${sd(e)}<span class="dn">⋯</span><span class="tx"><b>${t('gapTag',e.n)}</b><span class="tag">${t('gapNext')}: ${sideName(e.poss||e._side)} · ${ord(e.down||1)}${e.goal?' & Goal':''}</span>${gapPts(e)?`<span class="tag">${gapPts(e)}</span>`:''}</span><span class="ops">${readOnly()?'':`<button data-act="gapedit" data-id="${e.id}">${t('gapEdit')}</button>`}${delB(e)}</span></div>`;
     if(e.t==='half')return `<div class="ev"><span class="sd"></span><span class="dn">½</span><span class="tx"><b>${t('halfT')}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='conv'){
       const rt={G:`<span class="tag C">${t('convRes').G}</span>`,NG:`<span class="tag X">${t('convRes').NG}</span>`,INT:'<span class="tag INT">INT</span>'}[e.res];
@@ -1859,7 +1875,7 @@ function logView(){
   /* one card per drive, newest first: a tap opens its plays */
   const G=driveGroups(st), D=G.filter(d=>!d.half), anyOpen=D.some(d=>drIsOpen(d.n,st));
   const items=G.slice().reverse().map(d=>{
-    if(d.half)return `<div class="drv-sep"><span>${t('halfT')}</span><span class="ops">${delB(d.half)}</span></div>`;
+    if(d.half)return d.half.t==='gap'?`<div class="log">${row(d.half)}</div>`:`<div class="drv-sep"><span>${t('halfT')}</span><span class="ops">${delB(d.half)}</span></div>`;
     const op=drIsOpen(d.n,st);
     return `<section class="drv side-${d.side}${op?' open':''}"><button class="drv-h" data-act="drtog" data-n="${d.n}" aria-expanded="${op}">
         <span class="drv-t"><b>${sideName(d.side)}</b><small>${t('driveN',d.n+1)} · ${t('scPlaysN',d.plays.length)}${ydsTxt(d.yds)}</small></span>
@@ -2318,7 +2334,19 @@ function renderSheet(){
     h=`<h2>${t('otherT')}</h2><p>${t('offense')}: <b>${sideName(st.poss)}</b> · ${ord(st.down)} ${t('down')}</p>
       <div class="grid2"><button class="big" data-act="safety">${t('safety')}<small>${t('safetyS',sideName(other(st.poss)))}</small></button>
       <button class="big" data-act="badsnap">${t('badSnap')}<small>${t('badSnapS')}</small></button></div>
+      <button class="big gapbtn" data-act="gapnew">${t('gap')}<small>${t('gapS')}</small></button>
       <button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='gap'){
+    const sb=(act,v,l,on,cls='')=>`<button class="${cls}" data-act="${act}" data-v="${v}" aria-pressed="${on}">${l}</button>`, P=sheet.pts;
+    const ptsRow=k=>`<div class="gap-pts side-${k}"><b>${sideName(k)}</b><button class="btn" data-act="gappts" data-k="${k}" data-d="-1" aria-label="−1">−</button><span class="num">+${P[k]}</span><button class="btn" data-act="gappts" data-k="${k}" data-d="1" aria-label="+1">+</button></div>`;
+    h=`<div class="help-head"><h2>${t('gap')}</h2><button class="ghost" data-act="close">✕</button></div><p>${t('gapLead')}</p>
+      <span class="lbl2">${t('gapN')}</span><div class="gap-n"><button class="btn" data-act="gapn" data-d="-1" aria-label="−1">−</button><span class="num">${sheet.n||t('gapNUnk')}</span><button class="btn" data-act="gapn" data-d="1" aria-label="+1">+</button></div>
+      ${g.mode&&g.mode!=='both'?'':`<span class="lbl2">${t('gapPoss')}</span><div class="seg side gapseg">${sb('gapset','poss:H',sideName('H'),sheet.poss==='H','H')}${sb('gapset','poss:A',sideName('A'),sheet.poss==='A','A')}</div>`}
+      <span class="lbl2">${t('down')}</span><div class="grid4">${[1,2,3,4].map(d=>`<button class="big num" data-act="gapset" data-v="down:${d}" aria-pressed="${sheet.down===d}">${ord(d)}</button>`).join('')}</div>
+      <span class="lbl2">${t('gapDist')}</span><div class="seg gapseg">${sb('gapset','goal:0',t('gapFd'),!sheet.goal)}${sb('gapset','goal:1',t('gapGoal'),!!sheet.goal)}</div>
+      <span class="lbl2">${t('gapPts')}</span>${ptsRow('H')}${ptsRow('A')}
+      ${sheet.id?'':`<p class="note">${t('gapHalf')}</p>`}
+      <button class="primary" data-act="gapsave">${t('gapSave')}</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='addnum'){
     const v=sheet.v||'';
     h=`<h2>${t('newNumT')} · ${sideName(numSide(st))}</h2><div class="kp-out num">${v||'&nbsp;'}</div>
@@ -2634,6 +2662,13 @@ document.addEventListener('click',ev=>{
     case 'members':openSheet('members');break;
     case 'quick':{const q=!g.quick;updGame({quick:q});setTimeout(renderSheet,50);toast(q?t('quickOn'):t('quickOff'));break}
     case 'other':if(!readOnly()){draft=null;runMode=false;openSheet('other')}break;
+    case 'gapnew':if(!readOnly()){draft=null;runMode=false;openSheet('gap',{n:0,poss:st.poss,down:1,goal:false,pts:{H:0,A:0}})}break;
+    case 'gapedit':{const e=g.events.find(x=>x.id===b.dataset.id);if(!e||readOnly())break;openSheet('gap',{id:e.id,n:e.n||0,poss:e.poss||e._side,down:e.down||1,goal:!!e.goal,pts:{H:0,A:0,...(e.pts||{})}});break}
+    case 'gapset':{const [k,v]=b.dataset.v.split(':');sheet[k]=k==='poss'?v:k==='goal'?v==='1':+v;renderSheet();break}
+    case 'gapn':sheet.n=Math.max(0,Math.min(99,(sheet.n||0)+(+b.dataset.d)));renderSheet();break;
+    case 'gappts':{const k=b.dataset.k;sheet.pts[k]=Math.max(0,Math.min(99,(sheet.pts[k]||0)+(+b.dataset.d)));renderSheet();break}
+    case 'gapsave':{if(readOnly())break;const P=sheet, x={n:P.n||null,poss:P.poss,down:P.down,goal:!!P.goal,pts:{H:P.pts.H||0,A:P.pts.A||0}}, old=P.id&&g.events.find(e=>e.id===P.id);closeSheet();
+      if(old)act(grp=>chEv(old,x,grp));else act(grp=>addEv({t:'gap',...x},grp));toast(t('gapTag',x.n));break}
     case 'safety':case 'badsnap':{closeSheet();const sf=a==='safety';
       act(grp=>addEv({t:'play',kind:sf?'safety':'snap',zone:null,rec:null,res:sf?'SF':'BS',fd:false,form:g.curForm[st.poss]||null,qb2:false,annul:false},grp));
       toast(sf?`${t('safety')} · +2 ${sideName(other(st.poss))}`:`${t('badSnap')} · ${ord(st.down)} ${t('down')}`);if(sf)celebrate('SAFETY',other(st.poss),true);break}

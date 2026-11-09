@@ -848,3 +848,17 @@ button.slot{text-align:left;cursor:pointer;font:inherit;color:inherit}
 .sheet .resrow .rb{font-size:15px;min-height:56px;letter-spacing:0}
 .tn.last{border-color:var(--accent)}
 @media (max-width:420px){.sheet .resrow .rb{font-size:13px}}
+
+/* missing plays (gap in the tracking) */
+.big.gapbtn{width:100%;margin-top:8px}
+.seg.gapseg{margin-bottom:4px}
+.seg.gapseg button{flex:1}
+.gap-n,.gap-pts{display:flex;align-items:center;gap:10px;margin:6px 0}
+.gap-n .num,.gap-pts .num{min-width:72px;text-align:center;font-family:var(--f-display);font-weight:800;font-size:22px}
+.gap-pts b{flex:1;padding-left:10px;border-left:4px solid var(--opp)}
+.gap-pts.side-H b{border-left-color:var(--hammers)}
+.gap-n .btn,.gap-pts .btn{min-width:48px;min-height:44px;font-size:20px}
+.dl.r-gap{border-left-style:dashed;border-left-color:var(--muted)}
+.ev.gap{border-left:3px dashed var(--muted)}
+.ev.gap .tx b{font-style:italic}
+.gapnote{border-left:3px dashed var(--muted);padding-left:10px}
