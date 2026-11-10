@@ -107,7 +107,7 @@ pt:{
   tDone:(a,b)=>`${a} / ${b} revistas`, tShowList:'Ver lista', tHideList:'Esconder lista', tPlay:(i,n)=>`Jogada ${i} / ${n}`, tReviewed:'revista',
   tStart:'Início', tMark:'Marcar agora', tMarked:'Tempo marcado', tNoVideo:'Sem vídeo aberto', tVideos:'Vídeos', vPop:'Vídeo noutra janela', vBack:'Trazer vídeo',
   vAway:'O vídeo está noutra janela', vAwayS:'Arrasta essa janela para o outro ecrã. Os botões e as teclas daqui continuam a comandar o vídeo.',
-  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', nrBtn:'Não ficou gravada', nrTag:'não gravada', nrNote:'Conta como down mas não entra nas stats. Se souberes o resultado pelo marcador (TD, INT), marca-o.', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
+  tPlayCtl:'Play / pausa', tSlow:'0,5×', tBack5:'−5 s', tNext:'Próxima', tPrev:'Anterior', tIns:'+ Inserir jogada antes', nrBtn:'Não ficou gravada', nrTag:'não gravada', nrNote:'Conta como down mas não entra nas stats. Se souberes o que aconteceu (TD, INT ou 1º down), marca-o.', tDel:'Apagar jogada', tDelC:'Confirmar: apagar',
   tNewPlay:'Nova jogada', fouls:{fs:'Falsa partida',dg:'Atraso de jogo',sh:'Shift ou motion ilegal',os:'Offside',ip:'Participação ou substituição ilegal',pi:'Interferência de passe',ic:'Contacto ilegal',ir:'Rush ilegal',fl:'Flag puxada ilegalmente',sd:'Shielding',fg:'Flag guarding',jd:'Saltar ou mergulhar',fp:'Passe para a frente ilegal',rn:'Corrida ilegal (no-running zone)',dp:'Atraso de passe (7 s)',us:'Antidesportivo'},
   penWho:'Quem fez a falta?', penOff:'Ataque', penDef:'Defesa', penPre:'Antes do snap', penPlay:'Na jogada', penDead:'Depois da jogada', penOther:'Outra falta', penOtherS:'escolhes as jardas e o down',
   penYds:n=>n?`${n} jd`:'sem jardas', penSpot:{los:'a partir da linha de scrimmage',bs:'a partir da linha (ou do fim da jogada, se a defesa falhou numa jogada que ganhou terreno)',sf:'a partir do sítio da falta: põe nas jardas da jogada até onde foi a falta',next:'depois da jogada, que conta'},
@@ -282,7 +282,7 @@ en:{
   tDone:(a,b)=>`${a} / ${b} reviewed`, tShowList:'Show list', tHideList:'Hide list', tPlay:(i,n)=>`Play ${i} / ${n}`, tReviewed:'reviewed',
   tStart:'Start', tMark:'Mark now', tMarked:'Time marked', tNoVideo:'No video open', tVideos:'Videos', vPop:'Video in another window', vBack:'Bring video back',
   vAway:'The video is in another window', vAwayS:'Drag that window to the other screen. The buttons and keys here still control the video.',
-  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', nrBtn:'Not recorded', nrTag:'not recorded', nrNote:'Counts as a down but stays out of the stats. If you know the result from the score (TD, INT), mark it.', tDel:'Delete play', tDelC:'Confirm: delete',
+  tPlayCtl:'Play / pause', tSlow:'0.5×', tBack5:'−5 s', tNext:'Next', tPrev:'Previous', tIns:'+ Insert play before', nrBtn:'Not recorded', nrTag:'not recorded', nrNote:'Counts as a down but stays out of the stats. If you know what happened (TD, INT or 1st down), mark it.', tDel:'Delete play', tDelC:'Confirm: delete',
   tNewPlay:'New play', fouls:{fs:'False start',dg:'Delay of game',sh:'Illegal shift or motion',os:'Offside',ip:'Illegal participation or substitution',pi:'Pass interference',ic:'Illegal contact',ir:'Illegal rush',fl:'Illegal flag pull',sd:'Shielding',fg:'Flag guarding',jd:'Jumping or diving',fp:'Illegal forward pass',rn:'Illegal run (no-running zone)',dp:'Delay of pass (7 s)',us:'Unsportsmanlike'},
   penWho:'Who committed the foul?', penOff:'Offense', penDef:'Defense', penPre:'Before the snap', penPlay:'During the play', penDead:'After the play', penOther:'Other foul', penOtherS:'you pick the yards and the down',
   penYds:n=>n?`${n} yds`:'no yards', penSpot:{los:'from the line of scrimmage',bs:'from the line (or from the end of the play, when the defense fouled on a play that gained)',sf:'from the spot of the foul: put the yards of the play up to the foul',next:'after the play, which counts'},
@@ -480,7 +480,7 @@ function helpData(){
       <li>Escolher uma jogada na lista, ou com ‹ ›, faz o vídeo saltar para ela. <b>Marcar agora</b> corrige o início, e tocar no tempo de início volta a esse ponto do vídeo.</li>
       <li><b>⚑ Falta</b> regista uma falta nesta jogada: escolhes a equipa e a falta, e a app aplica as jardas a partir do sítio certo, o efeito no down e o novo spot da bola.</li>
       <li><b>Inserir jogada antes</b> acrescenta uma jogada que faltou no live. O down e o resultado são recalculados.</li>
-      <li><b>Não ficou gravada</b>: se a câmara ficou sem bateria ou o vídeo cortou, acrescenta a jogada e marca-a assim. Conta como down (e o TD ou INT, se o souberes) mas não entra nas stats.</li>
+      <li><b>Não ficou gravada</b>: se a câmara ficou sem bateria ou o vídeo cortou, acrescenta a jogada e marca-a assim. Conta como down (e o TD, INT ou 1º down, se o souberes) mas não entra nas stats.</li>
       <li><b>Vídeo noutra janela</b> abre o vídeo numa janela à parte, para pôr noutro ecrã. Os botões e as teclas continuam a comandá-lo.</li>
       <li>No computador: <b>← →</b> muda de jogada, <b>espaço</b> faz play/pausa, <b>Enter</b> é Próxima.</li></ul>
       <p>As jardas, o YAC, os QB, os nomes das jogadas, as flags e os PBU aparecem na <b>Análise</b>.</p>`},
@@ -593,7 +593,7 @@ function helpData(){
       <li>Picking a play in the list, or with ‹ ›, jumps the video to it. <b>Mark now</b> fixes the start, and tapping the start time jumps back to that point in the video.</li>
       <li><b>⚑ Foul</b> records a foul on this play: pick the team and the foul, and the app applies the yards from the right spot, the effect on the down and the new ball spot.</li>
       <li><b>Insert play before</b> adds a play missed live. Down and score are recalculated.</li>
-      <li><b>Not recorded</b>: if the camera died or the video cut, add the play and mark it like this. It counts as a down (and the TD or INT, if you know it) but stays out of the stats.</li>
+      <li><b>Not recorded</b>: if the camera died or the video cut, add the play and mark it like this. It counts as a down (and the TD, INT or 1st down, if you know it) but stays out of the stats.</li>
       <li><b>Video in another window</b> opens the video in a separate window, to put on another screen. The buttons and keys still control it.</li>
       <li>On a computer: <b>← →</b> change play, <b>space</b> play/pause, <b>Enter</b> is Next.</li></ul>
       <p>Yards, YAC, QBs, play names, flags and PBUs show in <b>Analysis</b>.</p>`},
@@ -796,7 +796,7 @@ const foulOf=k=>FOULS.find(f=>f.k===k);
 const isPre=pe=>{const f=pe.foul&&foulOf(pe.foul);return !!f&&f.when==='pre'};
 /* ▼n = n yards from the offense's own goal line, ▲n = n yards from the end zone it attacks */
 const spotTxt=x=>x==null?'?':x<MID?'▼'+x:x===MID?t('midTag'):'▲'+(FIELD-x);
-const ddTxt=e=>`${ord(e._down)} & ${e._dist==null?'?':e._goal?'Goal':e._dist}`;
+const ddTxt=e=>`${ord(e._down)} & ${e._goal?'Goal':e._dist==null?'?':e._dist}`;
 /* same bands as the field zones: 0-5, 5-10, 10-15, 15+ (a band includes its upper number) */
 const distB=d=>d==null?null:d<=5?1:d<=10?2:d<=15?3:4;
 /* state machine: replay events to get down, possession, score, half */
@@ -1972,7 +1972,7 @@ function tapePanel0(){
     ${e.res==='INT'||e.res==='SACK'?`<span class="lbl2">${e.res==='SACK'?t('whoSack'):t('whoInt')} · ${sideName(other(s))}</span>${nums('dby',other(s),e.dby??null)}`:''}`;
   /* a play the camera did not record: it counts as a down (and its result, if known from the score) but stays out of the stats */
   const nr=!conv&&!!e.nr, nrB=conv?'':`<button class="rb nrb" data-act="tbool" data-k="nr" aria-pressed="${nr}">${nr?'✓ ':''}${t('nrBtn')}</button>`;
-  const play=nr?`${nrB}<p class="note">${t('nrNote')}</p><div class="resrow">${[['TD','TD'],['INT','INT']].map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${e.res===v?'X':v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}</div>`:nrB+play0;
+  const play=nr?`${nrB}<p class="note">${t('nrNote')}</p><div class="resrow">${[['TD','TD'],['INT','INT']].map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${e.res===v?'X':v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${e.res==='TD'||e.res==='INT'?'':`<button class="rb" data-act="tbool" data-k="fd" aria-pressed="${!!e.fd}">${t('fd')}</button>`}</div>`:nrB+play0;
   const qbV=e.qb!=null?e.qb:tSugg(e,'qb'), fmV=e.form||(conv?null:tSugg(e,'form'));
   const forms=g.formations[s].map(f=>[f,f]);
   const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
@@ -1992,6 +1992,7 @@ function tapePanel0(){
       ${e.vt!=null?`<button class="btn vt" data-act="tjump" title="${t('tJump')}">${t('tStart')}: <b class="num">▶ ${vt}</b></button>`:`<span class="vt">${t('tStart')}: <b class="num">—</b></span>`}<button class="btn" data-act="tmark">${t('tMark')}</button>
       <span class="vsp"></span><button class="btn" data-act="videos">${t('tVideos')}</button><button class="btn" data-act="${away?'vback':'vpop'}">${away?t('vBack'):t('vPop')}</button>
     </div>
+    ${nr||conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${blk(t('tPlaySec'),t('tFix'),play)}
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
@@ -1999,7 +2000,6 @@ function tapePanel0(){
     ${nr?'':`${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
     ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
     ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
-    ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${ours?blk(t('tCall'),t('tCallS'),chips('call',playbook().map(c=>[c,c]),e.call||null,false)+`<button class="f" data-act="tcall">${t('newForm')}</button></div>`):''}
     ${!ours&&!conv&&(e.res==='C'||e.res==='R')?blk(t('tFlag'),t('tOurs'),nums('fby','H',e.fby??null)):''}
     ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}`}
