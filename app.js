@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.16.2';
+const APP_VERSION='1.17.0';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -89,7 +89,7 @@ pt:{
   convIntQ:'INT na conversão. A defesa devolveu-a para pontos?', whoSack:'Quem fez o sack', whoInt:'Quem intercetou', defense:'defesa',
   result:'Resultado', resSub:'escolhe antes do número', mapField:'Campo', glNote:'End zone em cima', losNote:'Linha de scrimmage entre Curto e Atrás',
   convs:'Conversões', convTries:'Tentativas', convGood:'Good %', marksConv:'+1 / +2 = conversão good, x = no good, INT = interceção.',
-  defTable:s=>`Defesa ${s}: INT e sacks`, thDef:['Nº','INT','Pick-6','Sacks'], byTag:n=>'por '+(n!=null?'#'+n:'sem nº'), retTag:n=>`devolvida +${n}`,
+  defTable:s=>`Defesa ${s}: INT e sacks`, thDef:['Nº','INT','Pick-6','Sacks'], byTag:n=>'por '+(n!=null?pk(n):'sem nº'), retTag:n=>`devolvida +${n}`,
   halfT:'Intervalo', halfS:s=>`a 2ª parte começa com ${s} a atacar`, h1:'1ª P', h2:'2ª P', game_:'Jogo todo',
   pick6Q:'Interceção. Foi devolvida para TD (pick-6)?', pick6Yes:'Sim, pick-6', pick6No:'Não', pick6Done:s=>`Pick-6: +6 para ${s}`,
   follows:'Sigo', roleA:'Adversário', roleB:'As duas', roleQ:'Que equipa segues neste jogo?',
@@ -114,7 +114,7 @@ pt:{
   penApply:'Aplicar falta', penDecl:'Recusada', penBack:'‹ Outra falta', penBall:(a,b)=>`Bola: ${a} → ${b}`, penAnnulPlay:'A falta anula a jogada', penOn:'Falta na jogada',
   penEff:{rep:'repete o down',fd:'1º down automático',loss:'perde o down',dec:'recusada'}, penRemove:'Remover falta', penAdd:'⚑ Falta', penYdsLbl:'Jardas da falta', midTag:'Meio-campo', tBall:'Bola', tBallS:'▼ meio-campo próprio · ▲ meio-campo adversário', tAutoS:'calculado com as jardas', tManualS:'corrigido à mão', tSpotFix:'Corrigir', tSpotAuto:'Automático', tSpotT:'Linha de scrimmage', tOwnHalf:'▼ Próprio', tOppHalf:'▲ Adversário', tSpotNote:'Jardas até à linha de golo de cada lado. A drive começa no ▼5 e o 1º down é no meio-campo (▼25).', tSpotQ:'Sem jardas na jogada anterior (ou depois de um INT): indica o spot.', fdAuto:'auto', distAll:'Qualquer distância', tJump:'Ir para o início desta jogada no vídeo', tPick6:'Pick-6', tNoConv:'Sem conversão', tSackK:'Sack', tPass:'Passe', tRun:'Corrida', tPlaySec:'Jogada', tFix:'corrige se for preciso', tZone:'Zona', tRunner:'Corredor',
   tYds:'Jardas', tYdsS:'totais, a partir da linha de scrimmage', tYac:'YAC', tYacS:'jardas depois da receção', yardsShort:'jd', tKpYds:'Jardas', tKpYac:'YAC',
-  tQb:'QB', tQbOpp:'QB do adversário', tSticky:'fica até mudares', tCall:'Nome da jogada', tCallS:'opcional, do playbook da equipa', tNewCall:'Nova jogada', tCallPh:'ex.: Smash', tTypeCall:'Escreve o nome da jogada',
+  tQb:'QB', tQbOpp:'QB do adversário', tSticky:'fica até mudares', tCall:'Nome da jogada', tCallS:'opcional, do playbook da equipa', tNewCall:'Nova jogada', tCallPh:'ex.: Smash', tTypeCall:'Escreve o nome da jogada', tName:'Nome', tNameT:'Jogador sem número', tNameNote:'Se não dá para ver o número, escreve o nome. Conta nas stats com esse nome. Se o nome estiver na ficha da equipa com número, fica o número.', tNamePh:'ex.: João', tTypeName:'Escreve o nome do jogador',
   tFormOpp:'Formação do adversário', tFlag:'Quem tirou a flag', tPbu:'PBU', tPbuS:'quem desviou a bola', tOurs:'Hammers, defesa', tNote:'Nota', tNotePh:'opcional', tKeys:'Teclas: ← → muda de jogada · espaço play/pausa · Enter próxima',
   vNoneT:'Sem vídeo', vNoneP:'Cola o link do YouTube do jogo (não listado) ou abre o ficheiro do vídeo neste aparelho.', vAddLink:'Colar link do YouTube', vFile:'Abrir ficheiro',
   vLead:'Um vídeo por jogo é o ideal. Se o jogo estiver em vários vídeos, acrescenta uma parte para cada um.', vPart:n=>`Parte ${n}`, vPaste:'Link do YouTube', vSaveLink:'Guardar link', vUse:'Ver esta',
@@ -149,8 +149,8 @@ pt:{
   zmRingsN:'O número é o total de bolas na zona e o anel enche com a % de sucesso (completos e corridas). Por baixo, a % de todas as bolas. Toca numa zona para ver as jogadas.',
   zmSumN:'Quanto mais amarela, mais bolas. Número de bolas, % de sucesso, alvo mais usado e a barra de completos, TD e falhados. Toca numa zona para ver as jogadas.',
   zmDotsN:'o número é o down. Toca numa zona para ver as jogadas.',
-  lsT:n=>`Habitual em ${n===1?'1 jogo':n+' jogos'} · toca para o relatório`, lsDown:(d,p,z,r)=>`${d} down: ${p} passe${z?' · '+z:''}${r?' · alvo #'+r:''}`, lsNoDown:d=>`${d} down: sem jogadas anteriores`, lsGl:z=>`perto da end zone: ${z}`,
-  alRun:(a,b)=>`Hoje correm ${a} das vezes (costumam ${b})`, alRec:(n,a,b)=>`#${n} com ${a} dos alvos hoje (costuma ter ${b})`, alSide:(i,a,b)=>`Hoje ${a} dos passes ${['para a esquerda','para o meio','para a direita'][i]} (costuma ser ${b})`, alForm:f=>`Formação nova hoje: ${f}`,
+  lsT:n=>`Habitual em ${n===1?'1 jogo':n+' jogos'} · toca para o relatório`, lsDown:(d,p,z,r)=>`${d} down: ${p} passe${z?' · '+z:''}${r?' · alvo '+pk(r):''}`, lsNoDown:d=>`${d} down: sem jogadas anteriores`, lsGl:z=>`perto da end zone: ${z}`,
+  alRun:(a,b)=>`Hoje correm ${a} das vezes (costumam ${b})`, alRec:(n,a,b)=>`${pk(n)} com ${a} dos alvos hoje (costuma ter ${b})`, alSide:(i,a,b)=>`Hoje ${a} dos passes ${['para a esquerda','para o meio','para a direita'][i]} (costuma ser ${b})`, alForm:f=>`Formação nova hoje: ${f}`,
   scByCall:'Por jogada do playbook', thScCall:['Jogada','Vezes','% passe','Comp %','Jd/jog','TD','Downs'], scCallF:c=>`Jogada: ${c}`,
   drvT:'Drives', drvAg:'Drives dos adversários', drvN:'drives', drvPts:'pontos por drive', drvTd:'acabam em TD', drvLost:'perdem a bola', drvPl:'jogadas por drive', drvOut:'Como acabam',
   drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'Fim de parte ou em curso'}, drvFirst:(p,z)=>`1ª jogada da drive: ${p} passe${z?`, sobretudo para ${z}`:''}.`,
@@ -160,12 +160,12 @@ pt:{
   sumT:'Resumo', sumNote:'Escrito automaticamente a partir dos números.', sumFew:'Ainda há poucas jogadas para um resumo (são precisas pelo menos 5).',
   sumGames:g=>g>1?`Em ${g} jogos: `:'', sumPass:(pp,np,nr,cp)=>`${pp} das jogadas são passes (${np} passes e ${nr} corridas), com ${cp} de completos.`,
   sumDir:(i,p)=>`A bola vai sobretudo ${['para a esquerda','para o meio','para a direita'][i]} (${p} dos passes)`, sumDirEven:(a,b,c)=>`A bola vai para os três lados (esquerda ${a}, meio ${b}, direita ${c})`,
-  sumDepth:(sh,dp)=>`; ${sh} ficam até 5 jardas e ${dp} vão a mais de 15.`, sumRec:(n,sh,c)=>`Alvo principal: #${n} (${sh} dos alvos, ${c} completos).`, sumRec2:(n,sh,c)=>` A seguir vem o #${n} (${sh}, ${c} completos).`,
-  sumLate:(p,z,r,o)=>`No 3º e 4º down: ${p} passe${z?`, sobretudo para ${z}`:''}${r?`, e o alvo preferido é o #${r}`:''}${o?` (não o #${o})`:''}.`,
+  sumDepth:(sh,dp)=>`; ${sh} ficam até 5 jardas e ${dp} vão a mais de 15.`, sumRec:(n,sh,c)=>`Alvo principal: ${n} (${sh} dos alvos, ${c} completos).`, sumRec2:(n,sh,c)=>` A seguir vem ${n} (${sh}, ${c} completos).`,
+  sumLate:(p,z,r,o)=>`No 3º e 4º down: ${p} passe${z?`, sobretudo para ${z}`:''}${r?`, e o alvo preferido é ${r}`:''}${o?` (não ${o})`:''}.`,
   sumForm:(f,sh,p)=>`Formação mais usada: ${f} (${sh} das jogadas, ${p} passe).`, sumFormRun:(f,p)=>` Em ${f} há mais corridas (${p}).`,
   sumGl:(z,sh)=>`Perto da end zone: sobretudo ${z} (${sh} das bolas no mapa GL).`, sumConv:l=>`Conversões: ${l.map(([p,n,gd])=>`${n} de ${p} pt${p>1?'s':''} (${gd} good)`).join(' e ')}.`,
   sumBig:(n,p)=>`Jogadas de 15+ jardas: ${n} (${p} das jogadas com jardas).`, sumDef:(us,c)=>`Contra ${us?'a nossa defesa':'esta defesa'} completa-se ${c} dos passes.`,
-  sumDefBest:(z,a,b)=>` Onde se completa mais: ${z} (${a} em ${b}).`, sumDefWorst:(z,a,b)=>` Onde se completa menos: ${z} (${a} em ${b}).`, sumDefPl:(n,x)=>` Defensor mais ativo: #${n} (${x}).`,
+  sumDefBest:(z,a,b)=>` Onde se completa mais: ${z} (${a} em ${b}).`, sumDefWorst:(z,a,b)=>` Onde se completa menos: ${z} (${a} em ${b}).`, sumDefPl:(n,x)=>` Defensor mais ativo: ${n} (${x}).`,
   chQuick:'Visão rápida', chDir:'Direção dos passes', chDepth:'Profundidade dos passes', chDown:'Passe e corrida por down', chRec:'Alvos e completos',
   sc:'Relatório de adversário', scS:'tendências de uma equipa em todos os jogos', scTeam:'Equipa', scUs:'Hammers (auto-scouting)', scGamesN:n=>n===1?'1 jogo':`${n} jogos`,
   scPrint:'Imprimir', scNone:'Ainda não há jogos registados.', scNoPlays:'Sem jogadas registadas nos jogos escolhidos.', scLoading:n=>`A carregar ${n===1?'1 jogo':n+' jogos'}...`,
@@ -173,7 +173,7 @@ pt:{
   scKey:'Tendências principais', scFew:n=>`Só ${n} jogadas: lê estas tendências com cuidado.`, scSample:n=>`${n} jogadas de ataque`,
   scPassK:'Passe ou corrida', scPassTxt:(p,r)=>`${p} passes e ${r} corridas`, scZoneK:'Zona favorita', scZoneTxt:(s,c)=>`${s} dos passes · ${c} completos`,
   scDeepK:'Bolas fundas', scDeepTxt:n=>`dos passes vão a mais de 15 jardas (${n})`, scRecK:'Alvo principal', scRecTxt:(s,c,td)=>`${s} dos alvos · ${c} completos · ${td} TD`,
-  scLateK:'3º e 4º down', scPassPct:p=>`${p} passe`, scFavZone:z=>`zona favorita ${z}`, scFavRec:n=>`alvo #${n}`, scPlaysN:n=>n===1?'1 jogada':`${n} jogadas`,
+  scLateK:'3º e 4º down', scPassPct:p=>`${p} passe`, scFavZone:z=>`zona favorita ${z}`, scFavRec:n=>`alvo ${pk(n)}`, scPlaysN:n=>n===1?'1 jogada':`${n} jogadas`,
   scFormK:'Formação mais usada', scFormTxt:(s,p)=>`${s} das jogadas · ${p} passe`, scGlK:'Perto da end zone', scGlTxt:(s,n)=>`${s} das bolas no mapa GL (${n})`,
   scConvK:'Conversões', scConvBig:p=>`${p} de 1 pt`, scConvTxt:(a,b,c,d)=>`good: 1 pt ${a}/${b} · 2 pts ${c}/${d}`,
   scDefK:h=>h?'A nossa defesa':'A defesa deles', scCompPct:p=>`${p} comp`, scDefTxt:(h,i,k)=>`completos ${h?'contra nós':'contra eles'} · ${i} INT · ${k} sacks`,
@@ -264,7 +264,7 @@ en:{
   convIntQ:'INT on the conversion. Did the defense return it for points?', whoSack:'Who made the sack', whoInt:'Who intercepted', defense:'defense',
   result:'Result', resSub:'pick it before the number', mapField:'Field', glNote:'End zone at the top', losNote:'Line of scrimmage between Short and Behind',
   convs:'Conversions', convTries:'Attempts', convGood:'Good %', marksConv:'+1 / +2 = good conversion, x = no good, INT = interception.',
-  defTable:s=>`${s} defense: INT and sacks`, thDef:['#','INT','Pick-6','Sacks'], byTag:n=>'by '+(n!=null?'#'+n:'no #'), retTag:n=>`returned +${n}`,
+  defTable:s=>`${s} defense: INT and sacks`, thDef:['#','INT','Pick-6','Sacks'], byTag:n=>'by '+(n!=null?pk(n):'no #'), retTag:n=>`returned +${n}`,
   halfT:'Halftime', halfS:s=>`2nd half starts with ${s} on offense`, h1:'1st H', h2:'2nd H', game_:'Whole game',
   pick6Q:'Interception. Returned for a TD (pick-6)?', pick6Yes:'Yes, pick-6', pick6No:'No', pick6Done:s=>`Pick-6: +6 for ${s}`,
   follows:'Following', roleA:'Opponent', roleB:'Both', roleQ:'Which team do you follow in this game?',
@@ -289,7 +289,7 @@ en:{
   penApply:'Apply foul', penDecl:'Declined', penBack:'‹ Another foul', penBall:(a,b)=>`Ball: ${a} → ${b}`, penAnnulPlay:'The foul nullifies the play', penOn:'Foul on the play',
   penEff:{rep:'replay the down',fd:'automatic 1st down',loss:'loss of down',dec:'declined'}, penRemove:'Remove foul', penAdd:'⚑ Foul', penYdsLbl:'Foul yards', midTag:'Midfield', tBall:'Ball', tBallS:'▼ own half · ▲ opponent half', tAutoS:'worked out from the yards', tManualS:'set by hand', tSpotFix:'Fix', tSpotAuto:'Automatic', tSpotT:'Line of scrimmage', tOwnHalf:'▼ Own', tOppHalf:'▲ Opponent', tSpotNote:'Yards to the goal line on each side. Drives start on the ▼5 and the 1st down is at midfield (▼25).', tSpotQ:'No yards on the previous play (or after an INT): set the spot.', fdAuto:'auto', distAll:'Any distance', tJump:'Go to the start of this play in the video', tPick6:'Pick-6', tNoConv:'No conversion', tSackK:'Sack', tPass:'Pass', tRun:'Run', tPlaySec:'Play', tFix:'fix it if needed', tZone:'Zone', tRunner:'Runner',
   tYds:'Yards', tYdsS:'total, from the line of scrimmage', tYac:'YAC', tYacS:'yards after the catch', yardsShort:'yds', tKpYds:'Yards', tKpYac:'YAC',
-  tQb:'QB', tQbOpp:'Opponent QB', tSticky:'stays until you change it', tCall:'Play name', tCallS:"optional, from the team's playbook", tNewCall:'New play', tCallPh:'e.g. Smash', tTypeCall:'Type the play name',
+  tQb:'QB', tQbOpp:'Opponent QB', tSticky:'stays until you change it', tCall:'Play name', tCallS:"optional, from the team's playbook", tNewCall:'New play', tCallPh:'e.g. Smash', tTypeCall:'Type the play name', tName:'Name', tNameT:'Player without number', tNameNote:"If the number can't be seen, type the name. It counts in the stats under that name. If the name is on the team sheet with a number, the number is used.", tNamePh:'e.g. John', tTypeName:"Type the player's name",
   tFormOpp:'Opponent formation', tFlag:'Who pulled the flag', tPbu:'PBU', tPbuS:'who broke up the pass', tOurs:'Hammers, defense', tNote:'Note', tNotePh:'optional', tKeys:'Keys: ← → change play · space play/pause · Enter next',
   vNoneT:'No video', vNoneP:"Paste the game's YouTube link (unlisted) or open the video file on this device.", vAddLink:'Paste YouTube link', vFile:'Open file',
   vLead:'One video per game is best. If the game is in several videos, add one part for each.', vPart:n=>`Part ${n}`, vPaste:'YouTube link', vSaveLink:'Save link', vUse:'Watch this',
@@ -324,8 +324,8 @@ en:{
   zmRingsN:'The number is the total of balls in the zone and the ring fills with the success % (completions and runs). Below, the % of all balls. Tap a zone to see its plays.',
   zmSumN:'The more yellow, the more balls. Number of balls, success %, most used target and the bar of completions, TDs and misses. Tap a zone to see its plays.',
   zmDotsN:'the number is the down. Tap a zone to see its plays.',
-  lsT:n=>`Usual in ${n===1?'1 game':n+' games'} · tap for the report`, lsDown:(d,p,z,r)=>`${d} down: ${p} pass${z?' · '+z:''}${r?' · target #'+r:''}`, lsNoDown:d=>`${d} down: no earlier plays`, lsGl:z=>`near the end zone: ${z}`,
-  alRun:(a,b)=>`Running ${a} of the time today (usually ${b})`, alRec:(n,a,b)=>`#${n} has ${a} of targets today (usually ${b})`, alSide:(i,a,b)=>`${a} of passes ${['to the left','to the middle','to the right'][i]} today (usually ${b})`, alForm:f=>`New formation today: ${f}`,
+  lsT:n=>`Usual in ${n===1?'1 game':n+' games'} · tap for the report`, lsDown:(d,p,z,r)=>`${d} down: ${p} pass${z?' · '+z:''}${r?' · target '+pk(r):''}`, lsNoDown:d=>`${d} down: no earlier plays`, lsGl:z=>`near the end zone: ${z}`,
+  alRun:(a,b)=>`Running ${a} of the time today (usually ${b})`, alRec:(n,a,b)=>`${pk(n)} has ${a} of targets today (usually ${b})`, alSide:(i,a,b)=>`${a} of passes ${['to the left','to the middle','to the right'][i]} today (usually ${b})`, alForm:f=>`New formation today: ${f}`,
   scByCall:'By playbook call', thScCall:['Play','Times','% pass','Comp %','Yds/play','TD','Downs'], scCallF:c=>`Play: ${c}`,
   drvT:'Drives', drvAg:'Opponent drives', drvN:'drives', drvPts:'points per drive', drvTd:'end in a TD', drvLost:'lose the ball', drvPl:'plays per drive', drvOut:'How they end',
   drvEnd:{TD:'TD',INT:'INT',P6:'Pick-6',DN:'Downs',SF:'Safety',END:'End of half or ongoing'}, drvFirst:(p,z)=>`1st play of the drive: ${p} pass${z?`, mostly to ${z}`:''}.`,
@@ -335,12 +335,12 @@ en:{
   sumT:'Summary', sumNote:'Written automatically from the numbers.', sumFew:'Too few plays for a summary yet (it needs at least 5).',
   sumGames:g=>g>1?`Over ${g} games: `:'', sumPass:(pp,np,nr,cp)=>`${pp} of plays are passes (${np} passes and ${nr} runs), with ${cp} completed.`,
   sumDir:(i,p)=>`The ball goes mostly ${['to the left','to the middle','to the right'][i]} (${p} of passes)`, sumDirEven:(a,b,c)=>`The ball goes to all three sides (left ${a}, middle ${b}, right ${c})`,
-  sumDepth:(sh,dp)=>`; ${sh} stay within 5 yards and ${dp} go more than 15.`, sumRec:(n,sh,c)=>`Main target: #${n} (${sh} of targets, ${c} complete).`, sumRec2:(n,sh,c)=>` Next is #${n} (${sh}, ${c} complete).`,
-  sumLate:(p,z,r,o)=>`On 3rd and 4th down: ${p} pass${z?`, mostly to ${z}`:''}${r?`, and the favorite target is #${r}`:''}${o?` (not #${o})`:''}.`,
+  sumDepth:(sh,dp)=>`; ${sh} stay within 5 yards and ${dp} go more than 15.`, sumRec:(n,sh,c)=>`Main target: ${n} (${sh} of targets, ${c} complete).`, sumRec2:(n,sh,c)=>` Next is ${n} (${sh}, ${c} complete).`,
+  sumLate:(p,z,r,o)=>`On 3rd and 4th down: ${p} pass${z?`, mostly to ${z}`:''}${r?`, and the favorite target is ${r}`:''}${o?` (not ${o})`:''}.`,
   sumForm:(f,sh,p)=>`Most used formation: ${f} (${sh} of plays, ${p} pass).`, sumFormRun:(f,p)=>` ${f} has more runs (${p}).`,
   sumGl:(z,sh)=>`Near the end zone: mostly ${z} (${sh} of balls on the GL map).`, sumConv:l=>`Conversions: ${l.map(([p,n,gd])=>`${n} for ${p} (${gd} good)`).join(' and ')}.`,
   sumBig:(n,p)=>`Plays of 15+ yards: ${n} (${p} of plays with yards).`, sumDef:(us,c)=>`Against ${us?'our defense':'this defense'}, ${c} of passes are completed.`,
-  sumDefBest:(z,a,b)=>` Most completions: ${z} (${a} of ${b}).`, sumDefWorst:(z,a,b)=>` Fewest: ${z} (${a} of ${b}).`, sumDefPl:(n,x)=>` Most active defender: #${n} (${x}).`,
+  sumDefBest:(z,a,b)=>` Most completions: ${z} (${a} of ${b}).`, sumDefWorst:(z,a,b)=>` Fewest: ${z} (${a} of ${b}).`, sumDefPl:(n,x)=>` Most active defender: ${n} (${x}).`,
   chQuick:'At a glance', chDir:'Pass direction', chDepth:'Pass depth', chDown:'Pass and run by down', chRec:'Targets and completions',
   sc:'Opponent report', scS:"one team's tendencies across every game", scTeam:'Team', scUs:'Hammers (self-scout)', scGamesN:n=>n===1?'1 game':`${n} games`,
   scPrint:'Print', scNone:'No games tracked yet.', scNoPlays:'No plays tracked in the chosen games.', scLoading:n=>`Loading ${n===1?'1 game':n+' games'}...`,
@@ -348,7 +348,7 @@ en:{
   scKey:'Key tendencies', scFew:n=>`Only ${n} plays: read these tendencies with care.`, scSample:n=>`${n} offensive plays`,
   scPassK:'Pass or run', scPassTxt:(p,r)=>`${p} passes and ${r} runs`, scZoneK:'Favorite zone', scZoneTxt:(s,c)=>`${s} of passes · ${c} complete`,
   scDeepK:'Deep balls', scDeepTxt:n=>`of passes go more than 15 yards (${n})`, scRecK:'Main target', scRecTxt:(s,c,td)=>`${s} of targets · ${c} complete · ${td} TD`,
-  scLateK:'3rd and 4th down', scPassPct:p=>`${p} pass`, scFavZone:z=>`favorite zone ${z}`, scFavRec:n=>`target #${n}`, scPlaysN:n=>n===1?'1 play':`${n} plays`,
+  scLateK:'3rd and 4th down', scPassPct:p=>`${p} pass`, scFavZone:z=>`favorite zone ${z}`, scFavRec:n=>`target ${pk(n)}`, scPlaysN:n=>n===1?'1 play':`${n} plays`,
   scFormK:'Most used formation', scFormTxt:(s,p)=>`${s} of plays · ${p} pass`, scGlK:'Near the end zone', scGlTxt:(s,n)=>`${s} of balls on the GL map (${n})`,
   scConvK:'Conversions', scConvBig:p=>`${p} go for 1`, scConvTxt:(a,b,c,d)=>`good: 1 pt ${a}/${b} · 2 pts ${c}/${d}`,
   scDefK:h=>h?'Our defense':'Their defense', scCompPct:p=>`${p} comp`, scDefTxt:(h,i,k)=>`completed ${h?'against us':'against them'} · ${i} INT · ${k} sacks`,
@@ -472,7 +472,7 @@ function helpData(){
     {id:'tape',t:'Tape review',b:`<p>Depois do jogo, abre o separador <b>Tape</b>. Aparece uma jogada de cada vez, com o que foi registado no live, ao lado do vídeo.</p>
       <ol><li>Em <b>Vídeos</b>, cola o link do YouTube do jogo (não listado). Se o jogo estiver em vários vídeos, acrescenta uma parte para cada um. Também podes abrir um ficheiro de vídeo do aparelho: só toca nesse aparelho.</li>
       <li>Vê o clip da jogada e completa: <b>jardas</b>, <b>YAC</b> nos completos, <b>QB</b>, <b>formação</b> e <b>nome da jogada</b> (opcional) quando atacamos. Quando defendemos: QB e formação do adversário, <b>quem tirou a flag</b> e <b>PBU</b>.</li>
-      <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou.</li>
+      <li>Corrige o tipo, o resultado, a zona ou o recetor se o live se enganou. Se não der para ver o número de um jogador, toca em <b>Nome</b> e escreve o nome: conta nas stats com esse nome e fica na lista para as jogadas seguintes.</li>
       <li>Carrega em <b>Próxima</b> quando o clip seguinte começar. A jogada fica revista e o segundo do vídeo fica guardado como início da jogada seguinte. Na última jogada, o botão passa a <b>Nova jogada</b> e cria a seguinte, como no Registo: depois de um TD é a conversão (1 ou 2 pts, ou <b>Sem conversão</b>), senão um passe que podes mudar para corrida ou sack. Assim dá para registar o jogo todo a partir da tape.</li></ol>
       <ul><li><b>Jardas no campo</b>: por cima das jardas há uma faixa de campo com a linha de scrimmage (azul) e o meio-campo (amarelo). Arrasta a bola até onde acabou a jogada: uma lupa mostra a jarda exata e as jardas ficam preenchidas. Se a arrastares até à end zone, um completo ou uma corrida passa a TD. Serve também para corrigir o que foi marcado no live.</li>
       <li><b>Down e distância</b>: com as jardas, a app sabe onde está a bola (▼ meio-campo próprio, ▲ meio-campo adversário) e mostra, por exemplo, <b>2º & 12 · ▼13</b>. A drive começa no ▼5 e passar o meio-campo é 1º down (e depois é <b>Goal</b>). Depois de um INT, ou se faltarem as jardas, indica o spot em <b>Bola → Corrigir</b>. Na Análise podes filtrar por distância (0-5, 5-10, 10-15, 15+).</li>
@@ -585,7 +585,7 @@ function helpData(){
     {id:'tape',t:'Tape review',b:`<p>After the game, open the <b>Tape</b> tab. It shows one play at a time, with what was tracked live, next to the video.</p>
       <ol><li>In <b>Videos</b>, paste the game's YouTube link (unlisted). If the game is in several videos, add one part for each. You can also open a video file from the device: it only plays on that device.</li>
       <li>Watch the play's clip and fill in: <b>yards</b>, <b>YAC</b> on completions, <b>QB</b>, <b>formation</b> and <b>play name</b> (optional) when we are on offense. On defense: opponent QB and formation, <b>who pulled the flag</b> and <b>PBU</b>.</li>
-      <li>Fix the type, result, zone or receiver if the live tracking got it wrong.</li>
+      <li>Fix the type, result, zone or receiver if the live tracking got it wrong. If a player's number can't be seen, tap <b>Name</b> and type the name: it counts in the stats under that name and stays in the list for the next plays.</li>
       <li>Tap <b>Next</b> when the next clip starts. The play is marked reviewed and the video second is saved as the start of the next play. On the last play the button becomes <b>New play</b> and creates the next one, like the Track tab: after a TD it is the conversion (1 or 2 pts, or <b>No conversion</b>), otherwise a pass you can switch to run or sack. So a whole game can be tracked from the tape.</li></ol>
       <ul><li><b>Yards on the field</b>: above the yards there is a field strip with the line of scrimmage (blue) and midfield (yellow). Drag the ball to where the play ended: a loupe shows the exact yard line and the yards are filled in. Dragging a completion or a run into the end zone turns it into a TD. It also fixes what was marked live.</li>
       <li><b>Down and distance</b>: with the yards the app knows where the ball is (▼ own half, ▲ opponent half) and shows, for example, <b>2nd & 12 · ▼13</b>. Drives start on the ▼5 and crossing midfield is a 1st down (then it is <b>Goal</b>). After an INT, or when yards are missing, set the spot in <b>Ball → Fix</b>. In Analysis you can filter by distance (0-5, 5-10, 10-15, 15+).</li>
@@ -743,8 +743,12 @@ function aliasOf(base){
   for(const id in all){const d=all[id];if(d&&d.key&&normKey(d.key)!==nb&&(d.aliases||[]).some(a=>normKey(d.key.split('|').slice(0,2).join('|')+'|'+a)===nb))return d.key}
   return base;
 }
-const pName=(key,n)=>{const d=key&&teamDoc(key);return d&&d.players&&n!=null?d.players[n]||'':''};
-const numTxt=(key,n)=>n==null?t('noNum'):'#'+n+(pName(key,n)?' '+esc(pName(key,n)):'');
+/* a player is a jersey number, or a name typed in the tape review when the number could not be seen */
+const isNm=v=>v!=null&&v!==''&&!/^-?\d+$/.test(String(v));
+const pk=v=>isNm(v)?esc(String(v)):'#'+v;
+const pkParse=v=>v==null||v===''?null:isNm(v)?String(v):+v;
+const pName=(key,n)=>{const d=key&&teamDoc(key);return d&&d.players&&n!=null&&!isNm(n)?d.players[n]||'':''};
+const numTxt=(key,n)=>n==null?t('noNum'):pk(n)+(pName(key,n)?' '+esc(pName(key,n)):'');
 const teamColor=key=>{const d=key&&teamDoc(key);return d&&d.color||null};
 /* ---------- current game ---------- */
 let games=[], g=null, curId=lsGet(LS_CUR), draft=null, runMode=false, qbNext=false, override=null;
@@ -931,7 +935,7 @@ function finalize(){
     ...(d.res==='INT'?{dby:d.by??null}:{}),...(d.kind==='pass'?qbOf(st.poss):{})};
   if(e.t==='play'){qbNext=false;Object.assign(e,d.extra||{})}
   act(grp=>{addEv(e,grp);if(d.spotEv!=null)addEv({t:'spot',spot:d.spotEv},grp)});
-  const who=x=>x!=null?'#'+x:t('noNum');
+  const who=x=>x!=null?pk(x):t('noNum');
   if(e.t==='conv')toast(`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]}`);
   else if(e.res==='SACK')toast(`${t('sack')} · ${who(e.dby)}`);
   else if(e.res==='INT')toast(`INT · ${who(e.dby)}`);
@@ -1246,7 +1250,7 @@ function slotsHTML(s){
   const by=d&&d.step==='by', numL=d&&d.kind==='run'||runMode?t('tRunner'):t('receiver');
   return `<div class="slots">${slot(t('tZone'),d&&d.zone?zoneName(d.zone):null,!d)}
     ${slot(d&&d.kind==='conv'?t('conv')+' '+d.pts+' pt':t('result'),d&&d.res?RES[d.res]:runMode?t('tagR'):null,false,d&&d.res?'r-'+d.res:'')}
-    ${g.quick?'':slot(numL,by?(d.rec!=null?'#'+d.rec:t('noNumShort')):null,!!d&&!by)+(d&&d.res==='INT'&&d.kind!=='conv'?slot(t('whoInt'),null,by):'')}
+    ${g.quick?'':slot(numL,by?(d.rec!=null?pk(d.rec):t('noNumShort')):null,!!d&&!by)+(d&&d.res==='INT'&&d.kind!=='conv'?slot(t('whoInt'),null,by):'')}
     ${g.quick||(d&&d.kind==='run')||runMode?'':`<button class="slot qbslot${g.curQb[s]!=null?' set':''}" data-act="qbpick" data-side="${s}"><small>QB</small><b>${g.curQb[s]!=null?numTxt(scKeyOf(g,s),g.curQb[s]):'—'}</b></button>`}</div>`;
 }
 /* the field from the offense's point of view (it always attacks to the right): own end zone, yard lines, midfield, the other end zone.
@@ -1264,12 +1268,12 @@ function fieldStripHTML(st){
 function evLine(e){
   const R={C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),SF:t('safety'),BS:t('badSnap')};
   if(e.t==='pen')return {cls:'pen',h:e.foul?t('fouls')[e.foul]:t('penalty'),s:(e.team?sideName(e.team)+' · ':'')+(e.foul?t('penEff')[e.eff==='rep'&&e.cnt?'loss':e.eff]:t('penShort')[e.eff]||'')};
-  if(e.t==='conv')return {cls:e.res==='G'?'C':'X',h:`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]||e.res}`,s:[e.rec!=null?'#'+e.rec:'',e.zone?zoneName(e.zone):''].filter(Boolean).join(' · '),tag:e.res==='G'?'+'+e.pts:''};
-  const h=e.nr&&e.res!=='TD'&&e.res!=='INT'?t('nrBtn'):e.kind==='sack'?t('sack')+(e.dby!=null?' · #'+e.dby:''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
+  if(e.t==='conv')return {cls:e.res==='G'?'C':'X',h:`${t('conv')} ${e.pts} pt · ${t('convRes')[e.res]||e.res}`,s:[e.rec!=null?pk(e.rec):'',e.zone?zoneName(e.zone):''].filter(Boolean).join(' · '),tag:e.res==='G'?'+'+e.pts:''};
+  const h=e.nr&&e.res!=='TD'&&e.res!=='INT'?t('nrBtn'):e.kind==='sack'?t('sack')+(e.dby!=null?' · '+pk(e.dby):''):`${e.kind==='run'&&e.res!=='TD'?t('tagR'):R[e.res]}${e.zone?' · '+zoneName(e.zone):''}`;
   if(e.res==='SF'||e.res==='BS')return {cls:e.res==='SF'?'SACK':'X',h,s:e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down'),tag:e.res==='SF'?'+2 '+sideName(other(e._side)):'',annul:e.annul};
   const dd=e._dist!=null?ddTxt(e):ord(e._down)+' '+t('down');
   const tags=[e.yds!=null?(e.yds>0?'+':'')+e.yds+' '+t('yardsShort'):'',e.fd||e._autoFd?t('fdLow'):'',e.pick6?'pick-6':'',e._tod?t('tod'):'',e.annul?t('annulTag'):'',e.nr?t('nrTag'):''].filter(Boolean);
-  return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?'#'+e.rec:'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
+  return {cls:e.res,h,s:[dd,e.kind!=='sack'&&e.rec!=null?pk(e.rec):'',e.form?esc(e.form):''].filter(Boolean).join(' · '),tag:tags.join(' · '),annul:e.annul};
 }
 /* the drives of this game in order: who had the ball, its events, plays, yards and how it ended. The halftime comes as its own item between two drives.
    Yards add the plays and the fouls; a TD without yards counts up to the goal line. */
@@ -1355,7 +1359,7 @@ function regView(st){
     const card=readOnly()?`<div class="defcard"><h3>${t('roTitle')}</h3><p>${t('readOnly')}</p></div>`
       :`<div class="defcard"><span class="lbl2">${t('offense')}</span><h3>${sideName(s)}</h3>
         <p>${t('defBody',sideName(r),sideName(s))}</p>
-        ${recent.length?`<span class="lbl2">${t('lastPlays')}</span><div class="mini">${recent.map(e=>`<div><b class="num">${ord(e._down)}</b><span>${e.rec!=null?'#'+e.rec:e.dby!=null?'#'+e.dby:''}</span><span>${e.zone?zoneName(e.zone):''}</span><span class="tag ${e.res}">${resTxt(e)}</span></div>`).join('')}</div>`:''}
+        ${recent.length?`<span class="lbl2">${t('lastPlays')}</span><div class="mini">${recent.map(e=>`<div><b class="num">${ord(e._down)}</b><span>${e.rec!=null?pk(e.rec):e.dby!=null?pk(e.dby):''}</span><span>${e.zone?zoneName(e.zone):''}</span><span class="tag ${e.res}">${resTxt(e)}</span></div>`).join('')}</div>`:''}
         <button class="btn" data-act="defover">${t('defOverride')}</button>
         <button class="btn" data-act="opts">${t('changeRole')}</button></div>`;
     return `<div class="reg side-${s}">
@@ -1468,11 +1472,11 @@ function anaView(){
   const rows=Object.entries(by).map(([k,l])=>{const p=l.filter(isPassLike);return{k,t:p.length,c:p.filter(isComp).length,td:l.filter(e=>e.res==='TD').length,int:p.filter(e=>e.res==='INT').length,r:l.filter(e=>e.kind==='run').length,
       y:sum(l.filter(e=>e.res!=='INT'),'yds'),yac:sum(l,'yac'),hy:l.some(e=>ydsOf(e)!=null)}})
     .sort((a,b)=>b.t-a.t||b.r-a.r);
-  const tbody=rows.map(r=>`<tr data-act="anrec" data-r="${r.k}" aria-selected="${String(an.rec)===r.k}"><td class="jn">${r.k==='?'?t('noNum'):'#'+r.k}</td><td>${r.t}</td><td>${r.c}</td><td>${pct(r.c,r.t)}</td>${hasY?`<td>${r.hy?r.y:'-'}</td><td>${r.hy?r.yac:'-'}</td>`:''}<td>${r.td}</td><td>${r.int}</td><td>${r.r}</td></tr>`).join('');
+  const tbody=rows.map(r=>`<tr data-act="anrec" data-r="${esc(r.k)}" aria-selected="${String(an.rec)===r.k}"><td class="jn">${r.k==='?'?t('noNum'):pk(r.k)}</td><td>${r.t}</td><td>${r.c}</td><td>${pct(r.c,r.t)}</td>${hasY?`<td>${r.hy?r.y:'-'}</td><td>${r.hy?r.yac:'-'}</td>`:''}<td>${r.td}</td><td>${r.int}</td><td>${r.r}</td></tr>`).join('');
   const thP2=hasY?[...t('thP').slice(0,4),lang==='pt'?'Jd':'Yds','YAC',...t('thP').slice(4)]:t('thP');
   // by QB and by play name (tape review fields)
   const qbs={};all.filter(e=>e.qb!=null&&isPassLike(e)).forEach(e=>{(qbs[e.qb]=qbs[e.qb]||[]).push(e)});
-  const qrows=Object.entries(qbs).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">#${k}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td>
+  const qrows=Object.entries(qbs).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">${pk(k)}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td>
       <td>${q.yds}</td><td>${q.air}</td><td>${q.td}</td><td>${q.int}</td><td>${q.fd}</td><td>${q.rt}</td></tr>`}).join('');
   const calls={};all.filter(e=>e.call).forEach(e=>{(calls[e.call]=calls[e.call]||[]).push(e)});
   const crows=Object.entries(calls).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const p=l.filter(isPassLike),y=l.filter(e=>ydsOf(e)!=null);
@@ -1482,7 +1486,7 @@ function anaView(){
     const l=base.filter(e=>e._down===d&&(an.rec==null||e.rec===an.rec));
     const p=l.filter(e=>e.kind==='pass');
     const tz=top(p,e=>e.zone), tr=top(p,e=>e.rec), tf=top(l,e=>e.form);
-    return `<tr data-act="andown" data-d="${d}" aria-selected="${an.down===d}"><td class="jn">${ord(d)}</td><td>${p.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${tz?zoneName(tz[0])+' ('+tz[1]+')':'-'}</td><td>${tr?'#'+tr[0]+' ('+tr[1]+')':'-'}</td><td>${tf?esc(tf[0]):'-'}</td><td>${l.filter(e=>e.kind==='run').length}</td>${hasY?`<td>${avg(l.filter(e=>e.yds!=null))}</td>`:''}</tr>`;
+    return `<tr data-act="andown" data-d="${d}" aria-selected="${an.down===d}"><td class="jn">${ord(d)}</td><td>${p.length}</td><td>${pct(p.filter(isComp).length,p.length)}</td><td>${tz?zoneName(tz[0])+' ('+tz[1]+')':'-'}</td><td>${tr?pk(tr[0])+' ('+tr[1]+')':'-'}</td><td>${tf?esc(tf[0]):'-'}</td><td>${l.filter(e=>e.kind==='run').length}</td>${hasY?`<td>${avg(l.filter(e=>e.yds!=null))}</td>`:''}</tr>`;
   }).join('');
   // defensive plays made against this offense: interceptions and sacks by number
   // flags and PBU from the tape review
@@ -1493,7 +1497,7 @@ function anaView(){
     if(e.pbu!=null)dk(e.pbu).b++;
   });
   const hasDT=Object.values(dv).some(v=>v.f||v.b);
-  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}</td>${hasDT?`<td>${v.f}</td><td>${v.b}</td>`:''}<td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
+  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):pk(k)}</td>${hasDT?`<td>${v.f}</td><td>${v.b}</td>`:''}<td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
   const forms=[...new Set(g.events.filter(e=>e.t==='play'&&e._side===an.side&&e.form).map(e=>e.form))];
   const seg=(key,opts,cls='')=>`<div class="seg ${cls}">${opts.map(([v,l,c])=>`<button class="${c||''}" data-act="an" data-k="${key}" data-v="${v}" aria-pressed="${String(an[key])===String(v)}">${l}</button>`).join('')}</div>`;
   const D=t('downs'), thP=t('thP'), thD=t('thD');
@@ -1514,7 +1518,7 @@ function anaView(){
       return `<section class="panel"><h3>${t('sumT')} · ${sideName(an.side)}</h3>${sumHTML(ev(an.side),ev(other(an.side)),1,an.side==='H',drivesOf(g.events,an.side).filter(d=>!an.half||d.half===an.half),scKeyOf(g,an.side))}</section>`})()}
     <div class="ana"><div class="sc-tables">
       <section class="panel">
-        <div class="toolbar"><h3>${t('distribution')}${an.rec!=null?' · #'+an.rec:''}</h3>${zoneModes('an',an.mode)}</div>
+        <div class="toolbar"><h3>${t('distribution')}${an.rec!=null?' · '+pk(an.rec):''}</h3>${zoneModes('an',an.mode)}</div>
         ${zoneMap(P,gl,an.mode,'an')}
         ${zoneLegend(an.mode)}${P.some(e=>e.vt!=null)?`<button class="btn" data-act="zdet" data-z="an|all">▶ ${t('vFilt',P.filter(e=>e.vt!=null).length)}</button>`:''}
         ${an.rec!=null?`<button class="btn" data-act="anrec" data-r="${an.rec}">${t('showAll')}</button>`:''}
@@ -1570,7 +1574,7 @@ const zoneLegend=mode=>mode==='dots'?`<div class="zleg"><i class="zdot c">1</i>$
    The summary is plain rules over the counts (no AI): the same data always gives the same text. */
 const colOf=z=>z==null?null:+z[isGL(z)?2:1];
 function sumHTML(off,def,nG,us,D,key){
-  const nn=n=>n+(pName(key,n)?' '+esc(pName(key,n)):'');
+  const nn=n=>pk(n)+(pName(key,n)?' '+esc(pName(key,n)):'');
   const pl=off.filter(e=>e.t==='play'), pas=pl.filter(e=>e.kind==='pass'), runs=pl.filter(e=>e.kind==='run'), n=pas.length+runs.length;
   if(n<5)return `<p class="note">${t('sumFew')}</p>`;
   const L=[], fp=pas.filter(e=>e.zone&&!isGL(e.zone));
@@ -1651,7 +1655,7 @@ function chartsHTML(P,downL,recL){
   const rm={};recL.filter(isPassLike).forEach(e=>{if(e.rec!=null)(rm[e.rec]=rm[e.rec]||[]).push(e)});
   const rr=Object.entries(rm).sort((a,b)=>b[1].length-a[1].length).slice(0,8), rmax=Math.max(1,...rr.map(x=>x[1].length));
   if(rr.length)h+=`<div class="chart"><span class="lbl2">${t('chRec')}</span>${rr.map(([k,l])=>{const c=l.filter(isComp).length;
-    return `<div class="ch-row"><span class="ch-l">#${k}</span><div class="ch-track"><div class="ch-t" style="width:${l.length/rmax*100}%"><i style="width:${c/l.length*100}%"></i></div></div><span class="ch-v">${c}/${l.length}</span></div>`}).join('')}</div>`;
+    return `<div class="ch-row"><span class="ch-l">${pk(k)}</span><div class="ch-track"><div class="ch-t" style="width:${l.length/rmax*100}%"><i style="width:${c/l.length*100}%"></i></div></div><span class="ch-v">${c}/${l.length}</span></div>`}).join('')}</div>`;
   return h?`<section class="panel"><h3>${t('chQuick')}</h3><div class="charts">${h}</div></section>`:'';
 }
 /* ---------- opponent report: one team's tendencies across every game tracked against it (or our own, to self-scout) ---------- */
@@ -1738,7 +1742,7 @@ function scoutView(){
   if(tz){const h=fp.filter(e=>e.zone===tz[0]);ins.push([t('scZoneK'),zoneName(tz[0]),t('scZoneTxt',pct(tz[1],fp.length),pct(h.filter(isComp).length,h.length))])}
   if(fp.length){const d=fp.filter(e=>e.zone[0]==='0').length;ins.push([t('scDeepK'),pct(d,fp.length),t('scDeepTxt',d)])}
   const trc=scTop(pas,e=>e.rec);
-  if(trc){const h=pas.filter(e=>String(e.rec)===trc[0]);ins.push([t('scRecK'),'#'+trc[0],t('scRecTxt',pct(trc[1],pas.length),pct(h.filter(isComp).length,h.length),h.filter(e=>e.res==='TD').length)])}
+  if(trc){const h=pas.filter(e=>String(e.rec)===trc[0]);ins.push([t('scRecK'),pk(trc[0]),t('scRecTxt',pct(trc[1],pas.length),pct(h.filter(isComp).length,h.length),h.filter(e=>e.res==='TD').length)])}
   const late=plays.filter(e=>e._down>=3&&e.kind!=='sack'), lp=late.filter(e=>e.kind==='pass');
   if(late.length){const z=scTop(lp.filter(e=>e.zone),e=>e.zone), r=scTop(lp,e=>e.rec);
     ins.push([t('scLateK'),t('scPassPct',pct(lp.length,late.length)),[z?t('scFavZone',zoneName(z[0])):'',r?t('scFavRec',r[0]):''].filter(Boolean).join(' · ')||t('scPlaysN',late.length)])}
@@ -1775,12 +1779,12 @@ function scoutView(){
       ${filtered?`<button class="btn noprint" data-act="scclear">${t('scClear')}</button>`:''}
     </div>`;
   const pP=P.filter(isPassLike);
-  const mapHTML=`<section class="panel"><div class="toolbar"><h3>${t('scMapT')}${sc.rec!=null?' · #'+sc.rec:''}</h3>${zoneModes('scm',sc.mode)}</div>
+  const mapHTML=`<section class="panel"><div class="toolbar"><h3>${t('scMapT')}${sc.rec!=null?' · '+pk(sc.rec):''}</h3>${zoneModes('scm',sc.mode)}</div>
       <span class="note">${t('scPlaysN',P.length)} · ${pct(pP.filter(isComp).length,pP.length)} ${t('comp')}</span>
       ${zoneMap(P,gl,sc.mode,'sc')}${zoneLegend(sc.mode)}${P.some(e=>e.vt!=null)?`<button class="btn noprint" data-act="zdet" data-z="sc|all">▶ ${t('vFilt',P.filter(e=>e.vt!=null).length)}</button>`:''}<p class="note">${t('scMapNote')}</p></section>`;
   // tables
   const cellsOf=l=>{const np=l.filter(e=>e.kind!=='sack'), p=l.filter(isPassLike), z=scTop(p.filter(e=>e.zone),e=>e.zone), r=scTop(p,e=>e.rec);
-    return [l.length,pct(p.length,np.length),pct(p.filter(isComp).length,p.length),z?zoneName(z[0]):'-',r?'#'+r[0]:'-']};
+    return [l.length,pct(p.length,np.length),pct(p.filter(isComp).length,p.length),z?zoneName(z[0]):'-',r?pk(r[0]):'-']};
   const tr=(k,v,sel,cells)=>`<tr data-act="sc" data-k="${k}" data-v="${esc(v)}" data-tog="1" aria-selected="${sel}">${cells.map((c,i)=>`<td${i===0?' class="jn"':''}>${c}</td>`).join('')}</tr>`;
   const tbl=(title,head,rows)=>rows?`<section class="panel"><h3>${title}</h3><div class="tablewrap"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></section>`:'';
   const topForm=l=>{const f=scTop(l,e=>e.form);return f?esc(f[0]):'-'};
@@ -1802,15 +1806,15 @@ function scoutView(){
   const nT=RL.filter(isPassLike).length;
   tables+=tbl(t('scTargets'),t('thScRec'),Object.entries(rm).map(([k,l])=>({k,l,p:l.filter(isPassLike)})).sort((a,b)=>b.p.length-a.p.length||b.l.length-a.l.length).map(({k,l,p})=>{
     const z=scTop(p.filter(e=>e.zone),e=>e.zone);
-    return tr('rec',k==='?'?'':k,String(sc.rec)===k,[k==='?'?t('noNum'):'#'+k+(pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''),p.length,pct(p.length,nT),pct(p.filter(isComp).length,p.length),l.filter(e=>e.res==='TD').length,l.filter(e=>e.kind==='run').length,z?zoneName(z[0]):'-'])}).join(''));
+    return tr('rec',k==='?'?'':k,String(sc.rec)===k,[k==='?'?t('noNum'):pk(k)+(pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''),p.length,pct(p.length,nT),pct(p.filter(isComp).length,p.length),l.filter(e=>e.res==='TD').length,l.filter(e=>e.kind==='run').length,z?zoneName(z[0]):'-'])}).join(''));
   const qm={};P.filter(e=>isPassLike(e)&&e.qb!=null).forEach(e=>{(qm[e.qb]=qm[e.qb]||[]).push(e)});
-  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">#${k}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td><td>${q.yds}</td><td>${q.td}</td><td>${q.int}</td><td>${q.fd}</td><td>${q.rt}</td></tr>`}).join(''));
+  tables+=tbl(t('scQbs'),t('thScQb'),Object.entries(qm).sort((a,b)=>b[1].length-a[1].length).map(([k,l])=>{const q=qbLine(l);return `<tr><td class="jn">${pk(k)}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${q.n}</td><td>${q.c}</td><td>${pct(q.c,q.n)}</td><td>${q.yds}</td><td>${q.td}</td><td>${q.int}</td><td>${q.fd}</td><td>${q.rt}</td></tr>`}).join(''));
   // the scouted team on defense: where opponents throw on them, and who makes the plays
   const dfp=dp.filter(e=>e.zone&&!isGL(e.zone));
   const dv={}, dk=k=>dv[k]=dv[k]||{f:0,b:0,i:0,p6:0,s:0};
   def.forEach(e=>{if(e.res==='INT'||e.res==='SACK'){const v=dk(e.dby==null?'?':e.dby);if(e.res==='SACK')v.s++;else{v.i++;if(e.pick6)v.p6++}}
     if(e.fby!=null)dk(e.fby).f++;if(e.pbu!=null)dk(e.pbu).b++});
-  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):'#'+k}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
+  const drows=Object.entries(dv).sort((a,b)=>(b[1].i+b[1].s+b[1].f+b[1].b)-(a[1].i+a[1].s+a[1].f+a[1].b)).map(([k,v])=>`<tr><td class="jn">${k==='?'?t('noNum'):pk(k)}${pName(team.key,k)?`<small class="pn">${esc(pName(team.key,k))}</small>`:''}</td><td>${v.f}</td><td>${v.b}</td><td>${v.i}</td><td>${v.p6}</td><td>${v.s}</td></tr>`).join('');
   const defHTML=dfp.length||drows||DD.length?`<section class="sc-sec"><h2>${t('scDefence',us)}</h2><div class="ana">
       ${dfp.length?`<section class="panel"><div class="toolbar"><h3>${t('scDefMap',us)}</h3><span class="note">${t('scPlaysN',dfp.length)} · ${pct(dfp.filter(isComp).length,dfp.length)} ${t('comp')}</span></div>
         ${zoneMap(dfp,false,sc.mode,'scd')}<p class="note">${t('scDefMapNote')}</p></section>`:'<div></div>'}
@@ -1847,12 +1851,12 @@ function logView(){
     if(e.t==='half')return `<div class="ev"><span class="sd"></span><span class="dn">½</span><span class="tx"><b>${t('halfT')}</b></span><span class="ops">${delB(e)}</span></div>`;
     if(e.t==='conv'){
       const rt={G:`<span class="tag C">${t('convRes').G}</span>`,NG:`<span class="tag X">${t('convRes').NG}</span>`,INT:'<span class="tag INT">INT</span>'}[e.res];
-      return `<div class="ev">${sd(e)}<span class="dn">+${e.pts}</span><span class="tx"><b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>${rt}<span class="tag">${t('conv')}</span>${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}
+      return `<div class="ev">${sd(e)}<span class="dn">+${e.pts}</span><span class="tx"><b>${e.rec!=null?pk(e.rec):t('noNum')}</b>${rt}<span class="tag">${t('conv')}</span>${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}
         ${e.res==='INT'?`<span class="tag">${t('byTag',e.dby)}</span>${e.ret?`<span class="tag TD">${t('retTag',e.ret)}</span>`:''}`:''}</span><span class="ops">${delB(e)}</span></div>`;
     }
     const resTag={C:`<span class="tag C">${t('tagC')}</span>`,X:`<span class="tag X">${t('tagX')}</span>`,R:`<span class="tag">${t('tagR')}</span>`,TD:'<span class="tag TD">TD</span>',INT:'<span class="tag INT">INT</span>',SACK:`<span class="tag INT">${t('sack')}</span>`,SF:`<span class="tag INT">${t('safety')}</span>`,BS:`<span class="tag X">${t('badSnap')}</span>`}[e.res];
     return `<div class="ev ${e.annul?'annul':''}">${sd(e)}<span class="dn">${ord(e._down)}</span>
-      <span class="tx">${e.kind==='sack'||e.kind==='safety'||e.kind==='snap'?'':`<b>${e.rec!=null?'#'+e.rec:t('noNum')}</b>`}${resTag}${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}${e.kind==='run'&&e.res==='TD'?`<span class="tag">${t('runLow')}</span>`:''}
+      <span class="tx">${e.kind==='sack'||e.kind==='safety'||e.kind==='snap'?'':`<b>${e.rec!=null?pk(e.rec):t('noNum')}</b>`}${resTag}${e.zone?`<span class="tag">${zoneName(e.zone)}</span>`:''}${e.kind==='run'&&e.res==='TD'?`<span class="tag">${t('runLow')}</span>`:''}
       ${(e.res==='INT'||e.res==='SACK')?`<span class="tag">${t('byTag',e.dby)}</span>`:''}
       ${e.fd?`<span class="tag">${t('fdLow')}</span>`:''}${e.form?`<span class="tag">${esc(e.form)}</span>`:''}${e.qb2?'<span class="tag">2 QB</span>':''}
       ${e.pick6?'<span class="tag TD">pick-6</span>':''}${e.pat!=null?`<span class="tag">${t('convTag',e.pat)}</span>`:''}${e._tod?`<span class="tag">${t('tod')}</span>`:''}${e.annul?`<span class="tag">${t('annulTag')}</span>`:''}${e.nr?`<span class="tag nr">${t('nrTag')}</span>`:''}</span>
@@ -1887,6 +1891,9 @@ function tapeCur(){
   if(tp.seekId&&e&&e.id===tp.seekId&&e.vt!=null){tp.seekId=null;setTimeout(()=>seekPlay(e),0)}
   return {L,i,e};
 }
+/* players typed by name (number not seen) for a team in this game: its receivers and QBs, and its defenders on the other team's plays */
+function tNames(side){const s=new Set();g.events.forEach(e=>{if(e.t!=='play'&&e.t!=='conv')return;
+  (e._side===side?['rec','qb']:['dby','fby','pbu']).forEach(k=>{if(isNm(e[k]))s.add(e[k])})});return [...s].sort((a,b)=>a.localeCompare(b))}
 /* sticky fields (QB, formation): the value of the previous play of the same team */
 function tSugg(e,k){const L=tapeAll();for(let j=L.indexOf(e)-1;j>=0;j--){const x=L[j];if(x._side===e._side&&x[k]!=null&&x[k]!=='')return x[k]}return null}
 const fmtT=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s/60)%60,ss=String(s%60).padStart(2,'0');return h?`${h}:${String(m).padStart(2,'0')}:${ss}`:`${m}:${ss}`};
@@ -1942,8 +1949,8 @@ function tapePanel0(){
   const done=L.filter(x=>x.rv).length, s=e._side, conv=e.t==='conv', ours=s==='H', vs=g.videos||[], away=vidAway();
   const blk=(l,sub,body)=>`<div class="tblk"><div class="lbl"><span>${l}</span><span>${sub||''}</span></div>${body}</div>`;
   const chips=(k,opts,val,sug)=>`<div class="forms">${opts.map(([v,l])=>`<button class="f" data-act="tset" data-k="${k}" data-s="${esc(v)}" aria-pressed="${val===v}"${sug&&val===v?' data-sug':''}>${esc(l)}</button>`).join('')}`;
-  const nums=(k,side,val,sug)=>{const R=[...new Set([...g.roster[side],...(val!=null?[val]:[])])].sort((a,b)=>a-b);
-    return `<div class="tnums">${R.map(n=>`<button class="tn num" data-act="tset" data-k="${k}" data-n="${n}" aria-pressed="${val===n}"${sug&&val===n?' data-sug':''}>${n}</button>`).join('')}<button class="tn add" data-act="taddnum" data-k="${k}" data-side="${side}" aria-label="${t('newNum')}">+</button></div>`};
+  const nums=(k,side,val,sug)=>{const R=[...new Set([...g.roster[side],...(val!=null&&!isNm(val)?[val]:[])])].sort((a,b)=>a-b), N=[...new Set([...tNames(side),...(isNm(val)?[val]:[])])];
+    return `<div class="tnums">${R.map(n=>`<button class="tn num" data-act="tset" data-k="${k}" data-n="${n}" aria-pressed="${val===n}"${sug&&val===n?' data-sug':''}>${n}</button>`).join('')}${N.map(n=>`<button class="tn tname" data-act="tset" data-k="${k}" data-s="${esc(n)}" aria-pressed="${val===n}"${sug&&val===n?' data-sug':''}>${esc(n)}</button>`).join('')}<button class="tn add" data-act="taddnum" data-k="${k}" data-side="${side}" aria-label="${t('newNum')}">+</button><button class="tn add tname" data-act="tname" data-k="${k}" data-side="${side}">${t('tName')}</button></div>`};
   const yds=(k,val)=>`<div class="tyds"><div class="tyv"><button class="tn" data-act="tadj" data-k="${k}" data-d="-1" aria-label="-1">−</button><b class="num">${val==null?'—':val}<span>${t('yardsShort')}</span></b>
       <button class="tn" data-act="tadj" data-k="${k}" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tkp" data-k="${k}">123</button></div>
     <div class="tq">${[-5,0,3,5,10,15,20,30].map(n=>`<button class="tn num" data-act="tset" data-k="${k}" data-n="${n}" aria-pressed="${val===n}">${n>0?'+'+n:n}</button>`).join('')}</div></div>`;
@@ -1971,7 +1978,7 @@ function tapePanel0(){
   const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
   const vt=e.vt!=null?`${fmtT(e.vt)}${vs.length>1?' · '+partName(e.vi):''}`:'—';
   const L2=L.map((x,j)=>`<button class="trow${x.id===e.id?' cur':''}" data-act="tgo" data-id="${x.id}"><span class="sd ${x._side}"></span><span class="num">${j+1}</span>
-      <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.nr&&x.res!=='TD'&&x.res!=='INT'?t('nrBtn'):`${x.rec!=null?'#'+x.rec+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}${x.nr?' · '+t('nrTag'):''}`}</span>
+      <span>${x.t==='conv'?'+'+x.pts:ddTxt(x)}</span><span class="trx">${x.nr&&x.res!=='TD'&&x.res!=='INT'?t('nrBtn'):`${x.rec!=null?pk(x.rec)+' ':''}${{C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'}[x.res]||''}${x.yds!=null?' · '+x.yds+' '+t('yardsShort'):''}${x.nr?' · '+t('nrTag'):''}`}</span>
       <span class="num">${x.vt!=null?fmtT(x.vt):''}</span><span>${x.rv?'✓':''}</span></button>`).join('');
   return `<div class="tprog"><div class="tbar"><i style="width:${L.length?Math.round(done/L.length*100):0}%"></i></div><span class="num">${t('tDone',done,L.length)}</span><button class="linkbtn" data-act="tlist">${tp.list?t('tHideList'):t('tShowList')}</button></div>
     ${tp.list?`<div class="tlist">${L2}</div>`:''}
@@ -2215,7 +2222,7 @@ function renderSheet(){
   const st=replay();let h='', cls='';
   if(sheet.kind==='pen'){
     const P=penCtx(), p=P.p;
-    const ctxLine=p?`<p>${t('penOn')}: <b>${p.t==='conv'?t('conv')+' '+p.pts+' pt':ddTxt(p)}</b> · ${p.rec!=null?'#'+p.rec+' · ':''}${({C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'})[p.res]||''}</p>`:'';
+    const ctxLine=p?`<p>${t('penOn')}: <b>${p.t==='conv'?t('conv')+' '+p.pts+' pt':ddTxt(p)}</b> · ${p.rec!=null?pk(p.rec)+' · ':''}${({C:t('tagC'),X:t('tagX'),R:t('tagR'),TD:'TD',INT:'INT',SACK:t('sack'),G:'Good',NG:'No Good'})[p.res]||''}</p>`:'';
     if(!sheet.team){
       h=`<h2>${t('penTitle')}</h2>${ctxLine}<span class="lbl2">${t('penWho')}</span>
         <div class="grid2">${['H','A'].map(x=>`<button class="big" data-act="penteam" data-v="${x}">${sideName(x)}<small>${x===P.offPlay?t('penOff'):t('penDef')}</small></button>`).join('')}</div>
@@ -2304,7 +2311,7 @@ function renderSheet(){
     const T=scoutTeams(), team=T.find(x=>x.key===sheet.key)||{games:[],side:'A',team:'',name:''}, d=teamDoc(sheet.key)||{}, us=team.side==='H';
     // numbers seen for this team: rosters of its games and the plays of the loaded ones
     const nums=new Set();team.games.forEach(G=>{const sd=(team.sideIn||{})[G.id]||team.side;((G.roster||{})[sd]||[]).forEach(n=>nums.add(+n));if(scoutReady(G))scoutGame(G).events.forEach(e=>{
-      if(e._side===sd){if(e.rec!=null)nums.add(e.rec);if(e.qb!=null)nums.add(e.qb)}else{['dby','fby','pbu'].forEach(k=>{if(e[k]!=null)nums.add(e[k])})}})});
+      if(e._side===sd){['rec','qb'].forEach(k=>{if(e[k]!=null&&!isNm(e[k]))nums.add(e[k])})}else{['dby','fby','pbu'].forEach(k=>{if(e[k]!=null&&!isNm(e[k]))nums.add(e[k])})}})});
     Object.keys(d.players||{}).forEach(n=>nums.add(+n));(sheet.extra||[]).forEach(n=>nums.add(+n));
     const dp=sheet.dp||{}, pv=n=>dp[n]!=null?dp[n]:(d.players||{})[n]||'';
     const others=T.filter(x=>x.side==='A'&&!us&&x.team===team.team&&x.key!==sheet.key&&!x.demo);
@@ -2468,6 +2475,10 @@ function renderSheet(){
       <div class="keypad">${[1,2,3,4,5,6,7,8,9].map(k=>`<button class="big num" data-act="tk" data-k="${k}">${k}</button>`).join('')}
       <span></span><button class="big num" data-act="tk" data-k="0">0</button><button class="big" data-act="tk" data-k="back" aria-label="Backspace">⌫</button></div>
       <button class="primary" data-act="tspotok">OK</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
+  }else if(sheet.kind==='tname'){
+    h=`<h2>${t('tNameT')} · ${sideName(sheet.side)}</h2><p>${t('tNameNote')}</p>
+      <input class="field-in" id="pl-name" maxlength="30" placeholder="${t('tNamePh')}" autocomplete="off">
+      <button class="primary" data-act="tnameok">OK</button><button class="ghost" data-act="close">${t('cancel')}</button>`;
   }else if(sheet.kind==='tcall'){
     h=`<h2>${t('tNewCall')}</h2>
       <label class="lbl2" for="call-name">${t('tCall')}</label>
@@ -2625,7 +2636,7 @@ document.addEventListener('click',ev=>{
       selectGame(id);toast(t('gameCreated'));break}
     case 'an':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist')v=+v;if(k==='form'&&v==='')v=null;an[k]=v;if(k==='side'){an.rec=null;an.form=null}render();break}
     case 'anannul':an.annul=b.checked;render();break;
-    case 'anrec':{const r=b.dataset.r==='?'?null:+b.dataset.r;an.rec=an.rec===r?null:r;render();break}
+    case 'anrec':{const r=b.dataset.r==='?'?null:pkParse(b.dataset.r);an.rec=an.rec===r?null:r;render();break}
     case 'andown':{const d=+b.dataset.d;an.down=an.down===d?0:d;render();break}
     case 'annul':{const e=g.events.find(x=>x.id===b.dataset.id);if(e&&!readOnly())act(grp=>chEv(e,{annul:!e.annul},grp));break}
     case 'del':{const id=b.dataset.id;if(readOnly())break;if(confirmDel!==id){confirmDel=id;render();break}
@@ -2645,7 +2656,7 @@ document.addEventListener('click',ev=>{
       toast(sf?`${t('safety')} · +2 ${sideName(other(st.poss))}`:`${t('badSnap')} · ${ord(st.down)} ${t('down')}`);if(sf)celebrate('SAFETY',other(st.poss),true);break}
     case 'scout':{sheet=null;document.getElementById('layer').innerHTML='';draft=null;runMode=false;
       if(b.dataset.key&&b.dataset.key!==sc.key){sc.key=b.dataset.key;sc.off={};sc.comp=null;scReset()}scFresh={};view='scout';render();scrollTo(0,0);break}
-    case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=v===''?null:+v;if((k==='form'||k==='call')&&v==='')v=null;
+    case 'sc':{const k=b.dataset.k;let v=b.dataset.v;if(k==='down'||k==='dist'||k==='pos')v=+v;if(k==='rec')v=pkParse(v);if((k==='form'||k==='call')&&v==='')v=null;
       if(b.dataset.tog&&String(sc[k])===String(v))v=k==='form'||k==='rec'||k==='call'?null:0;
       sc[k]=v;if(k==='area'&&v==='conv'){sc.down=0;sc.dist=0;sc.pos=0;sc.form=null}render();break}
     case 'scm':sc.mode=b.dataset.v;render();break;
@@ -2745,6 +2756,15 @@ document.addEventListener('click',ev=>{
       if(add&&!g.roster[side].includes(n))updGame({roster:{[side]:[...g.roster[side],n]}});
       const e=tapeCur().e;if(e&&e[k]===n)render();else tapeSet(k,n);break}
     case 'tcall':openSheet('tcall');break;
+    case 'tname':openSheet('tname',{k:b.dataset.k,side:b.dataset.side});setTimeout(()=>{const i=document.getElementById('pl-name');if(i)i.focus()},50);break;
+    case 'tnameok':{const nm=(document.getElementById('pl-name').value||'').replace(/\s+/g,' ').trim();if(!nm){toast(t('tTypeName'));break}
+      const {k,side}=sheet;sheet=null;document.getElementById('layer').innerHTML='';
+      // a name on the team sheet with its number, or a number typed here, is saved as the number
+      const pl=(teamDoc(scKeyOf(g,side))||{}).players||{}, hit=Object.keys(pl).find(n=>normName(pl[n])===normName(nm));
+      let v=hit!=null?+hit:/^\d{1,2}$/.test(nm)?+nm:nm;
+      if(isNm(v)){const old=tNames(side).find(x=>normName(x)===normName(v));if(old)v=old}
+      else if(!g.roster[side].includes(v))updGame({roster:{[side]:[...g.roster[side],v]}});
+      const e=tapeCur().e;if(e&&e[k]===v)render();else tapeSet(k,v);break}
     case 'tspot':{const e=tapeCur().e;if(!e||readOnly())break;const x=e._spot;openSheet('tspot',{half:x!=null&&x>MID?'opp':'own',v:''});break}
     case 'tspothalf':sheet.half=b.dataset.v;renderSheet();break;
     case 'tspotok':{const n=parseInt(sheet.v,10);if(isNaN(n)||n>MID){toast(t('typeNum'));break}const v=sheet.half==='own'?n:FIELD-n;sheet=null;document.getElementById('layer').innerHTML='';tapeSet('spot',v);break}
@@ -2792,6 +2812,7 @@ document.addEventListener('change',ev=>{
 document.addEventListener('keydown',e=>{
   if(!authed&&e.key==='Enter'&&e.target&&(e.target.id==='lg-pw'||e.target.id==='lg-email')){e.preventDefault();if(e.target.id==='lg-email'){const p=document.getElementById('lg-pw');if(p)p.focus()}else{const b=document.querySelector('[data-act="lgpw"]');if(b)b.click()}return}
   if(e.key==='Escape'&&sheet){if(sheet.kind==='play'){draft=null;runMode=false;closeSheet();render()}else closeSheet()}
+  if(e.key==='Enter'&&sheet&&sheet.kind==='tname'){e.preventDefault();document.querySelector('[data-act="tnameok"]').click();return}
   if(e.key==='Enter'&&sheet&&sheet.kind==='tcall'){e.preventDefault();document.querySelector('[data-act="tcalladd"]').click();return}
   if(e.key==='Enter'&&e.target&&e.target.id==='t-note'){e.preventDefault();e.target.blur();return}
   const tag=e.target&&e.target.tagName;
