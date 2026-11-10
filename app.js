@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.17.0';
+const APP_VERSION='1.17.1';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -1973,7 +1973,7 @@ function tapePanel0(){
   /* a play the camera did not record: it counts as a down (and its result, if known from the score) but stays out of the stats */
   const nr=!conv&&!!e.nr, nrB=conv?'':`<button class="rb nrb" data-act="tbool" data-k="nr" aria-pressed="${nr}">${nr?'✓ ':''}${t('nrBtn')}</button>`;
   const play=nr?`${nrB}<p class="note">${t('nrNote')}</p><div class="resrow">${[['TD','TD'],['INT','INT']].map(([v,l])=>`<button class="rb rb-${v}" data-act="tset" data-k="res" data-s="${e.res===v?'X':v}" aria-pressed="${e.res===v}">${l}</button>`).join('')}${e.res==='TD'||e.res==='INT'?'':`<button class="rb" data-act="tbool" data-k="fd" aria-pressed="${!!e.fd}">${t('fd')}</button>`}</div>`:nrB+play0;
-  const qbV=e.qb!=null?e.qb:tSugg(e,'qb'), fmV=e.form||(conv?null:tSugg(e,'form'));
+  const qbV=e.qb!=null?e.qb:tSugg(e,'qb'), fmV=e.form||tSugg(e,'form');
   const forms=g.formations[s].map(f=>[f,f]);
   const passDone=(e.kind==='pass'||conv)&&(e.res==='C'||e.res==='TD'||e.res==='G');
   const vt=e.vt!=null?`${fmtT(e.vt)}${vs.length>1?' · '+partName(e.vi):''}`:'—';
@@ -1992,7 +1992,7 @@ function tapePanel0(){
       ${e.vt!=null?`<button class="btn vt" data-act="tjump" title="${t('tJump')}">${t('tStart')}: <b class="num">▶ ${vt}</b></button>`:`<span class="vt">${t('tStart')}: <b class="num">—</b></span>`}<button class="btn" data-act="tmark">${t('tMark')}</button>
       <span class="vsp"></span><button class="btn" data-act="videos">${t('tVideos')}</button><button class="btn" data-act="${away?'vback':'vpop'}">${away?t('vBack'):t('vPop')}</button>
     </div>
-    ${nr||conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
+    ${nr?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${blk(t('tPlaySec'),t('tFix'),play)}
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
@@ -2155,7 +2155,7 @@ function tapeNext(){
   if(!readOnly())act(grp=>{
     const p={rv:true};
     if(e.qb==null&&!e.nr){const v=tSugg(e,'qb');if(v!=null)p.qb=v}
-    if(e.t==='play'&&!e.form&&!e.nr){const v=tSugg(e,'form');if(v)p.form=v}
+    if(!e.form&&!e.nr){const v=tSugg(e,'form');if(v)p.form=v}
     if(i===0&&e.vt==null&&now!=null){p.vt=0;p.vi=vid.slot}
     const n=document.getElementById('t-note');if(n&&n.value.trim()!==(e.note||''))p.note=n.value.trim();
     chEv(e,p,grp);
