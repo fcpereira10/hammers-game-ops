@@ -1,6 +1,6 @@
 (function(){
 /* app version: bump it (and CACHE in sw.js) in every change; shown in Options, on the home page and on the login screen */
-const APP_VERSION='1.16.1';
+const APP_VERSION='1.16.2';
 /* preview build (claude.ai link for testing before production): no Firebase, games stay in this browser */
 const PREVIEW=!!window.HGO_PREVIEW;
 const LS='hgo.games.v1', LS_CUR='hgo.current.v1', LS_LANG='hgo.lang', LS_HELP='hgo.helpSeen.v1';
@@ -1985,6 +1985,7 @@ function tapePanel0(){
       ${e.vt!=null?`<button class="btn vt" data-act="tjump" title="${t('tJump')}">${t('tStart')}: <b class="num">▶ ${vt}</b></button>`:`<span class="vt">${t('tStart')}: <b class="num">—</b></span>`}<button class="btn" data-act="tmark">${t('tMark')}</button>
       <span class="vsp"></span><button class="btn" data-act="videos">${t('tVideos')}</button><button class="btn" data-act="${away?'vback':'vpop'}">${away?t('vBack'):t('vPop')}</button>
     </div>
+    ${nr||conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${blk(t('tPlaySec'),t('tFix'),play)}
     ${conv?'':blk(t('tBall'),t('tBallS'),`<div class="tyv tball"><button class="tn" data-act="tspotadj" data-d="-1" aria-label="-1">−</button>
       <b class="num">${spotTxt(e._spot)}<span>${ddTxt(e)}</span></b><button class="tn" data-act="tspotadj" data-d="1" aria-label="+1">+</button><button class="tn kp" data-act="tspot">${t('tSpotFix')}</button></div>
@@ -1992,7 +1993,6 @@ function tapePanel0(){
     ${nr?'':`${conv?'':blk(t('tYds'),t('tYdsS'),tapeStrip(e)+yds('yds',e.yds??null))}
     ${ours&&passDone&&!conv?blk(t('tYac'),t('tYacS'),yds('yac',e.yac??null)):''}
     ${blk(ours?t('tQb'):t('tQbOpp'),t('tSticky'),nums('qb',s,qbV,e.qb==null))}
-    ${conv?'':blk(ours?t('formation'):t('tFormOpp'),t('tSticky'),chips('form',forms,fmV,!e.form)+`<button class="f" data-act="addform" data-side="${s}">${t('newForm')}</button></div>`)}
     ${ours?blk(t('tCall'),t('tCallS'),chips('call',playbook().map(c=>[c,c]),e.call||null,false)+`<button class="f" data-act="tcall">${t('newForm')}</button></div>`):''}
     ${!ours&&!conv&&(e.res==='C'||e.res==='R')?blk(t('tFlag'),t('tOurs'),nums('fby','H',e.fby??null)):''}
     ${!ours&&(e.res==='X'||e.res==='NG')?blk(t('tPbu'),t('tPbuS'),nums('pbu','H',e.pbu??null)):''}`}
